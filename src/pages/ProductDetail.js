@@ -43,7 +43,7 @@ export default function ProductDetail() {
             <p className="text-gray-600 bg-pink-300 w-fit px-2 rounded-lg mt-2">{product.category.name}</p>
             <div className="flex items-center mt-4">
               <span className={`text-xl font-semibold ${product.discount && "text-slate-300 line-through"}`}>{product.price}원</span>
-              {product.discount && <p className="ms-2 text-red-600 font-semibold text-md">{Math.round(product.price * (1 - product.discount.discountRating / 100))}원</p>}
+              {product.discount && <p className="ms-2 font-semibold text-xl">{"-> " + Math.round(product.price * (1 - product.discount.discountRating / 100))}원</p>}
             </div>
           </div>
         </div>
