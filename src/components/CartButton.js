@@ -68,7 +68,7 @@ export default function CartButton() {
         {totalPrice !== 0 && (
           <div className="flex flex-row">
             <Link
-              to="/pickup"
+              to="/test"
               onClick={() => {
                 setModalIsOpen(false);
                 setClickedPickupBtn(!clickedPickupBtn);
