@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
+import _debounce from 'lodash/debounce';
 const { naver } = window;
 
 export default function Test() {
   const [userAddress, setUserAddress] = useState("");
   const { cartItems } = useCart();
-
   const [storeAddress, setStoreAddress] = useState("");
 
   // get current position
@@ -34,6 +34,8 @@ export default function Test() {
   }, []);
 
   useEffect(() => {
+    const debouncedSendRequest = _debounce(() => {
+      console.log("가즈아")
     let productData = '?';
     for(let i = 0; i < cartItems.length; i++){
       productData += `data[${i}][productId]=${cartItems[i].productId}&data[${i}][count]=${cartItems[i].count}&`
@@ -54,8 +56,14 @@ export default function Test() {
         console.log(error.message);
       }
     };
-
     getStoreAddress()
+    }, 1000);
+
+    debouncedSendRequest();
+
+    return () => {
+      debouncedSendRequest.cancel();
+    }
   },[cartItems])
 
 
@@ -95,17 +103,12 @@ export default function Test() {
       }
       });
 
-      const contentHomeTags =
-        [
-          '<div class="iw_inner">',
-          '   <h3>나의 집</h3>',
-          '   <p>서울특별시 중구 태평로1가 31 | 서울특별시 중구 세종대로 110 서울특별시청<br />',
-          '       <img src="이미지url" width="55" height="55" alt="서울시청" class="thumb" /><br />',
-          '       02-120 | 공공,사회기관 &gt; 특별,광역시청<br />',
-          '       <a href="http://www.seoul.go.kr" target="_blank">www.seoul.go.kr/</a>',
-          '   </p>',
-          '</div>'
-      ].join('');
+      const contentHomeTags = 
+        `<div class="iw_inner">
+          <h3>나의 집</h3>
+            <p>${userAddress[0].address}<br />
+            </p>
+        </div>`
 
       // 나의 집 이벤트
       const infowindowHome = new naver.maps.InfoWindow({
@@ -133,22 +136,19 @@ export default function Test() {
       // 주변 가게 마커 나타내기
       const markers = [];
       const infowindows = [];
-      const contentTags =
-        [
-          '<div class="iw_inner">',
-          '   <h3>서울특별시청</h3>',
-          '   <p>서울특별시 중구 태평로1가 31 | 서울특별시 중구 세종대로 110 서울특별시청<br />',
-          '       <img src="이미지url" width="55" height="55" alt="서울시청" class="thumb" /><br />',
-          '       02-120 | 공공,사회기관 &gt; 특별,광역시청<br />',
-          '       <a href="http://www.seoul.go.kr" target="_blank">www.seoul.go.kr/</a>',
-          '   </p>',
-          '</div>'
-      ].join('');
-
+      const contentTags = []
 
       // 가게 배열 생성
       const storeAddressArray = []
       for(let j = 0; j < storeAddress.length; j++){
+        contentTags.push(
+          `<div class="iw_inner" style="width: 300px">
+              <h3>${storeAddress[j].name}</h3>
+              <p>${storeAddress[j].desccription}<br />
+                  <img src=${storeAddress[j].imgUrls} width="100" height="100" alt=${storeAddress[j].name} class="thumb" /><br />
+                  <p>${storeAddress[j].address}<br />
+              </p>
+          </div>`)
         storeAddressArray.push({address: storeAddress[j].address, lat: storeAddress[j].lat, lng: storeAddress[j].lng })
       }
 
@@ -170,7 +170,7 @@ export default function Test() {
         });
 
         const infowindow = new naver.maps.InfoWindow({
-          content: contentTags,
+          content: contentTags[i],
           borderWidth: 1,
           anchorSize: new naver.maps.Size(10, 10),
           pixelOffset: new naver.maps.Point(10, -10),
