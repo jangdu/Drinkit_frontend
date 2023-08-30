@@ -1,62 +1,67 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import { useCart } from "../context/CartContext";
 const { naver } = window;
 
 export default function Test() {
   const [userAddress, setUserAddress] = useState("");
+  const { cartItems } = useCart();
+
   const [storeAddress, setStoreAddress] = useState("");
 
   // get current position
   useEffect(() => {
 
     const getUserAddress = async () => {
-            try {
-              const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/user/address`, {
-                withCredentials: true,
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              });
-              if (response.status === 200) {
-                const data = await response.data;
-                setUserAddress(data);
-              }
-            } catch (error) {
-              console.log(error.message);
-            }
-          };
-      
-          getUserAddress()
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/user/address`, {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.status === 200) {
+          const data = await response.data;
+          setUserAddress(data);
+          console.log(data)
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    getUserAddress()
   }, []);
 
   useEffect(() => {
-    // const getStoreAddress = async () => {
-    //   try {
-    //     const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/스토어주소`, {
-    //       withCredentials: true,
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //     });
-    //     if (response.status === 200) {
-    //       const data = await response.data;
-    //       getStoreAddress(data);
-    //     }
-    //   } catch (error) {
-    //     console.log(error.message);
-    //   }
-    // };
+    let productData = '?';
+    for(let i = 0; i < cartItems.length; i++){
+      productData += `data[${i}][productId]=${cartItems[i].productId}&data[${i}][count]=${cartItems[i].count}&`
+    };
+    const getStoreAddress = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/stores${productData}`, {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.status === 200) {
+          const data = await response.data;
+          setStoreAddress(data);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
 
-    // getStoreAddress()
+    getStoreAddress()
+  },[cartItems])
 
+
+  useEffect(() => {
 
     if (typeof userAddress !== "string") {
-      const otherLatLngs = [
-        { lat: userAddress[0].lat + 0.02 , lng: userAddress[0].lng + 0.02 },
-        { lat: userAddress[0].lat + 0.01 , lng: userAddress[0].lng - 0.02 },
-        { lat: userAddress[0].lat - 0.02 , lng: userAddress[0].lng + 0.02 },
-        { lat: userAddress[0].lat - 0.02 , lng: userAddress[0].lng - 0.02 },
-      ];
       const currentPosition = [userAddress[0].lat, userAddress[0].lng];
 
       const map = new naver.maps.Map("map", {
@@ -102,21 +107,6 @@ export default function Test() {
           '</div>'
       ].join('');
 
-      // 주변 마커 나타내기
-      const markers = [];
-      const infowindows = [];
-      const contentTags =
-        [
-          '<div class="iw_inner">',
-          '   <h3>서울특별시청</h3>',
-          '   <p>서울특별시 중구 태평로1가 31 | 서울특별시 중구 세종대로 110 서울특별시청<br />',
-          '       <img src="이미지url" width="55" height="55" alt="서울시청" class="thumb" /><br />',
-          '       02-120 | 공공,사회기관 &gt; 특별,광역시청<br />',
-          '       <a href="http://www.seoul.go.kr" target="_blank">www.seoul.go.kr/</a>',
-          '   </p>',
-          '</div>'
-      ].join('');
-
       // 나의 집 이벤트
       const infowindowHome = new naver.maps.InfoWindow({
         content: contentHomeTags,
@@ -140,12 +130,35 @@ export default function Test() {
 
       naver.maps.Event.addListener(homeMarker, "click", getHomeClickHandler());
 
+      // 주변 가게 마커 나타내기
+      const markers = [];
+      const infowindows = [];
+      const contentTags =
+        [
+          '<div class="iw_inner">',
+          '   <h3>서울특별시청</h3>',
+          '   <p>서울특별시 중구 태평로1가 31 | 서울특별시 중구 세종대로 110 서울특별시청<br />',
+          '       <img src="이미지url" width="55" height="55" alt="서울시청" class="thumb" /><br />',
+          '       02-120 | 공공,사회기관 &gt; 특별,광역시청<br />',
+          '       <a href="http://www.seoul.go.kr" target="_blank">www.seoul.go.kr/</a>',
+          '   </p>',
+          '</div>'
+      ].join('');
+
+
+      // 가게 배열 생성
+      const storeAddressArray = []
+      for(let j = 0; j < storeAddress.length; j++){
+        storeAddressArray.push({address: storeAddress[j].address, lat: storeAddress[j].lat, lng: storeAddress[j].lng })
+      }
+
+      
       // 가게 이벤트
-      for (let i = 0; i < otherLatLngs.length; i += 1) {
+      for (let i = 0; i < storeAddressArray.length; i += 1) {
         const otherMarkers = new naver.maps.Marker({
           position: new naver.maps.LatLng(
-            otherLatLngs[i].lat,
-            otherLatLngs[i].lng
+            storeAddressArray[i].lat,
+            storeAddressArray[i].lng
           ),
           map,
           icon:{
@@ -217,7 +230,7 @@ export default function Test() {
         naver.maps.Event.addListener(markers[i], "click", getClickHandler(i));
       }
     }
-  }, [userAddress]);
+  }, [userAddress, storeAddress]);
 
 
   return <div id='map' style={{ width: "100%", height: "500px" }} />;
