@@ -11,7 +11,7 @@ const pc_config = {
 };
 
 // 뒤에 namespace이름
-const SOCKET_SERVER_URL = "http://localhost:8080";
+const SOCKET_SERVER_URL = "http://localhost:8000";
 
 const Chats = () => {
   const socketRef = useRef();

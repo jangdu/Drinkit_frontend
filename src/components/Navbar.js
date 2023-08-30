@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import Cookies from "js-cookie";
 import Login from "./Login";
 import Signup from "./Signup";
+import CartButton from "./CartButton";
 
 const customStyles = {
   overlay: {
@@ -125,6 +126,7 @@ export default function Navbar() {
             로그인
           </button>
         )}
+        <CartButton />
       </div>
       <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={customStyles}>
         <style>{slideUpAnimation}</style>
