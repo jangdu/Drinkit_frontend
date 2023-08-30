@@ -13,6 +13,8 @@ import MyProfile from "./pages/MyProfile";
 import ProductDetail from "./pages/ProductDetail";
 import Subscribes from "./pages/subscribes";
 import Test from "./pages/Test";
+import PickUpPage from "./pages/PickUpPage";
+import PaymentsPage from "./pages/PaymentsPage";
 
 const router = createBrowserRouter([
   {
@@ -54,6 +56,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Subscribes />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/pickup",
+        element: (
+          <ProtectedRoute>
+            <PickUpPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/payments",
+        element: (
+          <ProtectedRoute>
+            <PaymentsPage />
           </ProtectedRoute>
         ),
       },
