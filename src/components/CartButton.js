@@ -66,9 +66,24 @@ export default function CartButton() {
         <style>{slideUpAnimation}</style>
         <Cart setModalIsOpen={setModalIsOpen} />
         {totalPrice !== 0 && (
-          <Link to="/payments" className="flex w-fit text-xl text-center mx-auto py-1 px-2 rounded-xl font-bold text-white bg-pink-300 hover:bg-pink-500">
-            {totalPrice + "원 주문하기"}
-          </Link>
+          <div className="flex flex-row">
+            <Link
+              to="/pickup"
+              onClick={() => {
+                setModalIsOpen(false);
+              }}
+              className="flex w-fit text-lg text-center mx-auto py-1 px-2 rounded-xl font-semibold text-black bg-pink-300 hover:bg-pink-500 hover:text-white">
+              {"픽업: 재고 확인"}
+            </Link>
+            <Link
+              to="/payments"
+              onClick={() => {
+                setModalIsOpen(false);
+              }}
+              className="flex w-fit text-lg text-center mx-auto py-1 px-2 rounded-xl font-semibold text-black bg-pink-300 hover:bg-pink-500 hover:text-white">
+              {totalPrice + "원 주문하기"}
+            </Link>
+          </div>
         )}
       </ReactModal>
     </div>

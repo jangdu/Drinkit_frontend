@@ -10,9 +10,8 @@ const Signup = ({ isUpdateProfile }) => {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [nickname, setNickname] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [location, setLocation] = useState("");
-  const [newStore, setNewStore] = useState({});
+  const [isPersonal, setIsPerisPersonal] = useState(false);
+  const [adress, setAdress] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,12 +21,12 @@ const Signup = ({ isUpdateProfile }) => {
       setConfirm("");
       return;
     }
-    const userData = { name, password, confirmPassword: confirm, email, phoneNumber, nickname, isAdmin, location };
+    const userData = { name, password, confirmPassword: confirm, email, phoneNumber, nickname, isPersonal, adress };
     try {
       if (isUpdateProfile) {
         await axios.put(
           `${process.env.REACT_APP_API_SERVERURL}/user/authenticate`,
-          { name, email, phoneNumber, nickname, location },
+          { name, email, phoneNumber, nickname, adress },
           {
             withCredentials: true,
             headers: {
@@ -42,24 +41,27 @@ const Signup = ({ isUpdateProfile }) => {
         // 성공적으로 업로드 후 처리할 로직을 작성하세요.
       } else {
         // 회원가입
-        const response = await fetch(`${process.env.REACT_APP_API_SERVERURL}/user/signup`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        });
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_SERVERURL}/user/signup`,
+          { name, password, confirm, email, isPersonal, isAdmin: false, phoneNumber, nickname, adress },
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (response.status === 201) {
-          const data = await response.json();
-          alert(data.message);
+          const data = await response;
+          alert("회원가입에 성공하였습니다.");
           window.location.reload();
         } else {
-          const data = await response.json();
+          const data = await response;
           alert(data.message);
           setConfirm("");
           setEmail("");
-          setIsAdmin(false);
+          setIsPerisPersonal(false);
           setName("");
           setNickname("");
           setPassword("");
@@ -72,15 +74,8 @@ const Signup = ({ isUpdateProfile }) => {
     }
   };
 
-  // 삭제버튼 클릭시 함수
   const onClickDelBtn = () => {
-    // 삭제 로직 구현
     console.log("삭제");
-
-    // 쿠키삭제
-    // Cookies.remove('Authorization');
-    // 새로고침
-    // window.location.reload();
   };
 
   return (
@@ -92,16 +87,15 @@ const Signup = ({ isUpdateProfile }) => {
         <input type="password" placeholder="비밀번호 확인" value={confirm} required onChange={(e) => setConfirm(e.target.value)} />
         <input type="email" placeholder="이메일" value={email} required onChange={(e) => setEmail(e.target.value)} />
         <input type="text" placeholder="휴대폰번호" value={phoneNumber} required onChange={(e) => setPhoneNumber(e.target.value)} />
-        {/* <input type="text" placeholder="이메일 인증" value={emailConfirm} required onChange={(e) => setEmailConfirm(e.target.value)} /> */}
         <input type="nickname" placeholder="닉네임" value={nickname} onChange={(e) => setNickname(e.target.value)} />
-        <input type="text" placeholder="지역" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <input type="text" placeholder="지역" value={adress} onChange={(e) => setAdress(e.target.value)} />
+
         {!isUpdateProfile && (
           <div>
             <span className="me-5">사장님이세요?</span>
-            <input type="checkbox" placeholder="사장님이세요?" value={isAdmin} onChange={(e) => setIsAdmin(e.target.checked)} />
+            <input type="checkbox" placeholder="사장님이세요?" value={isPersonal} onChange={(e) => setIsPerisPersonal(e.target.checked)} />
           </div>
         )}
-        {/* <input type="email" placeholder="프로필 이미지" value={imgUrl} onChange={(e) => setImgUrl(e.target.value)} /> */}
         <button className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500" type="submit">
           {isUpdateProfile ? "회원정보 변경" : "회원가입"}
         </button>
