@@ -11,6 +11,7 @@ const CartContext = React.createContext();
 
 const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(initialCartItems);
+  const [clickedPickupBtn, setClickedPickupBtn] = useState(false);
 
   const addToCart = async (newItem) => {
     // 중복된 productId를 가진 메뉴가 이미 장바구니에 있는지 체크
@@ -60,6 +61,8 @@ const CartProvider = ({ children }) => {
     <CartContext.Provider
       value={{
         cartItems,
+        clickedPickupBtn,
+        setClickedPickupBtn,
         addToCart,
         decreaseCount,
         increaseCount,
