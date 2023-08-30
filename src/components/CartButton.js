@@ -40,7 +40,7 @@ const slideUpAnimation = `
   `;
 
 export default function CartButton() {
-  const { getTotalCount, cartItems, getTotalPrice } = useCart();
+  const { getTotalCount, clickedPickupBtn, setClickedPickupBtn, cartItems, getTotalPrice } = useCart();
   const [totalPrice, setTotalPrice] = useState(getTotalPrice());
   const [totalCount, setTotalCount] = useState(getTotalCount());
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -71,6 +71,7 @@ export default function CartButton() {
               to="/pickup"
               onClick={() => {
                 setModalIsOpen(false);
+                setClickedPickupBtn(!clickedPickupBtn);
               }}
               className="flex w-fit text-lg text-center mx-auto py-1 px-2 rounded-xl font-semibold text-black bg-pink-300 hover:bg-pink-500 hover:text-white">
               {"픽업: 재고 확인"}

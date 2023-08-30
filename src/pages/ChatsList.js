@@ -1,39 +1,34 @@
-import React, { useEffect, useState } from "react";
+// ChatList.js
+import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 
-const SOCKET_SERVER_URL = "http://localhost:8080";
+const socket = io("http://localhost:8000/chat", {
+  transports: ["websocket", "polling"],
 
-const ChatsList = () => {
-  const [roomList, setRoomList] = useState([]);
-  const socket = io(SOCKET_SERVER_URL, {
-    transports: ["websocket", "polling"],
-  });
+  withCredentials: true,
+});
+
+const ChatList = () => {
+  const [chatRooms, setChatRooms] = useState();
 
   useEffect(() => {
-    // 서버로부터 방 목록을 요청
-    // io.of
-    socket.emit("all_users", (rooms) => console.log(rooms));
-
-    // 서버로부터 방 목록을 받음
-    socket.on("room_list", (rooms) => {
-      setRoomList(rooms);
+    socket.emit("getRooms", null, (response) => {
+      console.log(JSON.parse(response[4]));
+      setChatRooms(response[4]);
     });
-
-    return () => {
-      socket.disconnect();
-    };
   }, []);
 
   return (
     <div>
-      <h1>Chat Rooms</h1>
-      <ul>
-        {roomList.map((room, index) => (
-          <li key={index}>{room}</li>
+      <h1>채팅방 목록</h1>
+      {chatRooms &&
+        chatRooms.map((room) => (
+          <div key={room.roomId}>
+            <span>{room.name}</span>
+          </div>
         ))}
-      </ul>
     </div>
   );
 };
 
-export default ChatsList;
+export default ChatList;
