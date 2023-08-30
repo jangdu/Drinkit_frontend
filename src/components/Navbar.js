@@ -5,6 +5,8 @@ import Cookies from "js-cookie";
 import Login from "./Login";
 import Signup from "./Signup";
 import CartButton from "./CartButton";
+import _debounce from 'lodash/debounce';
+import axios from "axios";
 
 const customStyles = {
   overlay: {
@@ -48,6 +50,7 @@ export default function Navbar() {
   const [refreshToken, setRefreshToken] = useState(Cookies.get("RefreshToken"));
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isSignupLogIn, setIsSignupLogIn] = useState("login");
+  const [text, setText] = useState("");
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -56,10 +59,44 @@ export default function Navbar() {
   console.log(Cookies.get("AccessToken"));
 
   useEffect(() => {
+    console.log("토큰 이펙트")
     const storedToken = Cookies.get("AccessToken");
     setRefreshToken(Cookies.get("RefreshToken"));
     setToken(storedToken);
   }, []);
+
+  useEffect(() => {
+    if(text !== ''){
+      const debouncedSendRequest = _debounce(() => {
+        const openSearch = async () => {
+          try {
+            const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/open-search?keyword=${text}`, {
+              withCredentials: true,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+            if (response.status === 200) {
+              const data = await response.data;
+              console.log(data)
+            }
+          } catch (error) {
+            console.log(error.message);
+          }
+        }
+        openSearch()
+      }, 800)
+      debouncedSendRequest();
+
+      return() => {
+        debouncedSendRequest.cancel();
+      }
+    }
+  },[text])
+
+  const newText = (value) => {
+    setText(value)
+  }
 
   const goBack = () => {
     window.history.back();
@@ -79,7 +116,7 @@ export default function Navbar() {
       </div>
       <div className=" flex justify-end items-center gap-2 font-semibold">
         <div className="hidden sm:block">
-          <input placeholder="검색어 입력" className="placeholder:text-gray-500 p-2 bg-pink-300 border rounded-lg"></input>
+          <input placeholder="검색어 입력" className="placeholder:text-gray-500 p-2 bg-pink-300 border rounded-lg" onKeyUp={(e) => newText(e.target.value)}></input>
         </div>
         <div>
           <Link className="text-black-300 hover:text-pink-500" to={"/subscribes"}>
