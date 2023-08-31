@@ -7,7 +7,6 @@ const cardStyles = {
   position: "fixed",
   bottom: "80px",
   right: "20px",
-  padding: "10px",
   width: "400px",
   height: "700px",
   zIndex: "1100",
