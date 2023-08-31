@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
 import _debounce from 'lodash/debounce';
+import haversine from "haversine";
 const { naver } = window;
 
 export default function Test() {
@@ -9,9 +10,22 @@ export default function Test() {
   const { cartItems } = useCart();
   const [storeAddress, setStoreAddress] = useState("");
 
+  const addressGeocode = async (address) => {
+    // let address = "신천천서로 50-1"
+    await naver.maps.Service.geocode({query: address}, function(status, response){
+      if (status === naver.maps.Service.Status.ERROR) {
+        return alert('Something wrong!');
+      }
+      // console.log("지오코드", response.v2.addresses)
+      const lat = response.v2.addresses[0].y
+      const lng = response.v2.addresses[0].x
+      console.log("지오코드 위도 경도", "lat: ", lat, "lng: ", lng)
+      
+    })
+  }
+
   // get current position
   useEffect(() => {
-
     const getUserAddress = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/user/address`, {
@@ -149,7 +163,7 @@ export default function Test() {
                   <p>${storeAddress[j].address}<br />
               </p>
           </div>`)
-        storeAddressArray.push({address: storeAddress[j].address, lat: storeAddress[j].lat, lng: storeAddress[j].lng })
+        storeAddressArray.push({id: j, address: storeAddress[j].address, lat: storeAddress[j].lat, lng: storeAddress[j].lng })
       }
 
       
@@ -161,12 +175,7 @@ export default function Test() {
             storeAddressArray[i].lng
           ),
           map,
-          icon:{
-            url: './storeLocation.png',
-            size: new naver.maps.Size(50,52),
-            origin: new naver.maps.Point(0, 0),
-            anchor: new naver.maps.Point(25, 26),
-          }
+          title: storeAddressArray[i].id
         });
 
         const infowindow = new naver.maps.InfoWindow({
@@ -183,7 +192,8 @@ export default function Test() {
       naver.maps.Event.addListener(map, "idle", () => {
         updateMarkers(map, markers);
       });
-
+      let showMarkers = [];
+      let showMarkersInfo = [];
       const updateMarkers = (
         isMap,
         isMarkers
@@ -191,21 +201,33 @@ export default function Test() {
         const mapBounds = isMap.getBounds();
         let marker;
         let position;
-
+        showMarkers = []
+        showMarkersInfo = []
         for (let i = 0; i < isMarkers.length; i += 1) {
           marker = isMarkers[i];
           position = marker.getPosition();
-
           if (mapBounds.hasLatLng(position)) {
             showMarker(isMap, marker);
           } else {
             hideMarker(marker);
           }
         }
-      };
 
+        // 마커 
+        for(let k = 0; k < showMarkers.length; k++){
+          console.log(currentPosition[0],currentPosition[1],storeAddress[showMarkers[k]]["lat"],storeAddress[showMarkers[k]]["lng"])
+          let distance = haversine({latitude: currentPosition[0], longitude: currentPosition[1]},{latitude: storeAddress[showMarkers[k]]["lat"], longitude: storeAddress[showMarkers[k]]["lng"]} , {unit: 'km'})
+          showMarkersInfo.push({name: storeAddress[showMarkers[k]]["name"], distance })
+        }
+        console.log("마커띄우는정보",showMarkersInfo)
+      };
       const showMarker = (isMap, marker) => {
         marker.setMap(isMap);
+        if(marker.map !== null){
+          showMarkers.push(marker.title)
+        }
+  
+        console.log("쇼 마커", showMarkers)
       };
 
       const hideMarker = (marker) => {
