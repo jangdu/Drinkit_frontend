@@ -24,7 +24,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       {
-        path: "/chats",
+        path: "/chats/:roomId",
         element: (
           <ProtectedRoute>
             <Chats />

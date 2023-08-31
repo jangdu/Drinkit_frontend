@@ -7,7 +7,6 @@ const cardStyles = {
   position: "fixed",
   bottom: "80px",
   right: "20px",
-  padding: "10px",
   width: "400px",
   height: "700px",
   zIndex: "1100",
@@ -42,7 +41,7 @@ const ToggleButton = () => {
       </div>
       {/* 고객센터 컴포넌트 */}
       {isCustomerServiceOpen && (
-        <div className={`transition-opacity rounded-3xl shadow-2xl bg-pink-50`} style={cardStyles}>
+        <div className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`} style={cardStyles}>
           <style>{slideUpAnimation}</style>
           <CustomerService toggleCustomerService={toggleCustomerService} onClose={() => setIsCustomerServiceOpen(false)} />
         </div>

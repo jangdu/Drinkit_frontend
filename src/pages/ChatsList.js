@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import CreateRoom from "../components/CreateRoom";
+import Button from "../components/ui/Button";
+import { Link } from "react-router-dom";
 
 const socket = io("http://localhost:8000/chat", {
   transports: ["websocket", "polling"],
@@ -14,7 +16,7 @@ const ChatList = () => {
 
   useEffect(() => {
     socket.emit("getRooms", null, (response) => {
-      //   console.log(Object.keys(chatRooms));
+      console.log(response);
       setChatRooms(response);
     });
   }, []);
@@ -41,7 +43,7 @@ const ChatList = () => {
                   <span>방 이름: {jsonRoom["name"]}</span>
                   <span>방장: {jsonRoom["roomOwner"]}</span>
                   <span>최대 인원: {jsonRoom["maxNumberOfPerson"]}</span>
-
+                  <Link to={`/chats/${jsonRoom["roomId"]}`}>들어가기</Link>
                   {/* 추가 정보 표시 */}
                 </div>
               );
