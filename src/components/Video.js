@@ -1,22 +1,27 @@
-import { forwardRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 
-const Video = forwardRef(({ email, stream, muted }, ref) => {
-  const [isMuted, setIsMuted] = useState(false);
+const Video = ({ stream, muted, autoPlay }) => {
+  const videoRef = useRef(null);
 
   useEffect(() => {
-    if (ref && ref.current) {
-      ref.current.srcObject = stream;
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
     }
-    if (muted) {
-      setIsMuted(muted);
-    }
-  }, [stream, muted, ref]);
+  }, [stream]);
 
   return (
-    <div>
-      <video ref={ref} muted={isMuted} autoPlay />
-      <span>{email}</span>
-    </div>
+    <video
+      ref={videoRef}
+      muted={muted}
+      autoPlay={autoPlay}
+      style={{
+        width: "240px",
+        height: "180px",
+        margin: "5px",
+
+        backgroundColor: "black",
+      }}></video>
   );
-});
+};
+
 export default Video;

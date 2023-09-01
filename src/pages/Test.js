@@ -3,35 +3,91 @@ import axios from "axios";
 import { useCart } from "../context/CartContext";
 import _debounce from "lodash/debounce";
 import haversine from "haversine";
+import Cart from "../components/Cart";
+import { RequestPay } from "../components/Iamport";
 const { naver } = window;
 
 export default function Test() {
-  const [userAddress, setUserAddress] = useState("");
+  const [user, setUser] = useState("");
+  const [userAddressArr, setUserAddressArr] = useState([{ address: "" }]);
   const { cartItems } = useCart();
   const [storeAddress, setStoreAddress] = useState("");
+  const [markerInfo, setMarkerInfo] = useState();
+  const [value, setValue] = useState();
+  const [storeId, setStoreId] = useState(null);
+  const [usePoint, setUsePoint] = useState(0);
+  const [input, setInput] = useState("서울시");
+  const [currentPosition, setCurrentPosition] = useState([]);
+  const requstPay = new RequestPay();
+  let showMarkersInfo = [];
 
   const addressGeocode = async (address) => {
-    // let address = "신천천서로 50-1"
     await naver.maps.Service.geocode(
       { query: address },
       function (status, response) {
         if (status === naver.maps.Service.Status.ERROR) {
           return alert("Something wrong!");
         }
-        // console.log("지오코드", response.v2.addresses)
         const lat = response.v2.addresses[0].y;
         const lng = response.v2.addresses[0].x;
-        console.log("지오코드 위도 경도", "lat: ", lat, "lng: ", lng);
+
+        setCurrentPosition([lat, lng]);
       }
     );
   };
 
+  let showMarkers = [];
+  const updateMarkers = (isMap, isMarkers) => {
+    const mapBounds = isMap.getBounds();
+    let marker;
+    let position;
+    showMarkers = [];
+    showMarkersInfo = [];
+    for (let i = 0; i < isMarkers.length; i += 1) {
+      marker = isMarkers[i];
+      position = marker.getPosition();
+      if (mapBounds.hasLatLng(position)) {
+        showMarker(isMap, marker);
+      } else {
+        hideMarker(marker);
+      }
+    }
+
+    // 마커
+    for (let k = 0; k < showMarkers.length; k++) {
+      let distance = haversine(
+        { latitude: currentPosition[0], longitude: currentPosition[1] },
+        {
+          latitude: storeAddress[showMarkers[k]]["lat"],
+          longitude: storeAddress[showMarkers[k]]["lng"],
+        },
+        { unit: "km" }
+      );
+      showMarkersInfo.push({
+        name: storeAddress[showMarkers[k]]["name"],
+        distance,
+        storeId: storeAddress[showMarkers[k]]["id"],
+      });
+    }
+    setMarkerInfo(showMarkersInfo);
+  };
+  const showMarker = (isMap, marker) => {
+    marker.setMap(isMap);
+    if (marker.map !== null) {
+      showMarkers.push(marker.title);
+    }
+  };
+
+  const hideMarker = (marker) => {
+    marker.setMap(null);
+  };
+
   // get current position
   useEffect(() => {
-    const getUserAddress = async () => {
+    const getuser = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_SERVERURL}/user/address`,
+          `${process.env.REACT_APP_API_SERVERURL}/user/profile`,
           {
             withCredentials: true,
             headers: {
@@ -41,17 +97,25 @@ export default function Test() {
         );
         if (response.status === 200) {
           const data = await response.data;
-          setUserAddress(data);
-          console.log(data);
+          setUser(data);
+          setUserAddressArr(JSON.parse(data.address));
+          setInput(JSON.parse(data.address)[0].address);
         }
       } catch (error) {
         console.log(error.message);
       }
     };
 
-    getUserAddress();
+    getuser();
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      if (Number(usePoint) > Number(user.point)) {
+        setUsePoint(user.point);
+      }
+    }
+  }, [usePoint]);
   useEffect(() => {
     const debouncedSendRequest = _debounce(() => {
       let productData = "?";
@@ -72,6 +136,7 @@ export default function Test() {
           if (response.status === 200) {
             const data = await response.data;
             setStoreAddress(data);
+            setValue("");
           }
         } catch (error) {
           console.log(error.message);
@@ -88,9 +153,7 @@ export default function Test() {
   }, [cartItems]);
 
   useEffect(() => {
-    if (typeof userAddress !== "string") {
-      const currentPosition = [userAddress[0].lat, userAddress[0].lng];
-
+    if (typeof user !== "string") {
       const map = new naver.maps.Map("map", {
         center: new naver.maps.LatLng(currentPosition[0], currentPosition[1]),
         zoom: 15,
@@ -129,7 +192,7 @@ export default function Test() {
 
       const contentHomeTags = `<div class="iw_inner">
           <h3>나의 집</h3>
-            <p>${userAddress[0].address}<br />
+            <p>${userAddressArr[0].address}<br />
             </p>
         </div>`;
 
@@ -205,60 +268,10 @@ export default function Test() {
 
       naver.maps.Event.addListener(map, "idle", () => {
         updateMarkers(map, markers);
+        setValue("");
       });
-      let showMarkers = [];
-      let showMarkersInfo = [];
-      const updateMarkers = (isMap, isMarkers) => {
-        const mapBounds = isMap.getBounds();
-        let marker;
-        let position;
-        showMarkers = [];
-        showMarkersInfo = [];
-        for (let i = 0; i < isMarkers.length; i += 1) {
-          marker = isMarkers[i];
-          position = marker.getPosition();
-          if (mapBounds.hasLatLng(position)) {
-            showMarker(isMap, marker);
-          } else {
-            hideMarker(marker);
-          }
-        }
 
-        // 마커
-        for (let k = 0; k < showMarkers.length; k++) {
-          console.log(
-            currentPosition[0],
-            currentPosition[1],
-            storeAddress[showMarkers[k]]["lat"],
-            storeAddress[showMarkers[k]]["lng"]
-          );
-          let distance = haversine(
-            { latitude: currentPosition[0], longitude: currentPosition[1] },
-            {
-              latitude: storeAddress[showMarkers[k]]["lat"],
-              longitude: storeAddress[showMarkers[k]]["lng"],
-            },
-            { unit: "km" }
-          );
-          showMarkersInfo.push({
-            name: storeAddress[showMarkers[k]]["name"],
-            distance,
-          });
-        }
-        console.log("마커띄우는정보", showMarkersInfo);
-      };
-      const showMarker = (isMap, marker) => {
-        marker.setMap(isMap);
-        if (marker.map !== null) {
-          showMarkers.push(marker.title);
-        }
-
-        console.log("쇼 마커", showMarkers);
-      };
-
-      const hideMarker = (marker) => {
-        marker.setMap(null);
-      };
+      updateMarkers(map, markers);
 
       const getClickHandler = (seq) => {
         return () => {
@@ -277,7 +290,7 @@ export default function Test() {
         naver.maps.Event.addListener(markers[i], "click", getClickHandler(i));
       }
     }
-  }, [userAddress, storeAddress]);
+  }, [user, storeAddress, currentPosition]);
 
   return <div id="map" style={{ width: "100%", height: "500px" }} />;
 }
