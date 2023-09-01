@@ -15,6 +15,7 @@ import Subscribes from "./pages/subscribes";
 import Test from "./pages/Test";
 import PickUpPage from "./pages/PickUpPage";
 import PaymentsPage from "./pages/PaymentsPage";
+import OrderList from "./components/OrderList";
 
 const router = createBrowserRouter([
   {
@@ -72,6 +73,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <PaymentsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/orderlist",
+        element: (
+          <ProtectedRoute>
+            <OrderList />
           </ProtectedRoute>
         ),
       },
