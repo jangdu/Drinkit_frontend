@@ -9,7 +9,6 @@ export default function CustomerService({}) {
 
   const sendMessage = async () => {
       setSave([...save, {owner: false, input: input}])
-      console.log(save)
     try {
       const response = await axios.post(`${process.env.REACT_APP_OPENAI_SERVERURL}/messages`, {message: input}, {
         withCredentials: true,

@@ -3,32 +3,80 @@ import axios from "axios";
 import { useCart } from "../context/CartContext";
 import _debounce from 'lodash/debounce';
 import haversine from "haversine";
+import Cart from "../components/Cart";
+import { RequestPay } from "../components/Iamport";
 const { naver } = window;
 
 export default function Test() {
-  const [userAddress, setUserAddress] = useState("");
+  const [user, setUser] = useState("");
+  const [userAddressArr, setUserAddressArr] = useState([{address: ""}]);
   const { cartItems } = useCart();
   const [storeAddress, setStoreAddress] = useState("");
+  const [markerInfo, setMarkerInfo] = useState();
+  const [value, setValue] = useState();
+  const [storeId, setStoreId] = useState(null);
+  const [usePoint, setUsePoint] = useState(0)
+  const [input, setInput] = useState('서울시');
+  const [currentPosition, setCurrentPosition] = useState([]);
+  const requstPay = new RequestPay()
+  let showMarkersInfo = [];
 
   const addressGeocode = async (address) => {
-    // let address = "신천천서로 50-1"
     await naver.maps.Service.geocode({query: address}, function(status, response){
       if (status === naver.maps.Service.Status.ERROR) {
         return alert('Something wrong!');
       }
-      // console.log("지오코드", response.v2.addresses)
       const lat = response.v2.addresses[0].y
       const lng = response.v2.addresses[0].x
-      console.log("지오코드 위도 경도", "lat: ", lat, "lng: ", lng)
-      
+
+      setCurrentPosition([lat, lng])
     })
   }
 
+  let showMarkers = [];
+      const updateMarkers = (
+        isMap,
+        isMarkers
+      ) => {
+        const mapBounds = isMap.getBounds();
+        let marker;
+        let position;
+        showMarkers = []
+        showMarkersInfo = []
+        for (let i = 0; i < isMarkers.length; i += 1) {
+          marker = isMarkers[i];
+          position = marker.getPosition();
+          if (mapBounds.hasLatLng(position)) {
+            showMarker(isMap, marker);
+          } else {
+            hideMarker(marker);
+          }
+        }
+
+        // 마커 
+        for(let k = 0; k < showMarkers.length; k++){
+          let distance = haversine({latitude: currentPosition[0], longitude: currentPosition[1]},{latitude: storeAddress[showMarkers[k]]["lat"], longitude: storeAddress[showMarkers[k]]["lng"]} , {unit: 'km'})
+          showMarkersInfo.push({name: storeAddress[showMarkers[k]]["name"], distance, storeId: storeAddress[showMarkers[k]]["id"] })
+        }
+        setMarkerInfo(showMarkersInfo)
+      };
+      const showMarker = (isMap, marker) => {
+        marker.setMap(isMap);
+        if(marker.map !== null){
+          showMarkers.push(marker.title)
+        }
+
+      };
+
+      const hideMarker = (marker) => {
+        marker.setMap(null);
+      };
+
   // get current position
   useEffect(() => {
-    const getUserAddress = async () => {
+    const getuser = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/user/address`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/user/profile`, {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
@@ -36,20 +84,27 @@ export default function Test() {
         });
         if (response.status === 200) {
           const data = await response.data;
-          setUserAddress(data);
-          console.log(data)
+          setUser(data);
+          setUserAddressArr(JSON.parse(data.address))
+          setInput(JSON.parse(data.address)[0].address)
         }
       } catch (error) {
         console.log(error.message);
       }
     };
 
-    getUserAddress()
+    getuser()
   }, []);
 
   useEffect(() => {
+    if(user){
+      if(Number(usePoint) > Number(user.point)){
+        setUsePoint(user.point)
+      }
+    }
+  }, [usePoint])
+  useEffect(() => {
     const debouncedSendRequest = _debounce(() => {
-      console.log("가즈아")
     let productData = '?';
     for(let i = 0; i < cartItems.length; i++){
       productData += `data[${i}][productId]=${cartItems[i].productId}&data[${i}][count]=${cartItems[i].count}&`
@@ -65,6 +120,7 @@ export default function Test() {
         if (response.status === 200) {
           const data = await response.data;
           setStoreAddress(data);
+          setValue('');
         }
       } catch (error) {
         console.log(error.message);
@@ -80,12 +136,12 @@ export default function Test() {
     }
   },[cartItems])
 
+  useEffect(() => {
+    addressGeocode(input)
+  }, [input])
 
   useEffect(() => {
-
-    if (typeof userAddress !== "string") {
-      const currentPosition = [userAddress[0].lat, userAddress[0].lng];
-
+    if (typeof user !== "string") {
       const map = new naver.maps.Map("map", {
         center: new naver.maps.LatLng(currentPosition[0], currentPosition[1]),
         zoom: 15,
@@ -120,7 +176,7 @@ export default function Test() {
       const contentHomeTags = 
         `<div class="iw_inner">
           <h3>나의 집</h3>
-            <p>${userAddress[0].address}<br />
+            <p>${userAddressArr[0].address}<br />
             </p>
         </div>`
 
@@ -191,48 +247,13 @@ export default function Test() {
 
       naver.maps.Event.addListener(map, "idle", () => {
         updateMarkers(map, markers);
+        setValue('');
       });
-      let showMarkers = [];
-      let showMarkersInfo = [];
-      const updateMarkers = (
-        isMap,
-        isMarkers
-      ) => {
-        const mapBounds = isMap.getBounds();
-        let marker;
-        let position;
-        showMarkers = []
-        showMarkersInfo = []
-        for (let i = 0; i < isMarkers.length; i += 1) {
-          marker = isMarkers[i];
-          position = marker.getPosition();
-          if (mapBounds.hasLatLng(position)) {
-            showMarker(isMap, marker);
-          } else {
-            hideMarker(marker);
-          }
-        }
 
-        // 마커 
-        for(let k = 0; k < showMarkers.length; k++){
-          console.log(currentPosition[0],currentPosition[1],storeAddress[showMarkers[k]]["lat"],storeAddress[showMarkers[k]]["lng"])
-          let distance = haversine({latitude: currentPosition[0], longitude: currentPosition[1]},{latitude: storeAddress[showMarkers[k]]["lat"], longitude: storeAddress[showMarkers[k]]["lng"]} , {unit: 'km'})
-          showMarkersInfo.push({name: storeAddress[showMarkers[k]]["name"], distance })
-        }
-        console.log("마커띄우는정보",showMarkersInfo)
-      };
-      const showMarker = (isMap, marker) => {
-        marker.setMap(isMap);
-        if(marker.map !== null){
-          showMarkers.push(marker.title)
-        }
+      updateMarkers(map, markers)
+      
+
   
-        console.log("쇼 마커", showMarkers)
-      };
-
-      const hideMarker = (marker) => {
-        marker.setMap(null);
-      };
 
       const getClickHandler = (seq) => {
         return () => {
@@ -252,8 +273,43 @@ export default function Test() {
         naver.maps.Event.addListener(markers[i], "click", getClickHandler(i));
       }
     }
-  }, [userAddress, storeAddress]);
+  }, [user, storeAddress, currentPosition]);
 
-
-  return <div id='map' style={{ width: "100%", height: "500px" }} />;
+  const selectStore = (id) => {
+    for(let i = 0; i < markerInfo.length; i++){
+      if(Number(markerInfo[i].storeId) === Number(id)){
+        setValue(`선택된 가게: ${markerInfo[i].name} / 거리: ${markerInfo[i].distance.toFixed(2)}km`)
+        console.log(markerInfo[i].storeId)
+        setStoreId(markerInfo[i].storeId)
+      }
+    }
+  }
+  return  <div>
+            <div>
+              <div id='map' style={{ width: "50%", height: "500px" }} />
+              {
+                markerInfo &&
+                markerInfo.map((item, index) => {
+                  return  <button key={index} value={item.storeId} type="submit" className="w-[90%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500 mb-2" onClick={(e) => (selectStore(e.target.value))}>
+                            {item.name} / {item.distance.toFixed(2)}km
+                          </button>
+                })
+              }
+              <div value={storeId && storeId} className="w-[90%] mx-auto bg-pink-500 py-1.5 rounded-2xl font-bold text-white mb-2">{value}</div>
+              <p>주소 선택하기</p>
+              <select onChange={(e) => setInput(e.target.value)}>
+                {
+                  userAddressArr.map((item)=>{
+                    return <option value={item.address} >{item.address}</option>
+                  })
+                }
+              </select>
+              <p>사용 가능 포인트: {user && user.point}</p>
+              <input type="number" value={usePoint} onChange={(e) => {setUsePoint(e.target.value)}} />
+              <button type="submit" className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500 mb-2" onClick={() => requstPay.requestPay(cartItems, input, user, usePoint, storeId)}>
+                주문하기
+              </button>
+            </div>
+            <Cart />
+          </div>;
 }
