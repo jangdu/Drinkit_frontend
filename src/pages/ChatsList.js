@@ -12,39 +12,27 @@ const socket = io("http://localhost:8000/chat", {
   withCredentials: true,
 });
 
-const customStyles = {
-  overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  content: {
-    width: "80%",
-    maxWidth: "450px",
-    position: "fixed",
-    height: "90%",
-    top: "5%",
-    left: "50%",
-    backgroundColor: "white",
-    padding: "1rem",
-    paddingLeft: "2rem",
-    paddingRight: "2rem",
-    borderRadius: "0.5rem",
-    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
-    animation: "slide-up 0.8s", // 애니메이션 적용
-  },
+const cardStyles = {
+  position: "fixed",
+  bottom: "80px",
+  right: "2.5%",
+  width: "95%",
+  height: "85vh",
+  animation: "slide-up 0.8s",
 };
 
 const slideUpAnimation = `
-  @keyframes slide-up {
-    from {
-      opacity: 0;
-      transform: translate(10%, 0);
+    @keyframes slide-up {
+      from {
+        opacity: 0;
+        transform: translate(10%, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate(0, 0);
+      }
     }
-    to {
-      opacity: 1;
-      transform: translate(0, 0);
-    }
-  }
-`;
+  `;
 
 const ChatList = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -68,40 +56,40 @@ const ChatList = () => {
       <h1>채팅방 목록</h1>
       <button onClick={handleCreateRoomClick}>새 채팅방 만들기</button>
       {isCreatingRoom ? (
-        <CreateRoom />
+        <CreateRoom socket={socket} />
       ) : (
         chatRooms &&
-        Object.keys(chatRooms).map((roomSize) => (
-          <div key={roomSize}>
-            <h2>{roomSize}명 방</h2>
-            {chatRooms[roomSize].map((room) => {
-              const jsonRoom = JSON.parse(room);
-              return (
-                <div key={jsonRoom["roomId"]}>
-                  <span>방 이름: {jsonRoom["name"]}</span>
-                  <span>방장: {jsonRoom["roomOwner"]}</span>
-                  <span>최대 인원: {jsonRoom["maxNumberOfPerson"]}</span>
-                  {/* <Link to={`/chats/${jsonRoom["roomId"]}`}>들어가기</Link> */}
-                  <Button
-                    text={"들어가기"}
-                    onClick={() => {
-                      console.log(jsonRoom);
-                      setModalIsOpen(true);
-                      setClickedRoom(jsonRoom);
-                    }}
-                  />
-                  {/* 추가 정보 표시 */}
-                </div>
-              );
-            })}
-            <Modal isOpen={modalIsOpen} style={customStyles}>
-              <style>{slideUpAnimation}</style>
-              <div className="">
-                <ChatsModal clickedRoom={clickedRoom} socket={socket} setModalIsOpen={setModalIsOpen} />
-              </div>
-            </Modal>
-          </div>
-        ))
+        Object.entries(chatRooms).map(([roomSize, value]) => {
+          return (
+            <div key={roomSize}>
+              <h2>{roomSize}명 방</h2>
+              {chatRooms[roomSize] &&
+                Object.entries(chatRooms[roomSize]).map(([roomId, roomList]) => {
+                  const jsonRoom = JSON.parse(roomList);
+                  return (
+                    <div key={roomId}>
+                      <span>방 이름: {jsonRoom["roomName"]}</span>
+                      <span>방장: {jsonRoom["roomOwner"]}</span>
+                      <span>최대 인원: {jsonRoom["maxNumberOfPerson"]}</span>
+                      <Button
+                        text={"들어가기"}
+                        onClick={() => {
+                          setModalIsOpen(true);
+                          setClickedRoom({ ...jsonRoom, roomId });
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+            </div>
+          );
+        })
+      )}
+      {modalIsOpen && (
+        <div className={`transition-opacity rounded-3xl shadow-2xl p-6 bg-pink-100`} style={cardStyles}>
+          <style>{slideUpAnimation}</style>
+          <ChatsModal clickedRoom={clickedRoom} socket={socket} setModalIsOpen={setModalIsOpen} />
+        </div>
       )}
     </div>
   );
