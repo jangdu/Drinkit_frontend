@@ -41,7 +41,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_SERVERURL}/user/kakao`);
+      window.location = "http://localhost:3000/user/login/kakao";
     } catch (error) {
       alert(error);
       console.error("Error occurred during signup:", error);
@@ -52,7 +52,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_SERVERURL}/user/naver`);
+      window.location = "http://localhost:3000/user/login/naver";
     } catch (error) {
       alert(error);
       console.error("Error occurred during signup:", error);
@@ -63,11 +63,16 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_SERVERURL}/user/google`);
+      window.location = "http://localhost:3000/user/login/google";
     } catch (error) {
       alert(error);
       console.error("Error occurred during signup:", error);
     }
+  };
+
+  const signup = async (e) => {
+    e.preventDefault();
+    window.location = "http://localhost:3200/authEmail";
   };
 
   return (
@@ -111,6 +116,12 @@ const Login = () => {
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
           onClick={googleLogin}>
           구글 로그인
+        </button>
+        <button
+          type="submit"
+          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
+          onClick={signup}>
+          회원가입
         </button>
       </div>
     </div>

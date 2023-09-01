@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
-import _debounce from 'lodash/debounce';
+import _debounce from "lodash/debounce";
 import haversine from "haversine";
 const { naver } = window;
 
@@ -12,77 +12,82 @@ export default function Test() {
 
   const addressGeocode = async (address) => {
     // let address = "신천천서로 50-1"
-    await naver.maps.Service.geocode({query: address}, function(status, response){
-      if (status === naver.maps.Service.Status.ERROR) {
-        return alert('Something wrong!');
+    await naver.maps.Service.geocode(
+      { query: address },
+      function (status, response) {
+        if (status === naver.maps.Service.Status.ERROR) {
+          return alert("Something wrong!");
+        }
+        // console.log("지오코드", response.v2.addresses)
+        const lat = response.v2.addresses[0].y;
+        const lng = response.v2.addresses[0].x;
+        console.log("지오코드 위도 경도", "lat: ", lat, "lng: ", lng);
       }
-      // console.log("지오코드", response.v2.addresses)
-      const lat = response.v2.addresses[0].y
-      const lng = response.v2.addresses[0].x
-      console.log("지오코드 위도 경도", "lat: ", lat, "lng: ", lng)
-      
-    })
-  }
+    );
+  };
 
   // get current position
   useEffect(() => {
     const getUserAddress = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/user/address`, {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_SERVERURL}/user/address`,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (response.status === 200) {
           const data = await response.data;
           setUserAddress(data);
-          console.log(data)
+          console.log(data);
         }
       } catch (error) {
         console.log(error.message);
       }
     };
 
-    getUserAddress()
+    getUserAddress();
   }, []);
 
   useEffect(() => {
     const debouncedSendRequest = _debounce(() => {
-      console.log("가즈아")
-    let productData = '?';
-    for(let i = 0; i < cartItems.length; i++){
-      productData += `data[${i}][productId]=${cartItems[i].productId}&data[${i}][count]=${cartItems[i].count}&`
-    };
-    const getStoreAddress = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/stores${productData}`, {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.status === 200) {
-          const data = await response.data;
-          setStoreAddress(data);
-        }
-      } catch (error) {
-        console.log(error.message);
+      let productData = "?";
+      for (let i = 0; i < cartItems.length; i++) {
+        productData += `data[${i}][productId]=${cartItems[i].productId}&data[${i}][count]=${cartItems[i].count}&`;
       }
-    };
-    getStoreAddress()
+      const getStoreAddress = async () => {
+        try {
+          const response = await axios.get(
+            `${process.env.REACT_APP_API_SERVERURL}/stores${productData}`,
+            {
+              withCredentials: true,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          if (response.status === 200) {
+            const data = await response.data;
+            setStoreAddress(data);
+          }
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+      getStoreAddress();
     }, 1000);
 
     debouncedSendRequest();
 
     return () => {
       debouncedSendRequest.cancel();
-    }
-  },[cartItems])
-
+    };
+  }, [cartItems]);
 
   useEffect(() => {
-
     if (typeof userAddress !== "string") {
       const currentPosition = [userAddress[0].lat, userAddress[0].lng];
 
@@ -104,25 +109,29 @@ export default function Test() {
         map,
         icon: {
           path: [
-              new naver.maps.Point(0,15), new naver.maps.Point(10, 30), new naver.maps.Point(20, 15),
-              new naver.maps.Point(15, 15), new naver.maps.Point(15, 0), new naver.maps.Point(5, 0), new naver.maps.Point(5, 15)
+            new naver.maps.Point(0, 15),
+            new naver.maps.Point(10, 30),
+            new naver.maps.Point(20, 15),
+            new naver.maps.Point(15, 15),
+            new naver.maps.Point(15, 0),
+            new naver.maps.Point(5, 0),
+            new naver.maps.Point(5, 15),
           ],
           style: "closedPath",
           anchor: new naver.maps.Point(13, 35),
-          fillColor: '#F9A8D4',
+          fillColor: "#F9A8D4",
           fillOpacity: 1,
-          strokeColor: '#FF8FCC',
-          strokeStyle: 'solid',
-          strokeWeight: 2
-      }
+          strokeColor: "#FF8FCC",
+          strokeStyle: "solid",
+          strokeWeight: 2,
+        },
       });
 
-      const contentHomeTags = 
-        `<div class="iw_inner">
+      const contentHomeTags = `<div class="iw_inner">
           <h3>나의 집</h3>
             <p>${userAddress[0].address}<br />
             </p>
-        </div>`
+        </div>`;
 
       // 나의 집 이벤트
       const infowindowHome = new naver.maps.InfoWindow({
@@ -150,11 +159,11 @@ export default function Test() {
       // 주변 가게 마커 나타내기
       const markers = [];
       const infowindows = [];
-      const contentTags = []
+      const contentTags = [];
 
       // 가게 배열 생성
-      const storeAddressArray = []
-      for(let j = 0; j < storeAddress.length; j++){
+      const storeAddressArray = [];
+      for (let j = 0; j < storeAddress.length; j++) {
         contentTags.push(
           `<div class="iw_inner" style="width: 300px">
               <h3>${storeAddress[j].name}</h3>
@@ -162,11 +171,16 @@ export default function Test() {
                   <img src=${storeAddress[j].imgUrls} width="100" height="100" alt=${storeAddress[j].name} class="thumb" /><br />
                   <p>${storeAddress[j].address}<br />
               </p>
-          </div>`)
-        storeAddressArray.push({id: j, address: storeAddress[j].address, lat: storeAddress[j].lat, lng: storeAddress[j].lng })
+          </div>`
+        );
+        storeAddressArray.push({
+          id: j,
+          address: storeAddress[j].address,
+          lat: storeAddress[j].lat,
+          lng: storeAddress[j].lng,
+        });
       }
 
-      
       // 가게 이벤트
       for (let i = 0; i < storeAddressArray.length; i += 1) {
         const otherMarkers = new naver.maps.Marker({
@@ -175,7 +189,7 @@ export default function Test() {
             storeAddressArray[i].lng
           ),
           map,
-          title: storeAddressArray[i].id
+          title: storeAddressArray[i].id,
         });
 
         const infowindow = new naver.maps.InfoWindow({
@@ -194,15 +208,12 @@ export default function Test() {
       });
       let showMarkers = [];
       let showMarkersInfo = [];
-      const updateMarkers = (
-        isMap,
-        isMarkers
-      ) => {
+      const updateMarkers = (isMap, isMarkers) => {
         const mapBounds = isMap.getBounds();
         let marker;
         let position;
-        showMarkers = []
-        showMarkersInfo = []
+        showMarkers = [];
+        showMarkersInfo = [];
         for (let i = 0; i < isMarkers.length; i += 1) {
           marker = isMarkers[i];
           position = marker.getPosition();
@@ -213,21 +224,36 @@ export default function Test() {
           }
         }
 
-        // 마커 
-        for(let k = 0; k < showMarkers.length; k++){
-          console.log(currentPosition[0],currentPosition[1],storeAddress[showMarkers[k]]["lat"],storeAddress[showMarkers[k]]["lng"])
-          let distance = haversine({latitude: currentPosition[0], longitude: currentPosition[1]},{latitude: storeAddress[showMarkers[k]]["lat"], longitude: storeAddress[showMarkers[k]]["lng"]} , {unit: 'km'})
-          showMarkersInfo.push({name: storeAddress[showMarkers[k]]["name"], distance })
+        // 마커
+        for (let k = 0; k < showMarkers.length; k++) {
+          console.log(
+            currentPosition[0],
+            currentPosition[1],
+            storeAddress[showMarkers[k]]["lat"],
+            storeAddress[showMarkers[k]]["lng"]
+          );
+          let distance = haversine(
+            { latitude: currentPosition[0], longitude: currentPosition[1] },
+            {
+              latitude: storeAddress[showMarkers[k]]["lat"],
+              longitude: storeAddress[showMarkers[k]]["lng"],
+            },
+            { unit: "km" }
+          );
+          showMarkersInfo.push({
+            name: storeAddress[showMarkers[k]]["name"],
+            distance,
+          });
         }
-        console.log("마커띄우는정보",showMarkersInfo)
+        console.log("마커띄우는정보", showMarkersInfo);
       };
       const showMarker = (isMap, marker) => {
         marker.setMap(isMap);
-        if(marker.map !== null){
-          showMarkers.push(marker.title)
+        if (marker.map !== null) {
+          showMarkers.push(marker.title);
         }
-  
-        console.log("쇼 마커", showMarkers)
+
+        console.log("쇼 마커", showMarkers);
       };
 
       const hideMarker = (marker) => {
@@ -244,7 +270,6 @@ export default function Test() {
           } else {
             infoWindow.open(map, marker);
           }
-
         };
       };
 
@@ -254,6 +279,5 @@ export default function Test() {
     }
   }, [userAddress, storeAddress]);
 
-
-  return <div id='map' style={{ width: "100%", height: "500px" }} />;
+  return <div id="map" style={{ width: "100%", height: "500px" }} />;
 }
