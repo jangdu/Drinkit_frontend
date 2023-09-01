@@ -153,6 +153,10 @@ export default function Test() {
   }, [cartItems]);
 
   useEffect(() => {
+    addressGeocode(input);
+  }, [input]);
+
+  useEffect(() => {
     if (typeof user !== "string") {
       const map = new naver.maps.Map("map", {
         center: new naver.maps.LatLng(currentPosition[0], currentPosition[1]),
@@ -292,5 +296,65 @@ export default function Test() {
     }
   }, [user, storeAddress, currentPosition]);
 
-  return <div id="map" style={{ width: "100%", height: "500px" }} />;
+  const selectStore = (id) => {
+    for (let i = 0; i < markerInfo.length; i++) {
+      if (Number(markerInfo[i].storeId) === Number(id)) {
+        setValue(
+          `선택된 가게: ${markerInfo[i].name} / 거리: ${markerInfo[
+            i
+          ].distance.toFixed(2)}km`
+        );
+        console.log(markerInfo[i].storeId);
+        setStoreId(markerInfo[i].storeId);
+      }
+    }
+  };
+  return (
+    <div>
+      <div>
+        <div id="map" style={{ width: "50%", height: "500px" }} />
+        {markerInfo &&
+          markerInfo.map((item, index) => {
+            return (
+              <button
+                key={index}
+                value={item.storeId}
+                type="submit"
+                className="w-[90%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500 mb-2"
+                onClick={(e) => selectStore(e.target.value)}>
+                {item.name} / {item.distance.toFixed(2)}km
+              </button>
+            );
+          })}
+        <div
+          value={storeId && storeId}
+          className="w-[90%] mx-auto bg-pink-500 py-1.5 rounded-2xl font-bold text-white mb-2">
+          {value}
+        </div>
+        <p>주소 선택하기</p>
+        <select onChange={(e) => setInput(e.target.value)}>
+          {userAddressArr.map((item) => {
+            return <option value={item.address}>{item.address}</option>;
+          })}
+        </select>
+        <p>사용 가능 포인트: {user && user.point}</p>
+        <input
+          type="number"
+          value={usePoint}
+          onChange={(e) => {
+            setUsePoint(e.target.value);
+          }}
+        />
+        <button
+          type="submit"
+          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500 mb-2"
+          onClick={() =>
+            requstPay.requestPay(cartItems, input, user, usePoint, storeId)
+          }>
+          주문하기
+        </button>
+      </div>
+      <Cart />
+    </div>
+  );
 }
