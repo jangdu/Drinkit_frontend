@@ -13,6 +13,8 @@ import MyProfile from "./pages/MyProfile";
 import ProductDetail from "./pages/ProductDetail";
 import Subscribes from "./pages/subscribes";
 import Test from "./pages/Test";
+import Signup from "./pages/SignUp";
+import AuthEmail from "./pages/Email";
 import PickUpPage from "./pages/PickUpPage";
 import PaymentsPage from "./pages/PaymentsPage";
 import OrderList from "./components/OrderList";
@@ -105,6 +107,14 @@ const router = createBrowserRouter([
       {
         path: "/test",
         element: <Test />,
+      },
+      {
+        path: "/signup",
+        element: <Signup />,
+      },
+      {
+        path: "/authEmail",
+        element: <AuthEmail />,
       },
       // {
       //   path: '/stores/:storeId',
