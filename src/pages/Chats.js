@@ -23,7 +23,23 @@ const Chats = () => {
   const [users, setUsers] = useState([]);
   const { user, isLoading } = useAuthContext();
 
+  const [localStream, setLocalStream] = useState(null);
+
   useEffect(() => {
+    const init = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        setLocalStream(stream);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    init();
+
     // Establish socket connection and setup local stream
     socketRef.current = io(SOCKET_SERVER_URL, {
       transports: ["websocket", "polling"],
