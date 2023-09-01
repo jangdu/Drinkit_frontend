@@ -4,7 +4,11 @@ import axios from "axios";
 const IMP = window.IMP;
 
 export class RequestPay extends React.Component {
-    requestPay = async (cartItems, input, user, usePoint) => {
+    requestPay = async (cartItems, input, user, usePoint, storeId) => {
+        console.log('아임포트',cartItems, input, user, usePoint, storeId)
+        if(!storeId){
+            throw new Error("점포 고유 아이디 값이 존재하지 않습니다.")
+        }
         IMP.init("imp26455227")
         let name = '';
         let amount = 0;
@@ -12,9 +16,7 @@ export class RequestPay extends React.Component {
             name += `, ${e.productName}`;
             amount += Number(e.price)*e.count
         })
-        console.log("인풋", input)
-        console.log(typeof input)
-        let storeId = 2;
+
         amount -= Number(usePoint)
         const uuid = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16))
 
@@ -37,7 +39,6 @@ export class RequestPay extends React.Component {
 
             if (response.status === 201) {
                 const data = await response.data;
-                console.log(data)
 
                 IMP.request_pay(
                     {
@@ -55,7 +56,6 @@ export class RequestPay extends React.Component {
                     async function (rsp) {
                     let msg = '';
                         if (rsp.success) {
-                            console.log(rsp);
                             msg = `결제가 완료되었습니다.\n고유ID: ${rsp.imp_uid}\n상점 거래ID: ${rsp.merchant_uid}\n결제 금액: ${rsp.paid_amount}원\n카드 승인번호: ${rsp.apply_num}`;
             
                             const response = await axios.post(`${process.env.REACT_APP_API_SERVERURL}/orders/postOrder`,
@@ -68,7 +68,6 @@ export class RequestPay extends React.Component {
     
                             if (response.status === 201) {
                                 await response.data;
-                                console.log("결제 성공")
                                 alert(msg)
                             }
                         }
@@ -92,7 +91,6 @@ export class RequestPay extends React.Component {
             });
             if (response.status === 201) {
                 const data = await response.data;
-                console.log(data)
                 alert(`${data.imp_uid}\n${data.name}상품이 환불되었습니다.`)
             }
         } catch (error) {

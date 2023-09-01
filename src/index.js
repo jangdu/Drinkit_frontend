@@ -16,6 +16,8 @@ import Test from "./pages/Test";
 import PickUpPage from "./pages/PickUpPage";
 import PaymentsPage from "./pages/PaymentsPage";
 import OrderList from "./components/OrderList";
+import OrderListByAdmin from "./components/OrderListByAdmin";
+import OrderListByStore from "./components/OrderListByStore";
 
 const router = createBrowserRouter([
   {
@@ -83,6 +85,22 @@ const router = createBrowserRouter([
             <OrderList />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "/orderlistbyadmin",
+        element: (
+          <ProtectedRoute>
+            <OrderListByAdmin />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "/orderlistbystore/:storeId",
+        element: (
+          <ProtectedRoute>
+            <OrderListByStore />
+          </ProtectedRoute>
+        )
       },
       {
         path: "/test",

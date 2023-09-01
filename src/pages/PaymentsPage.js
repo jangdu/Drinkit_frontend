@@ -58,12 +58,8 @@ export default function PaymentsPage() {
             <p>사용 가능 포인트: {user && user.point}</p>
             <input type="number" value={usePoint} onChange={(e) => {setUsePoint(e.target.value)}} />
           </div>
-          <button type="submit" className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500" onClick={() => requstPay.requestPay(cartItems, input, user, usePoint)}>
+          <button type="submit" className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500" onClick={() => requstPay.requestPay(cartItems, input, user, usePoint, 1)}>
             주문하기
-          </button>
-
-          <button type="submit" className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500" onClick={() => requstPay.refund()}>
-            환불하기
           </button>
         </div>;
 }

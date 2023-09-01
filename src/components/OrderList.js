@@ -17,12 +17,10 @@ export default function OrderList() {
                 });
                 if (response.status === 200) {
                     const data = await response.data;
-                    console.log(data)
                     setPaymentLog(data)
 
                 }
             } catch (error) {
-                console.log(1)
                 console.log(error.message);
             }
         };
@@ -30,7 +28,6 @@ export default function OrderList() {
     }, [reLoad])
 
     const cancelOrderRequest = async (id) => {
-        console.log(id)
         try {
             const response = await axios.delete(`${process.env.REACT_APP_API_SERVERURL}/orders/${id}`, {
                 withCredentials: true,
@@ -38,10 +35,8 @@ export default function OrderList() {
                 "Content-Type": "application/json",
                 },
             });
-            console.log(response.status)
             if (response.status === 200) {
                 const data = await response.data;
-                console.log(data)
                 if(reLoad){
                     setReLoad(false)
                 }else{
@@ -49,8 +44,8 @@ export default function OrderList() {
                 }
             }
         } catch (error) {
-            console.log(1)
             console.log(error.message);
+            
         }
     }
 
