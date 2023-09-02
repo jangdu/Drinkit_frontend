@@ -1,97 +1,110 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "./ui/Button";
 import { useAuthContext } from "../context/AuthContext";
-import Video from "./Video";
 import Peer from "peerjs";
 
 const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const { user } = useAuthContext();
-  const [loading, setLoading] = useState(true);
+  const [newPeer, setNewPeer] = useState();
+  const [myPeerId, setMyPeerId] = useState();
+  const [peers, setPeers] = useState([]);
+  const [chatMessages, setChatMessages] = useState([]);
 
-  // vid
-  const [users, setUsers] = useState([]);
-  const [localStream, setLocalStream] = useState(null); // 로컬 비디오 스트림 상태 추가
-  const [peer, setPeer] = useState(null); // Peer 객체 상태 추가
-  const [remoteStreams, setRemoteStreams] = useState([]); // 원격 비디오 스트림 목록 상태 추가
-  const [connectedPeers, setConnectedPeers] = useState([]);
-  const [remotePeerStreams, setRemotePeerStreams] = useState({});
+  const [myVideo, setMyVieo] = useState();
 
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then(async (stream) => {
-        await setLocalStream(stream); // 로컬 스트림 설정
-        console.log("a");
+    var peer = new Peer();
+    setNewPeer(peer);
 
-        // PeerJS 초기화
-        const peer = new Peer();
-        await setPeer(peer); // Peer 객체 설정
-        console.log(peer);
+    peer.on("open", function (data) {
+      console.log("me:", data);
+      setMyPeerId(data);
 
-        peer.on("open", (peerId) => {
-          console.log("My peer ID is: " + peerId);
-          // 서버 또는 다른 사용자와 피어 ID를 공유
-          socket.emit("shareId", peerId);
-        });
+      socket.emit("shareId", data);
+    });
 
-        peer.on("connection", (conn) => {
-          conn.on("data", (data) => {
-            // Will print 'hi!'
-            console.log(data);
-          });
-          conn.on("open", () => {
-            conn.send("hello!!");
-          });
-        });
-        // 원격 스트림 수신 이벤트 핸들러 추가
-        peer.on("call", (call) => {
-          if (!connectedPeers.includes(call.peer)) {
-            connectedPeers.push(call.peer);
-            setConnectedPeers([...connectedPeers]);
+    peer.on("connection", function (conn) {
+      // 새로운 연결이 설정될 때 처리
+      setPeers((prev) => [...prev, conn]);
 
-            call.answer(stream);
-            call.on("stream", (remoteStream) => {
-              setRemoteStreams((prevStreams) => [...prevStreams, remoteStream]);
-            });
-          }
-        });
-      })
-      .catch((error) => {
-        console.error("Error accessing media devices:", error);
+      conn.on("data", function (data) {
+        // 연결된 피어에서 수신
+        console.log(data);
+        setChatMessages((prevMessages) => [...prevMessages, data]);
       });
+    });
 
-    console.log("momomo");
+    // 전화 걸기
 
-    // 채팅방에 입장하기 위해 서버에 join 이벤트를 전송합니다.
-    console.log(clickedRoom);
+    const userMedia = navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false,
+    });
+    userMedia.then((stream) => {
+      const videoElement = document.createElement("video");
+      videoElement.srcObject = stream;
+      videoElement.autoplay = true; // 자동 재생 설정
+
+      // 비디오를 화면에 추가
+      const videoContainer = document.getElementById("videoContainer");
+      videoContainer.appendChild(videoElement);
+    });
+
+    peer.on("call", function (call) {
+      //2 받기
+      userMedia.then((mediaStream) => {
+        // Answer the call, providing our mediaStream
+        call.answer(mediaStream); // 3 답장하고
+        call.on("stream", function (stream) {
+          console.log("스트림 받았다잉");
+          // 2-1. 받은거 작업
+          // `stream` is the MediaStream of the remote peer.
+          // Here you'd add it to an HTML video/canvas element.
+          const videoElement = document.createElement("video");
+          videoElement.srcObject = stream;
+          videoElement.autoplay = true; // 자동 재생 설정
+
+          // 비디오를 화면에 추가
+          const videoContainer = document.getElementById("videoContainer");
+          videoContainer.appendChild(videoElement);
+        });
+      });
+    });
+
     socket.emit("joinRoom", clickedRoom);
     socket.on("joinedRoom", handleNewMessage);
     socket.on("userJoined", handleNewMessage);
     socket.on("broadcastMessage", handleNewMessage);
-    socket.on("sharedId", async (id) => {
-      console.log(id);
-      await setTimeout(() => {
-        console.log("sett", peer);
-      }, 1000);
 
-      // Peer 객체가 정상적으로 초기화된 후에 shareVideoAndAudio 함수 호출
-      if (peer) {
-        console.log("1");
-        shareVideoAndAudio(id);
-      } else {
-        console.log("아직 피어가 없습니답");
-      }
+    // id: 공유받은 id
+    socket.on("sharedId", async (id) => {
+      console.log("누구아이디", id);
+      await newConection(id);
     });
 
-    ///////////////////////////////////////////
+    const newConection = (id) => {
+      var conn = peer.connect(id);
+      conn.on("open", function () {
+        conn.send("hi!", id);
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((mediaStream) => {
+          // Call a peer, providing our mediaStream
+          var call = peer.call(id, mediaStream); // 1 걸기
 
-    // const iceServers = [
-    //   { urls: "stun:stun.l.google.com:19302" }, // Google STUN 서버 주소
-    // ];
+          call.on("stream", function (stream) {
+            console.log(stream);
+            const videoElement = document.createElement("video");
+            videoElement.srcObject = stream;
+            videoElement.autoplay = true; // 자동 재생 설정
 
-    // const peerConnection = new RTCPeerConnection({ iceServers });
+            // 비디오를 화면에 추가
+            const videoContainer = document.getElementById("videoContainer");
+            videoContainer.appendChild(videoElement);
+          });
+        });
+      });
+    };
 
     return () => {
       socket.off("broadcastMessage");
@@ -99,6 +112,17 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
       socket.off("joinedRoom");
     };
   }, [socket, clickedRoom]);
+
+  const handleLeaveRoom = () => {
+    socket.emit("deleteRoom", clickedRoom.name);
+
+    if (newPeer) {
+      newPeer.destroy(); // Peer 객체 파괴
+    }
+
+    setModalIsOpen(false);
+    window.location.reload();
+  };
 
   const handleSendMessage = () => {
     if (messageInput.trim() !== "") {
@@ -109,25 +133,6 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
     }
   };
 
-  const shareVideoAndAudio = async (remotePeerId) => {
-    console.log(remotePeerId);
-    const call = await peer.call(remotePeerId, localStream); // 원격 사용자에게 호출
-
-    console.log("id from sharVAA", remotePeerId);
-    call.on("stream", (remoteStream) => {
-      // 원격 비디오 스트림을 받아와서 화면에 표시
-      console.log(remoteStream);
-
-      // 이미 연결된 원격 피어인지 확인
-      if (!remotePeerStreams[remotePeerId]) {
-        setRemotePeerStreams((prevStreams) => ({
-          ...prevStreams,
-          [remotePeerId]: remoteStream,
-        }));
-      }
-    });
-  };
-
   const handleNewMessage = (data) => {
     setMessages((prevMessages) => [...prevMessages, `${data}`]);
   };
@@ -135,11 +140,16 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
   return (
     <div style={{ height: "90%", overflowY: "auto" }}>
       <h2>{clickedRoom.name} 채팅방</h2>
-      <Video stream={localStream} autoPlay={true} />
-      {Object.keys(remotePeerStreams).map((remotePeerId, index) => (
-        <Video key={index} stream={remotePeerStreams[remotePeerId]} autoPlay={true} />
-      ))}
-
+      <div id="myVideoContainer">{myVideo && <video srcObject={myVideo} autoPlay={true}></video>}</div>
+      <div id="videoContainer"></div>
+      <div>
+        {chatMessages.map((msg, index) => (
+          <div key={index}>
+            <strong>{msg.from}: </strong>
+            {msg.text}
+          </div>
+        ))}
+      </div>
       <div>
         {messages.map((message, index) => (
           <div key={index}>{message}</div>
@@ -154,8 +164,7 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
           text="나가기"
           onClick={() => {
             // 채팅 나가기
-            socket.emit("leaveRoom", clickedRoom.name);
-            setModalIsOpen(false);
+            handleLeaveRoom();
           }}
         />
       </div>
