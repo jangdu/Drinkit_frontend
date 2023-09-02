@@ -72,12 +72,10 @@ const AddPoint = (user) => {
                         );
                 
                         if (response.status === 200) {
-                                console.log(response);
                                 alert("충전이 완료되었습니다.");
                                 window.location.reload();
                             } else {
                                 const data = await response.json();
-                                console.log(data);
                             }
                     }
                 },
