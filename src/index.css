@@ -12,3 +12,87 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+.animate-shake {
+  animation: shake 1s;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(5px);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+.animate-tilt {
+  animation: tilt 2s;
+  transform-origin: 50% 0%;
+}
+
+@keyframes tilt {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(10deg);
+  }
+  20% {
+    transform: rotate(-10deg);
+  }
+  30% {
+    transform: rotate(20deg);
+  }
+  40% {
+    transform: rotate(-20deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(-10deg);
+  }
+  70% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* 알림 메시지 말풍선 스타일 */
+.alert-bubble {
+  position: absolute;
+  top: 64px; /* 알림 메시지가 아래로 내려가도록 설정 */
+  background-color: #fba1b7;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+/* 화면 너비가 1024px 이상인 경우 */
+@media (max-width: 896px) {
+  .alert-bubble::before {
+    content: "";
+    position: absolute;
+    bottom: 100%; /* 화살표를 아래로 향하도록 설정 */
+    right: 10px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent #fba1b7 transparent; /* 화살표의 색상을 변경 */
+  }
+}
+
+/* 말풍선 모양 만들기 */

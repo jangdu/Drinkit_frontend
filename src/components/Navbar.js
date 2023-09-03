@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import Cookies from "js-cookie";
 import Login from "./Login";
 import Signup from "./Signup";
 import CartButton from "./CartButton";
-import _debounce from 'lodash/debounce';
+import _debounce from "lodash/debounce";
 import axios from "axios";
+
+const cardStyles = {
+  zIndex: "1100",
+};
 
 const customStyles = {
   overlay: {
@@ -45,12 +49,14 @@ const slideUpAnimation = `
 Modal.setAppElement("#root"); // App 요소 설정
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [token, setToken] = useState(Cookies.get("AccessToken"));
   const [refreshToken, setRefreshToken] = useState(Cookies.get("RefreshToken"));
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isSignupLogIn, setIsSignupLogIn] = useState("login");
   const [text, setText] = useState("");
+  const [searchValue, setSearchValue] = useState([]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -59,14 +65,14 @@ export default function Navbar() {
   console.log(Cookies.get("AccessToken"));
 
   useEffect(() => {
-    console.log("토큰 이펙트")
+    console.log("토큰 이펙트");
     const storedToken = Cookies.get("AccessToken");
     setRefreshToken(Cookies.get("RefreshToken"));
     setToken(storedToken);
   }, []);
 
   useEffect(() => {
-    if(text !== ''){
+    if (text !== "") {
       const debouncedSendRequest = _debounce(() => {
         const openSearch = async () => {
           try {
@@ -78,45 +84,70 @@ export default function Navbar() {
             });
             if (response.status === 200) {
               const data = await response.data;
-              console.log(data)
+              console.log(data);
+              setSearchValue(data);
             }
           } catch (error) {
             console.log(error.message);
           }
-        }
-        openSearch()
-      }, 800)
+        };
+        openSearch();
+      }, 800);
       debouncedSendRequest();
 
-      return() => {
+      return () => {
         debouncedSendRequest.cancel();
-      }
+      };
     }
-  },[text])
+  }, [text]);
 
   const newText = (value) => {
-    setText(value)
-  }
+    setText(value);
+    if (!value) {
+      setSearchValue([]);
+    }
+  };
 
   const goBack = () => {
     window.history.back();
   };
 
   return (
-    <header className="flex max-w-4xl mx-auto justify-between border-b border-gray p-3">
+    <header className="flex max-w-4xl mx-auto justify-between p-3">
       {/* <div className="w-32">
         <button onClick={goBack} className="text-3xl text-center mx-auto py-1 px-2 rounded-xl font-bold text-pink-300 hover:text-pink-500">
           <MdArrowBackIos />
         </button>
       </div> */}
       <div className="">
-        <Link to={"/"} className="flex text-4xl text-black font-bold">
+        <Link to={"/"} className="flex text-4xl text-pink-500 font-bold">
           <h1>Drin!t</h1>
         </Link>
       </div>
       <div className=" flex justify-end items-center gap-2 font-semibold">
-        <div className="hidden sm:block">
-          <input placeholder="검색어 입력" className="placeholder:text-gray-500 p-2 bg-pink-300 border rounded-lg" onKeyUp={(e) => newText(e.target.value)}></input>
+        <div className="hidden absolute right-[40%] sm:block">
+          <input placeholder="검색어 입력" className="placeholder:text-gray-500 p-2 w-52 border rounded-lg border-pink-300" value={text} onChange={(e) => newText(e.target.value)}></input>
+        </div>
+        <div style={cardStyles} className="absolute hidden sm:block right-[40%] top-[54px]">
+          {searchValue.length > 0 && text && (
+            <div className="w-52 border border-pink-300 bg-white rounded-md flex flex-col shadow-md">
+              {searchValue.map((item) => {
+                return (
+                  <div
+                    className="cursor-pointer hover:bg-slate-200 rounded-md"
+                    onClick={() => {
+                      newText("");
+                      navigate(`/products/${item._source.id}`);
+                    }}>
+                    <p className=" p-2" key={item._source.id}>
+                      {item._source.productName}
+                    </p>
+                    <div className="border-b"></div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
         <div>
           <Link className="text-black-300 hover:text-pink-500" to={"/subscribes"}>

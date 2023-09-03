@@ -1,12 +1,13 @@
 // CreateRoom.js
 import React, { useState } from "react";
+import Button from "./ui/Button";
 
 // const socket = io("http://localhost:8000/chat", {
 //   transports: ["websocket", "polling"],
 //   withCredentials: true,
 // });
 
-const CreateRoom = ({ socket }) => {
+const CreateRoom = ({ socket, setIsCreatingRoom }) => {
   const [roomName, setRoomName] = useState("");
   const [maxNumberOfPerson, setMaxNumberOfPerson] = useState("");
   const [password, setPassword] = useState("");
@@ -21,10 +22,15 @@ const CreateRoom = ({ socket }) => {
     socket.emit("drinkitRoom", roomData, (response) => {
       console.log(response); // 백엔드에서 전달하는 응답 확인
     });
+
+    window.location.reload();
   };
 
   return (
-    <div>
+    <div className="p-6 text-lg flex flex-col gap-2">
+      <div className="absolute right-5 top-5">
+        <Button text={"닫기"} onClick={() => setIsCreatingRoom(false)} />
+      </div>
       <h1>새 채팅방 만들기</h1>
       <div>
         <label>방 이름: </label>
@@ -38,7 +44,9 @@ const CreateRoom = ({ socket }) => {
         <label>비밀번호: </label>
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
       </div>
-      <button onClick={handleCreateRoom}>방 만들기</button>
+      <div className="w-fit">
+        <Button text={"방 만들기"} onClick={handleCreateRoom} />
+      </div>
     </div>
   );
 };
