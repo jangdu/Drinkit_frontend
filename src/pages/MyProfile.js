@@ -5,6 +5,7 @@ import Modal from "react-modal";
 import Signup from "../components/Signup";
 import Button from "../components/ui/Button";
 import Loading from "../components/Loding";
+import AddPoint from "../components/AddPoint";
 
 const customStyles = {
   overlay: {
@@ -43,6 +44,7 @@ const slideUpAnimation = `
 export default function MyProfile() {
   const { user, isLoading, myStore } = useAuthContext();
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [isPoint, setIsPoint] = useState(false);
 
   if (isLoading) {
     return <Loading></Loading>;
@@ -73,14 +75,30 @@ export default function MyProfile() {
         </div>
         <div className="flex flex-row  items-center text-lg justify-between">
           <div className="flex flex-col">
-            <p className="font-bold">포인트</p> <span className="ms-10">{user.point}P</span>
+            <p className="font-bold">포인트</p>{" "}
+            <span className="ms-10">
+              {user.point}P
+              <button
+                className="flex justify-end text-black-300  font-bold hover:text-pink-500"
+                onClick={() => {
+                  setModalIsOpen(true);
+                  setIsPoint(true);
+                }}>
+                포인트 충전
+              </button>
+            </span>
           </div>
         </div>
         <div className="flex flex-row  items-center text-lg justify-between">
           <div className="flex flex-col">
             <p className="font-bold">지역</p> <span className="ms-10">{user.adress}</span>
           </div>
-          <Button text={"변경"} onClick={() => setModalIsOpen(true)}></Button>
+          <Button
+            text={"변경"}
+            onClick={() => {
+              setModalIsOpen(true);
+              setIsPoint(false);
+            }}></Button>
         </div>
         <div className="border-b-2 border-slate-300 mb-5"></div>
         {user.isPersonal && (
@@ -91,7 +109,7 @@ export default function MyProfile() {
         )}
         {user && user.isPersonal && (
           <div>
-            <Link to={`/ordered`} className="font-bold hover:text-pink-300">
+            <Link to={`/orderlistbyadmin`} className="font-bold hover:text-pink-300">
               나의 가게 주문내역
             </Link>
           </div>
@@ -105,17 +123,14 @@ export default function MyProfile() {
         )}
         {user && (
           <div>
-            <Link to={`/userOrdered`} className="font-bold hover:text-pink-300">
+            <Link to={`/orderlist`} className="font-bold hover:text-pink-300">
               나의 주문내역
             </Link>
           </div>
         )}
         <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={customStyles}>
           <style>{slideUpAnimation}</style>
-          <div className="">
-            {" "}
-            <Signup isUpdateProfile={true} />
-          </div>
+          <div className=""> {isPoint ? <AddPoint user={user} /> : <Signup isUpdateProfile={true} />}</div>
         </Modal>
       </div>
     );

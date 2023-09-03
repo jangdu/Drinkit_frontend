@@ -304,7 +304,6 @@ export default function Test() {
             i
           ].distance.toFixed(2)}km`
         );
-        console.log(markerInfo[i].storeId);
         setStoreId(markerInfo[i].storeId);
       }
     }

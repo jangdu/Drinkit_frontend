@@ -5,7 +5,6 @@ const IMP = window.IMP;
 
 export class RequestPay extends React.Component {
     requestPay = async (cartItems, input, user, usePoint, storeId) => {
-        console.log('아임포트',cartItems, input, user, usePoint, storeId)
         if(!storeId){
             throw new Error("점포 고유 아이디 값이 존재하지 않습니다.")
         }
@@ -75,7 +74,6 @@ export class RequestPay extends React.Component {
                 );
             }
         }catch(err){
-            console.log(err)
             alert(`주문 요청 실패\n${err}`)
         }
     }

@@ -3,16 +3,16 @@ import Category from "../components/Category";
 import ProductList from "../components/ProductList";
 
 export default function Products() {
-  const [category, setCategory] = useState("전체");
+  const [category, setCategory] = useState({ name: "전체", id: 0 });
+  const [categories, setCategories] = useState([]);
 
-  console.log(category);
   return (
     <div className="container mx-auto p-4">
       <div className="w-72 mx-auto">
-        <Category setCategory={setCategory} category={category} />
+        <Category categories={categories} setCategories={setCategories} setCategory={setCategory} category={category} />
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-auto">
-        <ProductList />
+        <ProductList categories={categories} setCategories={setCategories} category={category} />
       </div>
     </div>
   );
