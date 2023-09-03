@@ -21,7 +21,7 @@ function App() {
       <AuthContextProvider>
         <CartProvider>
           <div className="min-w-[348px] min-h-[100vh] mx-auto">
-            <header className=" bg-pink-300 w-full">
+            <header className=" border-b-2 border-pink-200 w-full">
               <Navbar />
             </header>
             <div className="max-w-4xl mx-auto p-4">

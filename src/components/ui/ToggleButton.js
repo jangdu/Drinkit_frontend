@@ -41,7 +41,7 @@ const ToggleButton = () => {
       </div>
       {/* 고객센터 컴포넌트 */}
       {isCustomerServiceOpen && (
-        <div className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`} style={cardStyles}>
+        <div className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100 bg-opacity-95`} style={cardStyles}>
           <style>{slideUpAnimation}</style>
           <CustomerService toggleCustomerService={toggleCustomerService} onClose={() => setIsCustomerServiceOpen(false)} />
         </div>
