@@ -2,13 +2,12 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 
-export default function ProductList() {
+export default function ProductList({ category }) {
   const [productList, setProductList] = useState([]);
-
   useEffect(() => {
     const getProductList = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/products`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/products?categoryId=${category.id}`, {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
@@ -25,7 +24,7 @@ export default function ProductList() {
       } catch (error) {}
     };
     getProductList();
-  }, []);
+  }, [category]);
 
   if (productList) {
     return productList.map((product) => {
