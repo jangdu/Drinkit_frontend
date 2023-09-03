@@ -22,12 +22,12 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then(async (stream) => {
-        await setLocalStream(stream); // 로컬 스트림 설정
+        setLocalStream(stream); // 로컬 스트림 설정
         console.log("a");
 
         // PeerJS 초기화
         const peer = new Peer();
-        await setPeer(peer); // Peer 객체 설정
+        setPeer(peer); // Peer 객체 설정
         console.log(peer);
 
         peer.on("open", (peerId) => {
@@ -72,7 +72,7 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
     socket.on("broadcastMessage", handleNewMessage);
     socket.on("sharedId", async (id) => {
       console.log(id);
-      await setTimeout(() => {
+      setTimeout(() => {
         console.log("sett", peer);
       }, 1000);
 
@@ -137,7 +137,11 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
       <h2>{clickedRoom.name} 채팅방</h2>
       <Video stream={localStream} autoPlay={true} />
       {Object.keys(remotePeerStreams).map((remotePeerId, index) => (
-        <Video key={index} stream={remotePeerStreams[remotePeerId]} autoPlay={true} />
+        <Video
+          key={index}
+          stream={remotePeerStreams[remotePeerId]}
+          autoPlay={true}
+        />
       ))}
 
       <div>
@@ -146,7 +150,12 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
         ))}
       </div>
       <div className="absolute bottom-0">
-        <input type="text" value={messageInput} onChange={(e) => setMessageInput(e.target.value)} placeholder="메시지를 입력하세요." />
+        <input
+          type="text"
+          value={messageInput}
+          onChange={(e) => setMessageInput(e.target.value)}
+          placeholder="메시지를 입력하세요."
+        />
         <Button text="전송" onClick={handleSendMessage} />
       </div>
       <div className="absolute right-3 top-3">

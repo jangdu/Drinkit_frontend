@@ -94,7 +94,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <OrderListByAdmin />
           </ProtectedRoute>
-        )
+        ),
       },
       {
         path: "/orderlistbystore/:storeId",
@@ -102,7 +102,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <OrderListByStore />
           </ProtectedRoute>
-        )
+        ),
       },
       {
         path: "/test",
