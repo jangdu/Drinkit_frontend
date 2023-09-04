@@ -13,7 +13,7 @@ export default function OrderListByStore() {
     useEffect(() => {
         const getPaymentLog = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/orders/${storeId}`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/orders/store/${storeId}`, {
                     withCredentials: true,
                     headers: {
                     "Content-Type": "application/json",
@@ -22,6 +22,7 @@ export default function OrderListByStore() {
                 if (response.status === 200) {
                     const data = await response.data;
                     setPaymentLog(data)
+                    console.log(data)
 
                 }
             } catch (error) {
