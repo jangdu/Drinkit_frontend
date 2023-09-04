@@ -1,14 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import CustomerChat from "./CustomerChat";
 
-export default function CustomerService({}) {
-  const [input, setInput] = useState();
-  const [message, setMessage] = useState();
+export default function CustomerService() {
+  const [input, setInput] = useState("");
+  const [message, setMessage] = useState([]);
   const [save, setSave] = useState([]);
+  const scrollContainerRef = useRef(null);
+  const [loading, setloading] = useState(false);
+
+  useEffect(() => {
+    // 스크롤 컨테이너의 scrollTop을 최대로 설정하여 항상 아래로 스크롤합니다.
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    }
+  }, [save]);
 
   const sendMessage = async () => {
-    setSave([...save, { owner: false, input: input }]);
+    setloading(true);
+    await setSave([...save, { owner: false, input: input }]);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_OPENAI_SERVERURL}/messages`,
@@ -30,42 +39,42 @@ export default function CustomerService({}) {
   };
 
   useEffect(() => {
-    setSave([...save, { owner: true, input: message }]);
+    if (input !== "") {
+      setSave([...save, { owner: true, input: message }]);
+    }
+    setloading(false);
   }, [message]);
+
+  const handlleSubmit = (e) => {
+    e.preventDefault();
+
+    sendMessage();
+    setInput("");
+  };
 
   return (
     <div className="h-full">
-      <div className="flex flex-col h-[93%] rounded-t-3xl p-3">
-        여기에 채팅
-        {/* <li className="flex justify-start">ai 메세지 내용</li>
-        <li className={`flex justify-end`}>내 메세지 내용</li> */}
-        {save &&
+      <h1 className="titleFont text-lg text-center mt-4">AI 바텐더</h1>
+      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[85%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
+        {save.length > 0 &&
           save.map((item) => {
             return (
-              <li
-                className={`${
-                  item.owner ? "flex justify-start" : "flex justify-end"
-                }`}>
-                {item.input}
-              </li>
+              <div key={item.input} className={`items-center ${item.owner ? "flex justify-start" : "flex justify-end"}`}>
+                {item.owner && <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-r-white"></div>}
+                <li className={`bg-white w-fit rounded-md px-4 py-2 list-none	`}>{item.input}</li>
+                {!item.owner && <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-l-white"></div>}
+              </div>
             );
           })}
       </div>
-      <div className="absolute bottom-0 h-[7%] w-full items-center">
-        <div className="flex flex-row h-full justify-around">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="w-[80%] text-lg p-2 h-full rounded-t-md rounded-bl-3xl"></input>
-          <button
-            className="w-20 h-full text-lg rounded-tr-md rounded-br-3xl hover:bg-pink-300"
-            onClick={(e) => {
-              sendMessage();
-              setInput("");
-            }}>
+      <div className="absolute bottom-2 h-[7%] w-full items-center">
+        <div className="w-[70%] mx-auto border-t border-slate-500"></div>
+        <form onSubmit={handlleSubmit} className="flex flex-row h-full justify-around  text-lg p-2 opacity-95">
+          <input value={input} required onChange={(e) => setInput(e.target.value)} className="w-[80%] px-4 bg-transparent"></input>
+          <button disabled={loading} className="w-20 h-full text-lg rounded-tr-md ">
             보내기
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
