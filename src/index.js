@@ -20,6 +20,7 @@ import PaymentsPage from "./pages/PaymentsPage";
 import OrderList from "./components/OrderList";
 import OrderListByAdmin from "./components/OrderListByAdmin";
 import OrderListByStore from "./components/OrderListByStore";
+import CreateStore from "./pages/Store";
 
 const router = createBrowserRouter([
   {
@@ -94,7 +95,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <OrderListByAdmin />
           </ProtectedRoute>
-        )
+        ),
       },
       {
         path: "/orderlistbystore/:storeId",
@@ -102,7 +103,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <OrderListByStore />
           </ProtectedRoute>
-        )
+        ),
       },
       {
         path: "/test",
@@ -115,6 +116,14 @@ const router = createBrowserRouter([
       {
         path: "/authEmail",
         element: <AuthEmail />,
+      },
+      {
+        path: "/store",
+        element: (
+          <ProtectedRoute>
+            <CreateStore />
+          </ProtectedRoute>
+        ),
       },
       // {
       //   path: '/stores/:storeId',

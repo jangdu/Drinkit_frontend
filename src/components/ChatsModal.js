@@ -88,21 +88,23 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
       var conn = peer.connect(id);
       conn.on("open", function () {
         conn.send("hi!", id);
-        navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((mediaStream) => {
-          // Call a peer, providing our mediaStream
-          var call = peer.call(id, mediaStream); // 1 걸기
+        navigator.mediaDevices
+          .getUserMedia({ video: true, audio: false })
+          .then((mediaStream) => {
+            // Call a peer, providing our mediaStream
+            var call = peer.call(id, mediaStream); // 1 걸기
 
-          call.on("stream", function (stream) {
-            console.log(stream);
-            const videoElement = document.createElement("video");
-            videoElement.srcObject = stream;
-            videoElement.autoplay = true; // 자동 재생 설정
+            call.on("stream", function (stream) {
+              console.log(stream);
+              const videoElement = document.createElement("video");
+              videoElement.srcObject = stream;
+              videoElement.autoplay = true; // 자동 재생 설정
 
-            // 비디오를 화면에 추가
-            const videoContainer = document.getElementById("videoContainer");
-            videoContainer.appendChild(videoElement);
+              // 비디오를 화면에 추가
+              const videoContainer = document.getElementById("videoContainer");
+              videoContainer.appendChild(videoElement);
+            });
           });
-        });
       });
     };
 
@@ -140,7 +142,9 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
   return (
     <div style={{ height: "90%", overflowY: "auto" }}>
       <h2>{clickedRoom.name} 채팅방</h2>
-      <div id="myVideoContainer">{myVideo && <video srcObject={myVideo} autoPlay={true}></video>}</div>
+      <div id="myVideoContainer">
+        {myVideo && <video srcObject={myVideo} autoPlay={true}></video>}
+      </div>
       <div id="videoContainer"></div>
       <div>
         {chatMessages.map((msg, index) => (
@@ -156,7 +160,12 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
         ))}
       </div>
       <div className="absolute bottom-0">
-        <input type="text" value={messageInput} onChange={(e) => setMessageInput(e.target.value)} placeholder="메시지를 입력하세요." />
+        <input
+          type="text"
+          value={messageInput}
+          onChange={(e) => setMessageInput(e.target.value)}
+          placeholder="메시지를 입력하세요."
+        />
         <Button text="전송" onClick={handleSendMessage} />
       </div>
       <div className="absolute right-3 top-3">
