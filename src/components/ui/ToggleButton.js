@@ -36,7 +36,7 @@ const ToggleButton = () => {
   return (
     <div style={{ position: "fixed", bottom: "20px", right: "20px", zIndex: "1000" }}>
       {/* 아이콘을 클릭하여 고객센터 토글 */}
-      <div onClick={toggleCustomerService} className={`text-red-500 cursor-pointer text-5xl hover:scale-110 transition-transform ${isCustomerServiceOpen ? "rotate-180" : ""}`}>
+      <div onClick={toggleCustomerService} className={`text-red-500 cursor-pointer text-5xl hover:scale-110 transition-transform ${isCustomerServiceOpen ? "rotate-180 " : ""}`}>
         {isCustomerServiceOpen ? <AiFillCloseCircle /> : <FiHelpCircle />}
       </div>
       {/* 고객센터 컴포넌트 */}

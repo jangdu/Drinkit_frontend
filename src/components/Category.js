@@ -25,7 +25,7 @@ export default function Category({ setCategory, category, categories, setCategor
     getCategoryList();
   }, []);
   return (
-    <div className="flex flex-row my-3 mx-auto overflow-hidden">
+    <div className="flex flex-row my-3 py-3 mx-auto overflow-scroll" style={{ whiteSpace: "nowrap" }}>
       {categories &&
         categories.map((item) => {
           return (

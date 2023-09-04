@@ -53,52 +53,81 @@ export default function MyProfile() {
     return <></>;
   } else {
     return (
-      <div className="flex flex-col gap-5 max-w-lg  mx-auto">
-        <h1 className="my-5 text-center content-center text-2xl">
-          <span className="font-bold w-20">{user.name}</span>님의 정보
-        </h1>
-        <div className="border-b-2 border-slate-300 mb-5"></div>
-        <div className="flex flex-row  items-center text-lg justify-between">
-          <div className="flex flex-row">
-            <p className="font-bold w-20">이름</p> <span className="ms-10">{user.name}</span>
-          </div>
+      <div className="flex flex-col gap-5 max-w-lg p-2 mx-auto">
+        <div className="mt-5 w-full text-left content-center p-2 flex flex-row text-xl font-semibold">
+          <p className="text-pink-500">{user.nickname}</p>
+          <p className="font-bold"> {"님의 회원정보"}</p>
         </div>
-        <div className="flex flex-row  items-center text-lg justify-between">
-          <div className="flex flex-row justify-between">
-            <p className="font-bold w-20">닉네임</p> <span className="ms-10">{user.nickname}</span>
-          </div>
-        </div>
-        <div className="flex flex-row  items-center text-lg justify-between">
-          <div className="flex flex-row justify-between">
-            <p className="font-bold w-20">전화번호</p> <span className="ms-10">{user.phoneNumber}</span>
-          </div>
-        </div>
-        <div className="flex flex-row  items-center text-lg justify-between">
-          <div className="flex flex-row justify-between">
-            <p className="font-bold w-20">포인트</p>{" "}
-            <div className="ms-10 flex flex-row gap-4">
-              <span>{user.point}P</span>
-              <button
-                className=" text-black-300 font-bold hover:text-pink-500"
-                onClick={() => {
-                  setModalIsOpen(true);
-                  setIsPoint(true);
-                }}>
-                포인트 충전
-              </button>
+        <div className="rounded-xl border-slate-200 text-slate-500 p-4 shadow-xl border flex flex-col gap-4">
+          <div className="flex flex-row items-center text-lg justify-between">
+            <div className="flex flex-row">
+              <p className="font-bold w-20">이름</p> <span className="ms-10 text-black">{user.name}</span>
             </div>
           </div>
-        </div>
-        <div className="flex flex-row  items-center text-lg justify-between">
-          <div className="flex flex-row justify-between">
-            <p className="font-bold w-20">지역</p> <span className="ms-10">{user.address}</span>
+          <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
+          <div className="flex flex-row  items-center text-lg justify-between">
+            <div className="flex flex-row justify-between">
+              <p className="font-bold w-20">닉네임</p> <span className="ms-10 text-black">{user.nickname}</span>
+            </div>
           </div>
-          <Button
-            text={"변경"}
-            onClick={() => {
-              setModalIsOpen(true);
-              setIsPoint(false);
-            }}></Button>
+          <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
+
+          <div className="flex flex-row  items-center text-lg justify-between">
+            <div className="flex flex-row justify-between">
+              <p className="font-bold w-20">이메일</p> <span className="ms-10 text-black">{user.email}</span>
+            </div>
+          </div>
+          <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
+
+          <div className="flex flex-row  items-center text-lg justify-between">
+            <div className="flex flex-row justify-between">
+              <p className="font-bold w-20">전화번호</p> <span className="ms-10 text-black">{user.phoneNumber}</span>
+            </div>
+          </div>
+          <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
+
+          <div className="flex flex-row  items-center text-lg justify-between">
+            <div className="flex flex-row justify-between">
+              <p className="font-bold w-20">포인트</p>{" "}
+              <div className="ms-10 text-black flex flex-row gap-4">
+                <span>{user.point}P</span>
+                <button
+                  className=" text-black-300 font-bold hover:text-pink-500"
+                  onClick={() => {
+                    setModalIsOpen(true);
+                    setIsPoint(true);
+                  }}>
+                  포인트 충전
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
+
+          <div className="flex flex-row  items-center text-lg justify-between">
+            <div className="flex flex-row justify-between">
+              <p className="font-bold w-20">주소</p>{" "}
+              <div className="ms-10 text-black">
+                {user.address && (
+                  <div>
+                    {JSON.parse(user.address).map((item) => {
+                      return (
+                        <div key={item.name}>
+                          <p>{item.name}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+            <Button
+              text={"변경"}
+              onClick={() => {
+                setModalIsOpen(true);
+                setIsPoint(false);
+              }}></Button>
+          </div>
         </div>
         <div className="border-b-2 border-slate-300 mb-5"></div>
         {user.isPersonal && (
