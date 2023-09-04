@@ -115,7 +115,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="flex max-w-4xl mx-auto justify-between p-3 titleFont">
+    <header className="flex max-w-4xl mx-auto mt-1 justify-between p-3 titleFont">
       {/* <div className="w-32">
         <button onClick={goBack} className="text-3xl text-center mx-auto py-1 px-2 rounded-xl font-bold text-pink-300 hover:text-pink-500">
           <MdArrowBackIos />
@@ -123,7 +123,7 @@ export default function Navbar() {
       </div> */}
       <div className="flex flex-row items-center gap-4 text-xl">
         <Link to={"/"} className="flex text-4xl text-pink-500 font-bold ">
-          <h1>Drin!t</h1>
+          <h1>Drink!t</h1>
         </Link>
         <div>
           <Link className="text-black-300 hover:text-pink-500 font-mono font-bold" to={"/subscribes"}>
