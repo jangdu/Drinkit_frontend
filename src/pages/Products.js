@@ -11,7 +11,7 @@ export default function Products() {
       <div className="w-72 mx-auto">
         <Category categories={categories} setCategories={setCategories} setCategory={setCategory} category={category} />
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-auto">
+      <div>
         <ProductList categories={categories} setCategories={setCategories} category={category} />
       </div>
     </div>

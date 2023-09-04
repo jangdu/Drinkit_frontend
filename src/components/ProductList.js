@@ -1,13 +1,17 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
+import Loading from "./Loding";
 
 export default function ProductList({ category }) {
   const [productList, setProductList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+
   useEffect(() => {
     const getProductList = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/products?categoryId=${category.id}`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/products?categoryId=${category.id}&page=${page}`, {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
@@ -27,12 +31,19 @@ export default function ProductList({ category }) {
   }, [category]);
 
   if (productList) {
-    return productList.map((product) => {
-      return (
-        <div key={product.id}>
-          <ProductCard product={product} />
+    return (
+      <div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-auto">
+          {productList.map((product) => {
+            return (
+              <div key={product.id}>
+                <ProductCard product={product} />
+              </div>
+            );
+          })}
         </div>
-      );
-    });
+        {loading && <Loading />}
+      </div>
+    );
   }
 }

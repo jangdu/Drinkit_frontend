@@ -53,45 +53,45 @@ export default function MyProfile() {
     return <></>;
   } else {
     return (
-      <div className="flex flex-col gap-5 ">
+      <div className="flex flex-col gap-5 max-w-lg  mx-auto">
         <h1 className="my-5 text-center content-center text-2xl">
-          <span className="font-bold">{user.name}</span>님의 정보
+          <span className="font-bold w-20">{user.name}</span>님의 정보
         </h1>
         <div className="border-b-2 border-slate-300 mb-5"></div>
         <div className="flex flex-row  items-center text-lg justify-between">
-          <div className="flex flex-col">
-            <p className="font-bold">이름</p> <span className="ms-10">{user.name}</span>
+          <div className="flex flex-row">
+            <p className="font-bold w-20">이름</p> <span className="ms-10">{user.name}</span>
           </div>
         </div>
         <div className="flex flex-row  items-center text-lg justify-between">
-          <div className="flex flex-col">
-            <p className="font-bold">닉네임</p> <span className="ms-10">{user.nickname}</span>
+          <div className="flex flex-row justify-between">
+            <p className="font-bold w-20">닉네임</p> <span className="ms-10">{user.nickname}</span>
           </div>
         </div>
         <div className="flex flex-row  items-center text-lg justify-between">
-          <div className="flex flex-col">
-            <p className="font-bold">전화번호</p> <span className="ms-10">{user.phoneNumber}</span>
+          <div className="flex flex-row justify-between">
+            <p className="font-bold w-20">전화번호</p> <span className="ms-10">{user.phoneNumber}</span>
           </div>
         </div>
         <div className="flex flex-row  items-center text-lg justify-between">
-          <div className="flex flex-col">
-            <p className="font-bold">포인트</p>{" "}
-            <span className="ms-10">
-              {user.point}P
+          <div className="flex flex-row justify-between">
+            <p className="font-bold w-20">포인트</p>{" "}
+            <div className="ms-10 flex flex-row gap-4">
+              <span>{user.point}P</span>
               <button
-                className="flex justify-end text-black-300  font-bold hover:text-pink-500"
+                className=" text-black-300 font-bold hover:text-pink-500"
                 onClick={() => {
                   setModalIsOpen(true);
                   setIsPoint(true);
                 }}>
                 포인트 충전
               </button>
-            </span>
+            </div>
           </div>
         </div>
         <div className="flex flex-row  items-center text-lg justify-between">
-          <div className="flex flex-col">
-            <p className="font-bold">지역</p> <span className="ms-10">{user.adress}</span>
+          <div className="flex flex-row justify-between">
+            <p className="font-bold w-20">지역</p> <span className="ms-10">{user.address}</span>
           </div>
           <Button
             text={"변경"}
@@ -103,27 +103,27 @@ export default function MyProfile() {
         <div className="border-b-2 border-slate-300 mb-5"></div>
         {user.isPersonal && (
           <div>
-            <h1 className="text-center text-xl font-bold">{`${myStore.name}님의 가게 정보`}</h1>
+            <h1 className="text-center text-xl font-bold w-20">{`${myStore.name}님의 가게 정보`}</h1>
             <div className="border-b-2 border-slate-300 my-5"></div>
           </div>
         )}
         {user && user.isPersonal && (
           <div>
-            <Link to={`/orderlistbyadmin`} className="font-bold hover:text-pink-300">
+            <Link to={`/orderlistbyadmin`} className="font-bold w-20 hover:text-pink-300">
               나의 가게 주문내역
             </Link>
           </div>
         )}
         {user && user.isAdmin && (
           <div>
-            <Link to={`/admin`} className="font-bold hover:text-pink-300">
+            <Link to={`/admin`} className="font-bold w-20 hover:text-pink-300">
               관리자 페이지
             </Link>
           </div>
         )}
         {user && (
           <div>
-            <Link to={`/orderlist`} className="font-bold hover:text-pink-300">
+            <Link to={`/orderlist`} className="font-bold w-20 hover:text-pink-300">
               나의 주문내역
             </Link>
           </div>
