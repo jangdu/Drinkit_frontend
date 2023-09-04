@@ -91,7 +91,7 @@ export default function MyProfile() {
         </div>
         <div className="flex flex-row  items-center text-lg justify-between">
           <div className="flex flex-row justify-between">
-            <p className="font-bold w-20">지역</p> <span className="ms-10">{user.address}</span>
+            <p className="font-bold w-20">지역</p> <div className="ms-10">{user.address && <div>{user.address}</div>}</div>
           </div>
           <Button
             text={"변경"}

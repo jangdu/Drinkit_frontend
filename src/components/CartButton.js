@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BsCartFill } from "react-icons/bs";
+import { CgShoppingCart } from "react-icons/cg";
 import { useCart } from "../context/CartContext";
 import ReactModal from "react-modal";
 import Cart from "./Cart";
@@ -78,10 +78,10 @@ export default function CartButton() {
           setModalIsOpen(true);
         }}
         className="">
-        <div className={`text-pink-500 cursor-pointer text-3xl hover:scale-110 ${isButtonShaking ? "animate-shake " : ""} relative transition`}>
-          <BsCartFill />
-          <div className="bg-black px-2 absolute rounded-full text-base text-white top-0 right-0 transform translate-x-1/2 -translate-y-1/2">
-            <span className="text-md">{totalCount}</span>
+        <div className={`text-pink-500 cursor-pointer text-4xl hover:scale-110 ${isButtonShaking ? "animate-shake " : ""} relative transition`}>
+          <CgShoppingCart />
+          <div className="bg-pink-300 px-2 py-0 absolute rounded-full text-base text-black top-2 right-1 transform translate-x-1/2 -translate-y-1/2">
+            <span className="text-sm">{totalCount}</span>
           </div>
         </div>
         {showAlert && <div className={`alert-bubble right-8 lg:right-[40%] lg:top-20`}>{alertMessage}</div>}
