@@ -12,11 +12,10 @@ const Signup = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [nickname, setNickname] = useState("");
   const [isPersonal, setIsPerisPersonal] = useState(false);
-  const [address, setAddress] = useState("");
   const [addressDetail, setAddressDetail] = useState("");
   const [addressName, setAddressName] = useState("");
-  const [lat, setLat] = useState("");
-  const [lng, setLng] = useState("");
+  const [code, setCode] = useState("");
+  const [isAuth, setIsAuth] = useState(false);
   const { naver } = window;
 
   useEffect(() => {
@@ -30,20 +29,65 @@ const Signup = () => {
     setEmail(validEmail);
   }, []);
 
-  const addressGeocode = async (address) => {
-    await naver.maps.Service.geocode(
-      { query: address },
-      function (status, response) {
-        if (status === naver.maps.Service.Status.ERROR) {
-          return alert("Something wrong!");
+  const sendSMS = async (e) => {
+    console.log(phoneNumber.length);
+    if (phoneNumber.length === 11 || phoneNumber.length === 10)
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_SERVERURL}/user/phoneAuth`,
+          {
+            phoneNumber,
+          },
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.status === 201) {
+          alert("문자가 발송됐습니다. 코드를 입력해주세요.");
+        } else {
+          alert("번호를 확인해주세요.");
         }
-        setLat(response.v2.addresses[0].y);
-        setLng(response.v2.addresses[0].x);
+      } catch (error) {
+        alert(error.message);
+        console.error("Error occurred during signup:", error);
       }
-    );
+    else return alert("번호가 올바른지 확인해 주세요.");
+  };
+
+  const codeAuth = async (e) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_SERVERURL}/user/phoneCodeAuth`,
+        {
+          phoneNumber,
+          code,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 201) {
+        alert("인증 되었습니다.");
+        setIsAuth(true);
+      } else {
+        alert("코드가 올바르지 않습니다.");
+      }
+    } catch (error) {
+      alert(error.message);
+      console.error("Error occurred during signup:", error);
+    }
   };
 
   const handleSubmit = async (e) => {
+    let x;
+    let y;
+
     e.preventDefault();
 
     if (password !== confirm) {
@@ -53,70 +97,76 @@ const Signup = () => {
       return;
     }
 
-    setAddress(enroll_company.address);
-    addressGeocode(address);
-    console.log({
-      name,
-      password,
-      confirm,
-      email,
-      isPersonal,
-      isAdmin: false,
-      phoneNumber,
-      nickname,
-      address: {
-        address: address + addressDetail,
-        lat,
-        lng,
-        name: addressName,
-      },
-    });
-    try {
-      // 회원가입
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_SERVERURL}/user/signup`,
-        {
-          name,
-          password,
-          confirm,
-          email,
-          isPersonal,
-          isAdmin: false,
-          phoneNumber,
-          nickname,
-          address: {
-            address: address + addressDetail,
-            lat,
-            lng,
-            name: addressName,
-          },
-        },
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
+    if (!isAuth) {
+      return alert("휴대폰 인증이 필요합니다.");
+    }
+
+    const handleGeocode = async () => {
+      await naver.maps.Service.geocode(
+        { query: enroll_company.address },
+        async (status, response) => {
+          if (status === 200) {
+            y = response.v2.addresses[0].y;
+            x = response.v2.addresses[0].x;
+
+            await handleRequest();
+          } else {
+            alert("Something wrong!");
+          }
         }
       );
+    };
 
-      if (response.status === 201) {
-        alert("회원가입에 성공하였습니다.");
-        Cookies.remove("email");
-        return (window.location = "http://localhost:3200");
-      } else {
-        alert(response.message);
-        setConfirm("");
-        setEmail("");
-        setIsPerisPersonal(false);
-        setName("");
-        setNickname("");
-        setPassword("");
-        setPhoneNumber("");
+    await handleGeocode();
+
+    const handleRequest = async () => {
+      try {
+        // 회원가입
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_SERVERURL}/user/signup`,
+          {
+            name,
+            password,
+            confirm,
+            email,
+            isPersonal,
+            isAdmin: false,
+            phoneNumber,
+            nickname,
+            address: {
+              address: enroll_company.address + addressDetail,
+              y,
+              x,
+              name: addressName,
+            },
+          },
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.status === 201) {
+          alert("회원가입에 성공하였습니다.");
+          Cookies.remove("email");
+          return (window.location = "http://localhost:3200");
+        } else {
+          alert(response.message);
+          setConfirm("");
+          setEmail("");
+          setIsPerisPersonal(false);
+          setName("");
+          setNickname("");
+          setPassword("");
+          setPhoneNumber("");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error("Error occurred during signup:", error);
       }
-    } catch (error) {
-      alert(error.message);
-      console.error("Error occurred during signup:", error);
-    }
+    };
   };
 
   const [enroll_company, setEnroll_company] = useState({
@@ -157,12 +207,25 @@ const Signup = () => {
           onChange={(e) => setConfirm(e.target.value)}
         />
         <input
-          type="text"
+          type="number"
           placeholder="휴대폰번호"
           value={phoneNumber}
           required
           onChange={(e) => setPhoneNumber(e.target.value)}
         />
+        <button type="button" onClick={sendSMS}>
+          인증 번호 발급
+        </button>
+        <input
+          type="number"
+          placeholder="코드"
+          value={code}
+          required
+          onChange={(e) => setCode(e.target.value)}
+        />
+        <button type="button" onClick={codeAuth}>
+          인증
+        </button>
         <input
           type="nickname"
           placeholder="닉네임"

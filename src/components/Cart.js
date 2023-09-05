@@ -19,7 +19,7 @@ export default function Cart({ setModalIsOpen }) {
 
   if (cartItems.length === 0) {
     return (
-      <div className="flex flex-col justify-between">
+      <div className="flex flex-col w-full justify-between">
         <h1 className="font-bold text-2xl text-center mx-auto my-5">
           아직 카트에
           <br /> 음식이 없어요!
@@ -31,7 +31,7 @@ export default function Cart({ setModalIsOpen }) {
     );
   }
   return (
-    <div className="flex flex-col">
+    <div className="flex w-full flex-col">
       <div className="mb-4">
         {cartItems.map((item) => {
           return (

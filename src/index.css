@@ -17,6 +17,13 @@ input:focus {
   outline: none;
 }
 
+li {
+  max-width: 200px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: normal; /* white-space를 normal로 설정 */
+}
+
 .speech-bubble {
   position: relative;
   background: #bd00b6;

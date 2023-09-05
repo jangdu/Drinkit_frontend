@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import Loading from "./Loding";
 
 export default function CustomerService() {
   const [input, setInput] = useState("");
@@ -13,7 +14,7 @@ export default function CustomerService() {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
-  }, [save]);
+  }, [save, loading]);
 
   const sendMessage = async () => {
     setloading(true);
@@ -39,7 +40,7 @@ export default function CustomerService() {
   };
 
   useEffect(() => {
-    if (input !== "") {
+    if (message.length > 0) {
       setSave([...save, { owner: true, input: message }]);
     }
     setloading(false);
@@ -59,13 +60,14 @@ export default function CustomerService() {
         {save.length > 0 &&
           save.map((item) => {
             return (
-              <div key={item.input} className={`items-center ${item.owner ? "flex justify-start" : "flex justify-end"}`}>
-                {item.owner && <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-r-white"></div>}
-                <li className={`bg-white w-fit rounded-md px-4 py-2 list-none	`}>{item.input}</li>
+              <div key={item.input} className={` items-center ${item.owner ? "flex justify-start" : "flex justify-end"}`}>
+                {item.owner && <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-r-pink-200"></div>}
+                <li className={`bg-white ${item.owner && `bg-pink-200`} h-auto rounded-md px-4 py-2 break-words list-none`}>{item.input}</li>
                 {!item.owner && <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-l-white"></div>}
               </div>
             );
           })}
+          {loading && <Loading />}
       </div>
       <div className="absolute bottom-2 h-[7%] w-full items-center">
         <div className="w-[70%] mx-auto border-t border-slate-500"></div>

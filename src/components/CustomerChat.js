@@ -1,52 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import Loading from "./Loding";
 
 export default function CustomerChat() {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(null);
   const [message, setMessage] = useState([]);
   const [save, setSave] = useState([]);
   const scrollContainerRef = useRef(null);
   const [loading, setloading] = useState(false);
   const [chainMessage, setChainMessage] = useState("");
+  const [isWait, setIsWait] = useState(true);
 
   useEffect(() => {
     // 스크롤 컨테이너의 scrollTop을 최대로 설정하여 항상 아래로 스크롤합니다.
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
-  }, [save]);
-
-  const sendMessage = async () => {
-    setloading(true);
-    setSave([...save, { owner: false, input: input }]);
-    setChainMessage([...chainMessage, input])
-    console.log(chainMessage)
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_OPENAI_SERVERURL}/messages/chain`,
-        { message: save },
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.status === 201) {
-        const data = await response.data;
-        setMessage(data);
-        console.log(data)
-        setChainMessage([...chainMessage, data])
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+  }, [save, loading]);
 
   useEffect(() => {
-    if (input !== "") {
+    if (input === "") {
       setSave([...save, { owner: true, input: message }]);
-      setChainMessage([...chainMessage, message])
     }
     setloading(false);
   }, [message]);
@@ -54,9 +28,41 @@ export default function CustomerChat() {
   const handlleSubmit = (e) => {
     e.preventDefault();
 
-    sendMessage();
+    setIsWait(false)
+    setSave([...save, { owner: false, input: input }]);
+    setChainMessage([...chainMessage, `50자 미만으로 답해. ${input}`])
     setInput("");
   };
+
+  useEffect(() => {
+    const sendMessage = async () => {
+      setloading(true);
+      setIsWait(true)
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_OPENAI_SERVERURL}/messages/chain`,
+          { message: chainMessage},
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.status === 201) {
+          const data = await response.data;
+          setMessage(data);
+          setChainMessage([...chainMessage, data])
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    if(isWait === false){
+      sendMessage();
+    }
+
+  }, [chainMessage])
 
   return (
     <div className="h-full">
@@ -72,6 +78,7 @@ export default function CustomerChat() {
               </div>
             );
           })}
+          {loading && <Loading />}
       </div>
       <div className="absolute bottom-2 h-[7%] w-full items-center">
         <div className="w-[70%] mx-auto border-t border-slate-500"></div>

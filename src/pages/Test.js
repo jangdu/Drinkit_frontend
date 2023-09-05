@@ -288,22 +288,17 @@ export default function Test() {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex p-4 flex-col">
       <h1 className="w-fit mx-auto mb-6 mt-2 text-xl font-bold ">픽업</h1>
-      <div className="flex flex-col md:flex-row md:justify-between">
-        <div id="map" className="mx-auto h-[500px] w-full md:w-[50%]" />
-        {markerInfo &&
-          markerInfo.map((item, index) => {
-            return (
-              <button key={index} value={item.storeId} type="submit" className="w-[90%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500 mb-2" onClick={(e) => selectStore(e.target.value)}>
-                {item.name} / {item.distance.toFixed(2)}km
-              </button>
-            );
-          })}
+      <div className="flex flex-col gap-4 md:flex-row md:justify-between">
+        <div id="map" className="mx-auto h-[500px] w-full md:w-[80%]" />
         <div value={storeId && storeId} className={`${!value ? "hidden" : ""} w-[90%] mx-auto py-1.5 rounded-2xl font-bold text-white mb-2 bg-pink-500`}>
           {value}
         </div>
-        <div className="mx-auto my-4 flex flex-col gap-2">
+        <div className="mx-auto my-4 w-full md:[50%] flex flex-col gap-2">
+          <div className="w-[80%] bg-white rounded-md p-4 mx-auto">
+            <Cart />
+          </div>
           <p className="text-lg font-bold text-center my-2">주소 선택하기</p>
           <select onChange={(e) => setInput(e.target.value)}>
             {userAddressArr.map((item) => {
@@ -323,9 +318,14 @@ export default function Test() {
           </div>
         </div>
       </div>
-      <div className="w-[80%] mx-auto">
-        <Cart />
-      </div>
+      {markerInfo &&
+        markerInfo.map((item, index) => {
+          return (
+            <button key={index} value={item.storeId} type="submit" className="w-[90%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500 mb-2" onClick={(e) => selectStore(e.target.value)}>
+              {item.name} / {item.distance.toFixed(2)}km
+            </button>
+          );
+        })}
     </div>
   );
 }
