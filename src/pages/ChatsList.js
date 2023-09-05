@@ -6,10 +6,15 @@ import Button from "../components/ui/Button";
 import Modal from "react-modal";
 import { Link, json } from "react-router-dom";
 import ChatsModal from "../components/ChatsModal";
+import Cookies from "js-cookie";
 
-const socket = io("http://localhost:8000/chat", {
-  transports: ["websocket", "polling"],
+const socket = io("http://jangdu.me:8000/chat", {
+  transports: ["polling", "websocket"],
   withCredentials: true,
+  extraHeaders: {
+    accessToken: Cookies.get("AccessToken"),
+    refreshToken: Cookies.get("RefreshToken"),
+  },
 });
 
 const cardStyles = {
