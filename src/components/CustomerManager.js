@@ -11,11 +11,6 @@ export default function CustomerManager() {
 
   useEffect(() => {
     if (scrollContainerRef.current) {
-
-        console.log(scrollContainerRef.current.scrollHeight)
-      }
-    if (scrollContainerRef.current) {
-    //   scrollContainerRef.current.scrollIntoView({ behavior: 'smooth', block: "end" })
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight
     }
   }, [heigth]);

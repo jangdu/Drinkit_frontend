@@ -7,8 +7,14 @@ export default function CustomerQuick() {
   const [message, setMessage] = useState([]);
   const [save, setSave] = useState([]);
   const scrollContainerRef = useRef(null);
-  const [loading, setloading] = useState(false);
-  const mainArr = ['택배', '환불']
+  const [loading, setloading] = useState(true);
+  const [statusButton, setStatusButton] = useState();
+  
+  const category = {
+    post: ['택배', '일정'],
+    refund: ['환불', '방법'],
+    subscribe: ['구독', '안내', '방법']
+  }
 
   useEffect(() => {
     // 스크롤 컨테이너의 scrollTop을 최대로 설정하여 항상 아래로 스크롤합니다.
@@ -17,12 +23,12 @@ export default function CustomerQuick() {
     }
   }, [save, loading]);
 
-  const sendCreateMessage = async () => {
-    setSave([...save, { owner: false, input: input }]);
+  const sendCreateMessage = async (num) => {
+    const inputMessage = `${category[statusButton][0]} / ${category[statusButton][num]} 라는 단어로 질문을 만들어 줘.`
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_OPENAI_SERVERURL}/messages`,
-        { message: input },
+        { message: inputMessage },
         {
           withCredentials: true,
           headers: {
@@ -77,15 +83,53 @@ export default function CustomerQuick() {
   };
 
   return (
-    <div className="h-full h-[80%]">
+    <div className="h-[80%]">
       {/* <h1 className="titleFont text-lg text-center mt-4">AI 고객센터</h1> */}
-      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[80%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
+      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[100%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
+      <div className="flex flex-col items-end gap-3">
+        <div className="items-center flex justify-end">
+          <button value={'post'} onClick={(e) => {setStatusButton(e.target.value)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none mr-2`}>
+            택배
+          </button>
+          <button value={'refund'} onClick={(e) => {setStatusButton(e.target.value)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none mr-2`}>
+            환불
+          </button>
+          <button value={'subscribe'} onClick={(e) => {setStatusButton(e.target.value)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none`}>
+            구독
+          </button>
+          <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-l-white"></div>
+        </div>
+      <div className="items-center flex flex-row">
+        {statusButton && category[statusButton].map((item, i) => {
+            if(i === 0){
+                return true;
+            }else if (i === category[statusButton].length -1){
+                return(
+                  <div className="flex flex-row">
+                    <button value={i} onClick={(e) => {sendCreateMessage(i)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none`}>
+                      {item}
+                    </button>
+                    <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-l-white"></div>
+                  </div>
+                )
+            }
+            return (
+              <div className="flex flex-row">
+                <button value={i} onClick={(e) => {sendCreateMessage(i)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none mr-2`}>
+                  {item}
+                </button>
+              </div>
+            )
+        })}
+      </div>
+      </div>
+
         {save.length > 0 &&
           save.map((item) => {
             return (
               <div key={item.input} className={` items-center ${item.owner ? "flex justify-start" : "flex justify-end"}`}>
-                {item.owner && <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-r-pink-200"></div>}
-                <li className={`bg-white ${item.owner && `bg-pink-200`} h-auto rounded-md px-4 py-2 break-words list-none`}>{item.input}</li>
+                {item.owner && <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-r-yellow-100"></div>}
+                <li className={`${item.owner ? `bg-yellow-100` : `bg-white`} h-auto rounded-md px-4 py-2 break-words list-none`}>{item.input}</li>
                 {!item.owner && <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-l-white"></div>}
               </div>
             );
