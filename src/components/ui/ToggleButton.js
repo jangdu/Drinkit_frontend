@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TbMessageCircleQuestion } from "react-icons/tb";
 import { IoClose } from "react-icons/io5";
 import CustomerService from "../CustomerService";
-import CustomerChat from "../CustomerChat";
+import CustomerManager from "../CustomerManager";
 
 const cardStyles = {
   position: "fixed",
@@ -42,9 +42,9 @@ const ToggleButton = () => {
       </div>
       {/* 고객센터 컴포넌트 */}
       {isCustomerServiceOpen && (
-        <div className={`transition-opacity rounded-3xl shadow-2xl bg-slate-300 `} style={cardStyles}>
+        <div className={`transition-opacity rounded-3xl shadow-2xl bg-pink-200 `} style={cardStyles}>
           <style>{slideUpAnimation}</style>
-          <CustomerChat toggleCustomerService={toggleCustomerService} onClose={() => setIsCustomerServiceOpen(false)} />
+          <CustomerManager toggleCustomerService={toggleCustomerService} onClose={() => setIsCustomerServiceOpen(false)} />
         </div>
       )}
     </div>

@@ -2,24 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Loading from "./Loding";
 
-export default function CustomerService() {
+export default function CustomerQuick() {
   const [input, setInput] = useState("");
   const [message, setMessage] = useState([]);
   const [save, setSave] = useState([]);
   const scrollContainerRef = useRef(null);
   const [loading, setloading] = useState(false);
-
-  useEffect(() => {
-    if(localStorage.getItem('save')){
-      setSave(JSON.parse(localStorage.getItem('save')))
-    }
-    // setSave(localStorage.getItem('save'))
-    console.log("save", save)
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem('save', JSON.stringify(save))
-  }, [save])
+  const mainArr = ['택배', '환불']
+  const subArr = 
 
   useEffect(() => {
     // 스크롤 컨테이너의 scrollTop을 최대로 설정하여 항상 아래로 스크롤합니다.
@@ -27,6 +17,28 @@ export default function CustomerService() {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
   }, [save, loading]);
+
+  const sendCreateMessage = async () => {
+    setSave([...save, { owner: false, input: input }]);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_OPENAI_SERVERURL}/messages`,
+        { message: input },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 201) {
+        const data = await response.data;
+        setInput(data)
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   const sendMessage = async () => {
     setloading(true);

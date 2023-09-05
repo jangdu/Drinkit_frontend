@@ -3,7 +3,7 @@ import axios from "axios";
 import Loading from "./Loding";
 
 export default function CustomerChat() {
-  const [input, setInput] = useState(null);
+  const [input, setInput] = useState("");
   const [message, setMessage] = useState([]);
   const [save, setSave] = useState([]);
   const scrollContainerRef = useRef(null);
@@ -12,13 +12,24 @@ export default function CustomerChat() {
   const [isWait, setIsWait] = useState(true);
 
   useEffect(() => {
+    if(localStorage.getItem('saveBar')){
+      setSave(JSON.parse(localStorage.getItem('saveBar')))
+    }
+    console.log("saveBar2", save)
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('saveBar', JSON.stringify(save))
+  },[save])
+
+  useEffect(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
   }, [save, loading]);
 
   useEffect(() => {
-    if (input === "") {
+    if (loading === true) {
       setSave([...save, { owner: true, input: message }]);
     }
     setloading(false);
@@ -64,9 +75,9 @@ export default function CustomerChat() {
   }, [chainMessage])
 
   return (
-    <div className="h-full">
-      <h1 className="titleFont text-lg text-center mt-4">AI 바텐더</h1>
-      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[85%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
+    <div className="h-full h-[80%]">
+      {/* <h1 className="titleFont text-lg text-center mt-4">AI 바텐더</h1> */}
+      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[95%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
         {save.length > 0 &&
           save.map((item) => {
             return (
@@ -80,10 +91,10 @@ export default function CustomerChat() {
           {loading && <Loading />}
       </div>
       <div className="absolute bottom-2 h-[7%] w-full items-center">
-        <div className="w-[70%] mx-auto border-t border-slate-500"></div>
+        <div className="w-[70%] mx-auto border-t border-pink-500"></div>
         <form onSubmit={handlleSubmit} className="flex flex-row h-full justify-around  text-lg p-2 opacity-95">
-          <input value={input} required onChange={(e) => setInput(e.target.value)} className="w-[80%] px-4 bg-transparent"></input>
-          <button disabled={loading} className="w-20 h-full text-lg rounded-tr-md ">
+          <input value={input} required onChange={(e) => setInput(e.target.value)} className="w-[80%] px-4 bg-pink-100 rounded-xl ml-3 mr-3"></input>
+          <button disabled={loading} className="w-16 h-full text-lg rounded-tr-md mr-2 bg-pink-300 rounded-xl titleFont ">
             보내기
           </button>
         </form>
