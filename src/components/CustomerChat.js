@@ -77,7 +77,7 @@ export default function CustomerChat() {
   return (
     <div className="h-full h-[80%]">
       {/* <h1 className="titleFont text-lg text-center mt-4">AI 바텐더</h1> */}
-      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[95%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
+      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[80%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
         {save.length > 0 &&
           save.map((item) => {
             return (

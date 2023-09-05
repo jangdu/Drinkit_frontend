@@ -9,7 +9,6 @@ export default function CustomerQuick() {
   const scrollContainerRef = useRef(null);
   const [loading, setloading] = useState(false);
   const mainArr = ['택배', '환불']
-  const subArr = 
 
   useEffect(() => {
     // 스크롤 컨테이너의 scrollTop을 최대로 설정하여 항상 아래로 스크롤합니다.
@@ -80,7 +79,7 @@ export default function CustomerQuick() {
   return (
     <div className="h-full h-[80%]">
       {/* <h1 className="titleFont text-lg text-center mt-4">AI 고객센터</h1> */}
-      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[95%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
+      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[80%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
         {save.length > 0 &&
           save.map((item) => {
             return (
