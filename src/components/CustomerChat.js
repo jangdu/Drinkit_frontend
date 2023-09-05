@@ -12,7 +12,6 @@ export default function CustomerChat() {
   const [isWait, setIsWait] = useState(true);
 
   useEffect(() => {
-    // 스크롤 컨테이너의 scrollTop을 최대로 설정하여 항상 아래로 스크롤합니다.
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
