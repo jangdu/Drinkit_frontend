@@ -23,15 +23,16 @@ export default function Test() {
   let showMarkersInfo = [];
 
   const addressGeocode = async (address) => {
-    await naver.maps.Service.geocode({ query: address }, function (status, response) {
-      if (status === naver.maps.Service.Status.ERROR) {
-        return alert("Something wrong!");
-      }
-      const lat = response.v2.addresses[0].y;
-      const lng = response.v2.addresses[0].x;
+    await naver.maps.Service.geocode(
+      { query: address },
+      function (status, response) {
+        if (status === naver.maps.Service.Status.ERROR) {
+          return alert("Something wrong!");
+        }
+        const lat = response.v2.addresses[0].y;
+        const lng = response.v2.addresses[0].x;
 
-      console.log("돌아가는중");
-      setCurrentPosition([lat, lng]);
+        setCurrentPosition([lat, lng]);
     });
   };
 
@@ -220,7 +221,7 @@ export default function Test() {
       contentTags.push(
         `<div class="iw_inner" style="width: 300px">
             <h3>${storeAddress[j].name}</h3>
-            <p>${storeAddress[j].desccription}<br />
+            <p>${storeAddress[j].description}<br />
                 <img src=${storeAddress[j].imgUrls} width="100" height="100" alt=${storeAddress[j].name} class="thumb" /><br />
                 <p>${storeAddress[j].address}<br />
             </p>

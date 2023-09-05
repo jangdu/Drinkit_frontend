@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import Loading from "./Loding";
 
 export default function CustomerService() {
   const [input, setInput] = useState("");
@@ -13,7 +14,7 @@ export default function CustomerService() {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
-  }, [save]);
+  }, [save, loading]);
 
   const sendMessage = async () => {
     setloading(true);
@@ -54,8 +55,8 @@ export default function CustomerService() {
 
   return (
     <div className="h-full">
-      <h1 className="titleFont text-lg text-center mt-4">AI 바텐더</h1>
-      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[85%] rounded-t-xl p-3 overflow-scroll" style={{ whiteSpace: "nowrap" }}>
+      <h1 className="titleFont text-lg text-center mt-4">AI 고객센터</h1>
+      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[85%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
         {save.length > 0 &&
           save.map((item) => {
             return (
@@ -66,6 +67,7 @@ export default function CustomerService() {
               </div>
             );
           })}
+          {loading && <Loading />}
       </div>
       <div className="absolute bottom-2 h-[7%] w-full items-center">
         <div className="w-[70%] mx-auto border-t border-slate-500"></div>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { TbMessageCircleQuestion } from "react-icons/tb";
 import { IoClose } from "react-icons/io5";
 import CustomerService from "../CustomerService";
+import CustomerChat from "../CustomerChat";
 
 const cardStyles = {
   position: "fixed",
@@ -43,7 +44,7 @@ const ToggleButton = () => {
       {isCustomerServiceOpen && (
         <div className={`transition-opacity rounded-3xl shadow-2xl bg-slate-300 `} style={cardStyles}>
           <style>{slideUpAnimation}</style>
-          <CustomerService toggleCustomerService={toggleCustomerService} onClose={() => setIsCustomerServiceOpen(false)} />
+          <CustomerChat toggleCustomerService={toggleCustomerService} onClose={() => setIsCustomerServiceOpen(false)} />
         </div>
       )}
     </div>
