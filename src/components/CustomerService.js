@@ -54,7 +54,7 @@ export default function CustomerService() {
 
   return (
     <div className="h-full">
-      <h1 className="titleFont text-lg text-center mt-4">AI 바텐더</h1>
+      <h1 className="titleFont text-lg text-center mt-4">AI 고객센터</h1>
       <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[85%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
         {save.length > 0 &&
           save.map((item) => {
