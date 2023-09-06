@@ -9,10 +9,7 @@ const CreateStore = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [businessLicense, setBusinessLicense] = useState("");
-  const [address, setAddress] = useState("");
   const [addressDetail, setAddressDetail] = useState("");
-  const [lat, setLat] = useState("");
-  const [lng, setLng] = useState("");
   const { user, isLoading } = useAuthContext();
   const [selectedImage, setSelectedImage] = useState("");
   const { naver } = window;
@@ -26,22 +23,6 @@ const CreateStore = () => {
     }
   }, [user]);
 
-  const addressGeocode = async (address) => {
-    await naver.maps.Service.geocode(
-      { query: address },
-      function (status, response) {
-        console.log(status);
-        if (status === 200) {
-          setLat(response.v2.addresses[0].y);
-          setLng(response.v2.addresses[0].x);
-          console.log(lat);
-          return;
-        }
-        return alert("Something wrong!");
-      }
-    );
-  };
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedImage(file);
@@ -49,68 +30,71 @@ const CreateStore = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let x;
+    let y;
 
     if (!selectedImage) {
       alert("이미지를 선택하세요.");
       return;
     }
 
-    const a = await naver.maps.Service.geocode(
-      { query: enroll_company.address },
-      function (status, response) {
-        console.log(status);
-        if (status === 200) {
-          setLat(response.v2.addresses[0].y);
-          setLng(response.v2.addresses[0].x);
-          console.log(lat);
-          return response;
-        }
-        return alert("Something wrong!");
-      }
-    );
-    console.log(a);
+    const handleGeocode = async () => {
+      await naver.maps.Service.geocode(
+        { query: enroll_company.address },
+        async (status, response) => {
+          if (status === 200) {
+            y = response.v2.addresses[0].y;
+            x = response.v2.addresses[0].x;
 
-    try {
-      const formData = new FormData();
-      formData.append("file", selectedImage);
-      formData.append("name", name);
-      formData.append("description", description);
-      formData.append("businessLicense", businessLicense);
-      formData.append("address", enroll_company.address + addressDetail);
-      formData.append("lat", lat);
-      formData.append("lng", lng);
-
-      return;
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_SERVERURL}/stores`,
-        formData,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+            await handleRequest();
+          } else {
+            alert("Something wrong!");
+          }
         }
       );
+    };
 
-      if (response.status === 201) {
-        alert("가게 생성에 성공하였습니다.");
-        Cookies.remove("email");
-        return (window.location = "http://localhost:3200");
-      } else {
-        alert(response.message);
-        setAddress("");
-        setAddressDetail("");
-        setBusinessLicense(false);
-        setDescription("");
-        setLat("");
-        setLng("");
-        setName("");
-        setEnroll_company("");
+    await handleGeocode();
+
+    const handleRequest = async () => {
+      try {
+        const formData = new FormData();
+        formData.append("file", selectedImage);
+        formData.append("name", name);
+        formData.append("description", description);
+        formData.append("businessLicense", businessLicense);
+        formData.append("address", enroll_company.address + addressDetail);
+        formData.append("lat", y);
+        formData.append("lng", x);
+
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_SERVERURL}/stores`,
+          formData,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        if (response.status === 201) {
+          alert("가게 생성에 성공하였습니다.");
+          Cookies.remove("email");
+          return (window.location = "http://localhost:3200");
+        } else {
+          alert(response.message);
+          setAddressDetail("");
+          setBusinessLicense(false);
+          setDescription("");
+          setName("");
+          setEnroll_company("");
+        }
+      } catch (error) {
+        alert(error.message);
+        console.error("Error occurred during signup:", error);
       }
-    } catch (error) {
-      alert(error.message);
-      console.error("Error occurred during signup:", error);
-    }
+    };
   };
 
   const [enroll_company, setEnroll_company] = useState({
@@ -188,7 +172,7 @@ const CreateStore = () => {
         </div>
         <button
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          type="submit">
+          type={"submit"}>
           {"가게 생성"}
         </button>
       </form>
