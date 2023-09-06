@@ -6,13 +6,55 @@ import Peer from "peerjs";
 const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
-  const { user } = useAuthContext();
   const [newPeer, setNewPeer] = useState();
   const [myPeerId, setMyPeerId] = useState();
   const [peers, setPeers] = useState([]);
   const [chatMessages, setChatMessages] = useState([]);
 
-  const [myVideo, setMyVieo] = useState();
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    const container = document.getElementById("myVideoContainer");
+
+    const handleMouseDown = (e) => {
+      const containerRect = container.getBoundingClientRect(); // 현재 위치 정보 가져오기
+      const initialX = e.clientX - containerRect.left; // 클릭한 위치에서 컨테이너의 좌측 모서리까지의 거리
+      const initialY = e.clientY - containerRect.top; // 클릭한 위치에서 컨테이너의 상단 모서리까지의 거리
+
+      setIsDragging(true);
+      let draggging = true;
+      container.classList.add("dragging");
+
+      const handleMouseMove = (event) => {
+        if (!draggging) return;
+
+        const dx = event.clientX - initialX; // X 방향 이동 거리
+        const dy = event.clientY - initialY; // Y 방향 이동 거리
+
+        // 현재 위치에서 이동 거리만큼 더한 위치로 설정
+        container.style.left = `${dx}px`;
+        container.style.top = `${dy}px`;
+      };
+
+      const handleMouseUp = () => {
+        setIsDragging(false);
+        draggging = false;
+        container.classList.remove("dragging");
+
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+      };
+
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    };
+
+    container.addEventListener("mousedown", handleMouseDown);
+
+    return () => {
+      container.removeEventListener("mousedown", handleMouseDown);
+    };
+  }, []);
 
   useEffect(() => {
     var peer = new Peer();
@@ -45,8 +87,9 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
     userMedia.then((stream) => {
       const videoElement = document.createElement("video");
       videoElement.srcObject = stream;
-      videoElement.className = "absolute bottom-10 w-96";
+      // videoElement.className = "absolute bottom-10 w-96";
       videoElement.autoplay = true; // 자동 재생 설정
+      videoElement.className = "border rounded-lg shadow-xl";
 
       // 비디오를 화면에 추가
       const videoContainer = document.getElementById("myVideoContainer");
@@ -66,6 +109,7 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
           const videoElement = document.createElement("video");
           videoElement.srcObject = stream;
           videoElement.autoplay = true; // 자동 재생 설정
+          videoElement.className = "border rounded-lg shadow-xl";
 
           // 비디오를 화면에 추가
           const videoContainer = document.getElementById("videoContainer");
@@ -98,6 +142,7 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
             const videoElement = document.createElement("video");
             videoElement.srcObject = stream;
             videoElement.autoplay = true; // 자동 재생 설정
+            videoElement.className = "border rounded-lg shadow-xl";
 
             // 비디오를 화면에 추가
             const videoContainer = document.getElementById("videoContainer");
@@ -141,7 +186,7 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
   return (
     <div style={{ height: "90%", overflowY: "auto" }}>
       <h2>{clickedRoom.name} 채팅방</h2>
-      <div id="myVideoContainer"></div>
+      <div id="myVideoContainer" className={`w-40 index99 ${"draggable-container"}`}></div>
       <div id="videoContainer" className="grid grid-cols-2"></div>
       <div>
         {chatMessages.map((msg, index) => (

@@ -133,3 +133,17 @@ li {
 .titleFont {
   font-family: "Jua", sans-serif;
 }
+
+.draggable-container {
+  position: absolute;
+
+  cursor: grab; /* 드래그 커서 모양 지정 */
+}
+
+.draggable-container.dragging {
+  cursor: grabbing; /* 드래그 중일 때의 커서 모양 지정 */
+}
+
+.index99 {
+  z-index: 999;
+}
