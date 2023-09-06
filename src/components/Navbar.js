@@ -50,7 +50,6 @@ Modal.setAppElement("#root"); // App 요소 설정
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [token, setToken] = useState(Cookies.get("AccessToken"));
   const [refreshToken, setRefreshToken] = useState(Cookies.get("RefreshToken"));
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -58,14 +57,7 @@ export default function Navbar() {
   const [text, setText] = useState("");
   const [searchValue, setSearchValue] = useState([]);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  console.log(Cookies.get("AccessToken"));
-
   useEffect(() => {
-    console.log("토큰 이펙트");
     const storedToken = Cookies.get("AccessToken");
     setRefreshToken(Cookies.get("RefreshToken"));
     setToken(storedToken);
@@ -76,12 +68,15 @@ export default function Navbar() {
       const debouncedSendRequest = _debounce(() => {
         const openSearch = async () => {
           try {
-            const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/open-search?keyword=${text}`, {
-              withCredentials: true,
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
+            const response = await axios.get(
+              `${process.env.REACT_APP_API_SERVERURL}/open-search?keyword=${text}`,
+              {
+                withCredentials: true,
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
             if (response.status === 200) {
               const data = await response.data;
               console.log(data);
@@ -108,38 +103,43 @@ export default function Navbar() {
     }
   };
 
-  const goBack = () => {
-    window.history.back();
-  };
-
   return (
-    <header className="flex max-w-4xl mx-auto justify-between p-3">
+    <header className="flex justify-between max-w-4xl p-3 mx-auto">
       {/* <div className="w-32">
-        <button onClick={goBack} className="text-3xl text-center mx-auto py-1 px-2 rounded-xl font-bold text-pink-300 hover:text-pink-500">
+        <button onClick={goBack} className="px-2 py-1 mx-auto text-3xl font-bold text-center text-pink-300 rounded-xl hover:text-pink-500">
           <MdArrowBackIos />
         </button>
       </div> */}
       <div className="">
-        <Link to={"/"} className="flex text-4xl text-pink-500 font-bold">
-          <h1>Drin!t</h1>
+        <Link to={"/"} className="flex text-4xl font-bold text-pink-500">
+          <h1>Drink!t</h1>
         </Link>
       </div>
-      <div className=" flex justify-end items-center gap-2 font-semibold">
+      <div className="flex items-center justify-end gap-2 font-semibold ">
         <div className="hidden absolute right-[40%] sm:block">
-          <input placeholder="검색어 입력" className="placeholder:text-gray-500 p-2 w-52 border rounded-lg border-pink-300" value={text} onChange={(e) => newText(e.target.value)}></input>
+          <input
+            placeholder="검색어 입력"
+            className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500 w-52"
+            value={text}
+            onChange={(e) => newText(e.target.value)}
+          ></input>
         </div>
-        <div style={cardStyles} className="absolute hidden sm:block right-[40%] top-[54px]">
+        <div
+          style={cardStyles}
+          className="absolute hidden sm:block right-[40%] top-[54px]"
+        >
           {searchValue.length > 0 && text && (
-            <div className="w-52 border border-pink-300 bg-white rounded-md flex flex-col shadow-md">
+            <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
               {searchValue.map((item) => {
                 return (
                   <div
-                    className="cursor-pointer hover:bg-slate-200 rounded-md"
+                    className="rounded-md cursor-pointer hover:bg-slate-200"
                     onClick={() => {
                       newText("");
                       navigate(`/products/${item._source.id}`);
-                    }}>
-                    <p className=" p-2" key={item._source.id}>
+                    }}
+                  >
+                    <p className="p-2 " key={item._source.id}>
                       {item._source.productName}
                     </p>
                     <div className="border-b"></div>
@@ -150,7 +150,10 @@ export default function Navbar() {
           )}
         </div>
         <div>
-          <Link className="text-black-300 hover:text-pink-500" to={"/subscribes"}>
+          <Link
+            className="text-black-300 hover:text-pink-500"
+            to={"/subscribes"}
+          >
             술구독
           </Link>
         </div>
@@ -170,7 +173,8 @@ export default function Navbar() {
             onClick={() => {
               setModalIsOpen(true);
               setIsSignupLogIn("signup");
-            }}>
+            }}
+          >
             회원가입
           </button>
         )}
@@ -181,7 +185,8 @@ export default function Navbar() {
               Cookies.remove("AccessToken");
               Cookies.remove("RefreshToken");
               window.location.reload();
-            }}>
+            }}
+          >
             로그아웃
           </button>
         ) : (
@@ -190,15 +195,22 @@ export default function Navbar() {
             onClick={() => {
               setModalIsOpen(true);
               setIsSignupLogIn("login");
-            }}>
+            }}
+          >
             로그인
           </button>
         )}
         <CartButton />
       </div>
-      <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={customStyles}>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        style={customStyles}
+      >
         <style>{slideUpAnimation}</style>
-        <div className="">{isSignupLogIn === "login" ? <Login /> : <Signup />}</div>
+        <div className="">
+          {isSignupLogIn === "login" ? <Login /> : <Signup />}
+        </div>
       </Modal>
     </header>
   );
