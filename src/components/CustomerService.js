@@ -10,6 +10,16 @@ export default function CustomerService() {
   const [loading, setloading] = useState(false);
 
   useEffect(() => {
+    if(localStorage.getItem('save')){
+      setSave(JSON.parse(localStorage.getItem('save')))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('save', JSON.stringify(save))
+  }, [save])
+
+  useEffect(() => {
     // 스크롤 컨테이너의 scrollTop을 최대로 설정하여 항상 아래로 스크롤합니다.
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
@@ -18,7 +28,7 @@ export default function CustomerService() {
 
   const sendMessage = async () => {
     setloading(true);
-    await setSave([...save, { owner: false, input: input }]);
+    setSave([...save, { owner: false, input: input }]);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_OPENAI_SERVERURL}/messages`,
@@ -54,15 +64,15 @@ export default function CustomerService() {
   };
 
   return (
-    <div className="h-full">
-      <h1 className="titleFont text-lg text-center mt-4">AI 고객센터</h1>
-      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[85%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
+    <div className="h-[80%]">
+      {/* <h1 className="titleFont text-lg text-center mt-4">AI 고객센터</h1> */}
+      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[100%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
         {save.length > 0 &&
           save.map((item) => {
             return (
               <div key={item.input} className={` items-center ${item.owner ? "flex justify-start" : "flex justify-end"}`}>
-                {item.owner && <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-r-pink-200"></div>}
-                <li className={`bg-white ${item.owner && `bg-pink-200`} h-auto rounded-md px-4 py-2 break-words list-none`}>{item.input}</li>
+                {item.owner && <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-r-yellow-100"></div>}
+                <li className={`${item.owner ? `bg-yellow-100` : `bg-white`} w-fit rounded-md px-4 py-2 list-none	`}>{item.input}</li>
                 {!item.owner && <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-l-white"></div>}
               </div>
             );
@@ -70,10 +80,10 @@ export default function CustomerService() {
           {loading && <Loading />}
       </div>
       <div className="absolute bottom-2 h-[7%] w-full items-center">
-        <div className="w-[70%] mx-auto border-t border-slate-500"></div>
+        <div className="w-[70%] mx-auto border-t border-pink-500"></div>
         <form onSubmit={handlleSubmit} className="flex flex-row h-full justify-around  text-lg p-2 opacity-95">
-          <input value={input} required onChange={(e) => setInput(e.target.value)} className="w-[80%] px-4 bg-transparent"></input>
-          <button disabled={loading} className="w-20 h-full text-lg rounded-tr-md ">
+          <input value={input} required onChange={(e) => setInput(e.target.value)} className="w-[80%] px-4 bg-pink-100 rounded-xl ml-3 mr-3"></input>
+          <button disabled={loading} className="w-16 h-full text-lg rounded-tr-md mr-2 bg-pink-300 rounded-xl titleFont ">
             보내기
           </button>
         </form>
