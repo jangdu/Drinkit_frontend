@@ -9,6 +9,7 @@ export default function CustomerQuick() {
   const scrollContainerRef = useRef(null);
   const [loading, setloading] = useState(true);
   const [statusButton, setStatusButton] = useState();
+  const [start, setStart] = useState(false);
   
   const category = {
     post: ['택배', '일정'],
@@ -24,6 +25,8 @@ export default function CustomerQuick() {
   }, [save, loading]);
 
   const sendCreateMessage = async (num) => {
+    setloading(true);
+    setStart(true)
     const inputMessage = `${category[statusButton][0]} / ${category[statusButton][num]} 라는 단어로 질문을 만들어 줘.`
     try {
       const response = await axios.post(
@@ -39,6 +42,7 @@ export default function CustomerQuick() {
       if (response.status === 201) {
         const data = await response.data;
         setInput(data)
+        setloading(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -77,15 +81,19 @@ export default function CustomerQuick() {
 
   const handlleSubmit = (e) => {
     e.preventDefault();
-
-    sendMessage();
-    setInput("");
+    if(start){
+      sendMessage();
+      setInput("");
+    }else{
+      alert("질문 카테고리를 선택해주세요.")
+      setInput("");
+    }
   };
 
   return (
     <div className="h-[80%]">
       {/* <h1 className="titleFont text-lg text-center mt-4">AI 고객센터</h1> */}
-      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[100%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
+      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[100%] rounded-t-xl p-3 overflow-y-auto no-scrollbar overscroll-none" style={{ whiteSpace: "nowrap" }}>
       <div className="flex flex-col items-end gap-3">
         <div className="items-center flex justify-end">
           <button value={'post'} onClick={(e) => {setStatusButton(e.target.value)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none mr-2`}>
@@ -140,7 +148,7 @@ export default function CustomerQuick() {
         <div className="w-[70%] mx-auto border-t border-pink-500"></div>
         <form onSubmit={handlleSubmit} className="flex flex-row h-full justify-around  text-lg p-2 opacity-95">
           <input value={input} required onChange={(e) => setInput(e.target.value)} className="w-[80%] px-4 bg-pink-100 rounded-xl ml-3 mr-3"></input>
-          <button disabled={loading} className="w-16 h-full text-lg rounded-tr-md mr-2 bg-pink-300 rounded-xl titleFont ">
+          <button disabled={loading} className="w-16 h-full text-lg rounded-tr-md mr-2 bg-pink-300 rounded-xl titleFont hover:bg-pink-400">
             보내기
           </button>
         </form>
