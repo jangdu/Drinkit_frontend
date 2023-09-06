@@ -63,10 +63,20 @@ export default function CustomerService() {
     setInput("");
   };
 
+  const clearChat = () => {
+    localStorage.removeItem('save')
+    setSave("")
+    setMessage("")
+    setloading(false)
+  }
+
   return (
-    <div className="h-[80%]">
+    <div className="h-[75%]">
       {/* <h1 className="titleFont text-lg text-center mt-4">AI 고객센터</h1> */}
-      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[100%] rounded-t-xl p-3 overflow-y-scroll" style={{ whiteSpace: "nowrap" }}>
+      <div className="flex flex-col items-end mt-1 mb-1">
+        <button className="pl-2 pr-2 text-lg rounded-tr-md mr-2 mb-1 bg-pink-300 rounded-xl titleFont shadow-sm shadow-pink-400 hover:bg-pink-400 hover:shadow-none" onClick={() => {clearChat()}}>대화내용삭제</button>
+      </div>
+      <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[100%] rounded-t-xl p-3 overflow-y-auto no-scrollbar overscroll-none" style={{ whiteSpace: "nowrap" }}>
         {save.length > 0 &&
           save.map((item) => {
             return (
@@ -83,7 +93,7 @@ export default function CustomerService() {
         <div className="w-[70%] mx-auto border-t border-pink-500"></div>
         <form onSubmit={handlleSubmit} className="flex flex-row h-full justify-around  text-lg p-2 opacity-95">
           <input value={input} required onChange={(e) => setInput(e.target.value)} className="w-[80%] px-4 bg-pink-100 rounded-xl ml-3 mr-3"></input>
-          <button disabled={loading} className="w-16 h-full text-lg rounded-tr-md mr-2 bg-pink-300 rounded-xl titleFont ">
+          <button disabled={loading} className="w-16 h-full text-lg rounded-tr-md mr-2 bg-pink-300 rounded-xl titleFont hover:bg-pink-400">
             보내기
           </button>
         </form>
