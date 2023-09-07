@@ -9,6 +9,7 @@ import Button from "./ui/Button";
 
 const CreateRoom = ({
   socket,
+  socketId,
   setIsCreatingRoom,
   setModalIsOpen,
   setClickedRoom,
@@ -19,13 +20,12 @@ const CreateRoom = ({
 
   const handleCreateRoom = () => {
     const roomData = {
-      roomName: roomName,
+      roomName,
       maxNumberOfPerson: parseInt(maxNumberOfPerson),
-      password: password,
+      password,
     };
 
     socket.emit("drinkitRoom", roomData, (response) => {
-      console.log(response); // 백엔드에서 전달하는 응답 확인
       setModalIsOpen(true);
       setClickedRoom({ ...response });
     });

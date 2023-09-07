@@ -80,12 +80,14 @@ const ChatList = () => {
   const [chatRooms, setChatRooms] = useState([]);
   const [isCreatingRoom, setIsCreatingRoom] = useState(false); // 방 만들기 화면을 표시할지 여부를 상태로 관리합니다.
   const [clickedRoom, setClickedRoom] = useState();
+  const [socketId, setSocketId] = useState("");
 
   useEffect(() => {
     socket.emit("getRooms", null, (response) => {
+      setSocketId(socket.id); // peer 객체 생성시 ID 값 활용
       setChatRooms(response);
     });
-  }, [isCreatingRoom]);
+  }, [isCreatingRoom, socketId]);
 
   const handleCreateRoomClick = () => {
     setIsCreatingRoom(true); // 버튼 클릭 시 방 만들기 화면 표시
@@ -98,9 +100,18 @@ const ChatList = () => {
         <Button text={"내 채팅방 만들기"} onClick={handleCreateRoomClick} />
       </div>
       {isCreatingRoom ? (
-        <div className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`} style={cardStyles}>
+        <div
+          className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`}
+          style={cardStyles}
+        >
           <style>{slideUpAnimation}</style>
-          <CreateRoom socket={socket} setIsCreatingRoom={setIsCreatingRoom} setModalIsOpen={setModalIsOpen} setClickedRoom={setClickedRoom} />
+          <CreateRoom
+            socket={socket}
+            socketId={socketId}
+            setIsCreatingRoom={setIsCreatingRoom}
+            setModalIsOpen={setModalIsOpen}
+            setClickedRoom={setClickedRoom}
+          />
         </div>
       ) : (
         chatRooms &&
@@ -109,23 +120,30 @@ const ChatList = () => {
             <div key={roomSize} className="flex flex-col p-2">
               <h2 className="text-xl font-bold">{roomSize}명 방</h2>
               {chatRooms[roomSize] &&
-                Object.entries(chatRooms[roomSize]).map(([roomId, roomList]) => {
-                  const jsonRoom = JSON.parse(roomList);
-                  return (
-                    <div key={roomId} className="flex flex-row items-center justify-between gap-3 p-4 my-4">
-                      <span className="text-lg ">방 이름: {jsonRoom["roomName"]}</span>
-                      {/* <span>방장: {jsonRoom["roomOwner"]}</span> */}
-                      {/* <span className="text-lg">최대 인원: {jsonRoom["maxNumberOfPerson"]}</span> */}
-                      <Button
-                        text={"들어가기"}
-                        onClick={() => {
-                          setModalIsOpen(true);
-                          setClickedRoom({ ...jsonRoom, roomId });
-                        }}
-                      />
-                    </div>
-                  );
-                })}
+                Object.entries(chatRooms[roomSize]).map(
+                  ([roomId, roomList]) => {
+                    const jsonRoom = JSON.parse(roomList);
+                    return (
+                      <div
+                        key={roomId}
+                        className="flex flex-row items-center justify-between gap-3 p-4 my-4"
+                      >
+                        <span className="text-lg ">
+                          방 이름: {jsonRoom["roomName"]}
+                        </span>
+                        {/* <span>방장: {jsonRoom["roomOwner"]}</span> */}
+                        {/* <span className="text-lg">최대 인원: {jsonRoom["maxNumberOfPerson"]}</span> */}
+                        <Button
+                          text={"들어가기"}
+                          onClick={() => {
+                            setModalIsOpen(true);
+                            setClickedRoom({ ...jsonRoom, roomId });
+                          }}
+                        />
+                      </div>
+                    );
+                  }
+                )}
             </div>
           );
         })
@@ -139,7 +157,12 @@ const ChatList = () => {
       <ReactModal isOpen={modalIsOpen} style={cusStyle}>
         <style>{slideUpModalAnimation}</style>
         <div>
-          <ChatsModal clickedRoom={clickedRoom} socket={socket} setModalIsOpen={setModalIsOpen} />
+          <ChatsModal
+            clickedRoom={clickedRoom}
+            socket={socket}
+            socketId={socketId}
+            setModalIsOpen={setModalIsOpen}
+          />
         </div>
       </ReactModal>
     </div>
