@@ -81,7 +81,7 @@ const CreateStore = () => {
         if (response.status === 201) {
           alert("가게 생성에 성공하였습니다.");
           Cookies.remove("email");
-          return (window.location = "http://localhost:3200");
+          return (window.location = "http://118.67.143.18:3200");
         } else {
           alert(response.message);
           setAddressDetail("");

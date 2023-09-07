@@ -41,7 +41,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      window.location = "http://localhost:3000/user/login/kakao";
+      window.location = `${process.env.REACT_APP_API_SERVERURL}/user/login/kakao`;
     } catch (error) {
       alert(error);
       console.error("Error occurred during signup:", error);
@@ -52,7 +52,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      window.location = "http://localhost:3000/user/login/naver";
+      window.location = `${process.env.REACT_APP_API_SERVERURL}/user/login/naver`;
     } catch (error) {
       alert(error);
       console.error("Error occurred during signup:", error);
@@ -63,7 +63,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      window.location = "http://localhost:3000/user/login/google";
+      window.location = `${process.env.REACT_APP_API_SERVERURL}/user/login/google`;
     } catch (error) {
       alert(error);
       console.error("Error occurred during signup:", error);
@@ -72,7 +72,7 @@ const Login = () => {
 
   const signup = async (e) => {
     e.preventDefault();
-    window.location = "http://localhost:3200/authEmail";
+    window.location = "http://118.67.143.18:3200/authEmail";
   };
 
   return (
