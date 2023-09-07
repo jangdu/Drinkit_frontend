@@ -50,12 +50,15 @@ export default function ProductDetail() {
   useEffect(() => {
     const getReview = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/products/${productId}`, {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_SERVERURL}/products/${productId}`,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (response.status === 200) {
           const data = await response.data;
           setProduct(data);
@@ -71,22 +74,52 @@ export default function ProductDetail() {
     return <div>해당하는 상품이 없습니다.</div>;
   } else {
     return (
-      <div className="p-8 flex flex-col mx-auto">
+      <div className="flex flex-col p-8 mx-auto">
         <div className="flex flex-col justify-between sm:flex-row">
-          <div className="cursor-pointer h-20 mx-auto sm: mb-6 rounded-t-lg" style={containerStyles} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-            <img src={product.imgUrl === "url" ? "https://res.cloudinary.com/dyhnnmhcf/image/upload/v1693281937/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-08-29_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_1.05.31_oezzbw.png" : product.imgUrl} alt={product.productName} style={imageStyles} />
+          <div
+            className="h-20 mx-auto mb-6 rounded-t-lg cursor-pointer sm:"
+            style={containerStyles}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <img
+              src={
+                product.imgUrl === "url"
+                  ? "https://res.cloudinary.com/dyhnnmhcf/image/upload/v1693281937/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-08-29_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_1.05.31_oezzbw.png"
+                  : product.imgUrl
+              }
+              alt={product.productName}
+              style={imageStyles}
+            />
           </div>
           <div className="sm:w-3/5 sm:pl-8">
             <h1 className="text-3xl font-semibold">{product.productName}</h1>
-            <p className="text-gray-600 mt-2" style={{ whiteSpace: "nowrap" }}>
+            <p className="mt-2 text-gray-600" style={{ whiteSpace: "nowrap" }}>
               {product.description}
             </p>
-            <p className="text-gray-600 bg-pink-300 w-fit px-2 rounded-lg mt-2">{product.category.name}</p>
+            <p className="px-2 mt-2 text-gray-600 bg-pink-300 rounded-lg w-fit">
+              {product.category.name}
+            </p>
             <div className="flex items-center mt-4">
-              <span className={`text-xl font-semibold ${product.discount && "text-slate-300 line-through"}`}>{product.price}원</span>
-              {product.discount && <p className="ms-2 font-semibold text-xl">{"→ " + Math.round(product.price * (1 - product.discount.discountRating / 100))}원</p>}
+              <span
+                className={`text-xl font-semibold ${
+                  product.discount && "text-slate-300 line-through"
+                }`}
+              >
+                {product.price}원
+              </span>
+              {product.discount && (
+                <p className="text-xl font-semibold ms-2">
+                  {"→ " +
+                    Math.round(
+                      product.price *
+                        (1 - product.discount.discountRating / 100)
+                    )}
+                  원
+                </p>
+              )}
             </div>
-            <div className="flex flex-row gap-3 text-lg font-bold items-center justify-end">
+            <div className="flex flex-row items-center justify-end gap-3 text-lg font-bold">
               <Button
                 text={"-"}
                 onClick={() => {
@@ -99,7 +132,9 @@ export default function ProductDetail() {
                 text={"+"}
                 onClick={() => {
                   if (count >= 50) {
-                    return alert("장바구니에는 50개 이하로만 담을 수 있습니다.");
+                    return alert(
+                      "장바구니에는 50개 이하로만 담을 수 있습니다."
+                    );
                   }
                   setCount(count + 1);
                 }}
@@ -110,17 +145,21 @@ export default function ProductDetail() {
         </div>
         <div className="w-[50%] mx-auto my-6 border border-b-2 border-pink-100"></div>
         <div className="mt-4 sm:mt-10">
-          <h2 className="text-2xl text-center font-bold mb-6">리뷰</h2>
+          <h2 className="mb-6 text-2xl font-bold text-center">리뷰</h2>
           <ul>
-            {!product.review.length && <li className="mx-4">아직 달린 리뷰가 없어요!</li>}
+            {!product.review.length && (
+              <li className="mx-4">아직 달린 리뷰가 없어요!</li>
+            )}
             {product.review.map((review) => (
               <li key={review.id} className="mb-8">
-                <div className="flex items-center bg-pink-100 rounded-lg w-fit my-2 px-3">
-                  <p className="text-yellow-500 text-2xl mr-1">★</p>
+                <div className="flex items-center px-3 my-2 bg-pink-100 rounded-lg w-fit">
+                  <p className="mr-1 text-2xl text-yellow-500">★</p>
                   <p className="text-lg">{review.rating}점</p>
-                  <p className="text-md ms-4 text-gray-500">{review.user.email}</p>
+                  <p className="text-gray-500 text-md ms-4">
+                    {review.user.email}
+                  </p>
                 </div>
-                <p className="text-gray-600 mb-1 px-4">{review.content}</p>
+                <p className="px-4 mb-1 text-gray-600">{review.content}</p>
               </li>
             ))}
           </ul>

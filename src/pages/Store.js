@@ -19,7 +19,7 @@ const CreateStore = () => {
       alert(
         "권한이 없습니다. 사업자 등록을 원하시면 관리자에게 문의 부탁드립니다."
       );
-      return (window.location = "http://localhost:3200");
+      return (window.location = "http://118.67.143.18:3200");
     }
   }, [user]);
 
@@ -108,7 +108,7 @@ const CreateStore = () => {
   };
   return (
     <div className="flex flex-col">
-      <h2 className="mb-5 mx-auto text-xl font-bold text-center">
+      <h2 className="mx-auto mb-5 text-xl font-bold text-center">
         {" "}
         {"가게 생성"}
       </h2>
@@ -167,12 +167,14 @@ const CreateStore = () => {
           {popup && (
             <Post
               company={enroll_company}
-              setcompany={setEnroll_company}></Post>
+              setcompany={setEnroll_company}
+            ></Post>
           )}
         </div>
         <button
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          type={"submit"}>
+          type={"submit"}
+        >
           {"가게 생성"}
         </button>
       </form>

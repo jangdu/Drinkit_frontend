@@ -180,7 +180,7 @@ const Signup = () => {
   };
   return (
     <div className="flex flex-col">
-      <h2 className="mb-5 mx-auto text-xl font-bold text-center">
+      <h2 className="mx-auto mb-5 text-xl font-bold text-center">
         {" "}
         {"회원가입"}
       </h2>
@@ -260,12 +260,14 @@ const Signup = () => {
           {popup && (
             <Post
               company={enroll_company}
-              setcompany={setEnroll_company}></Post>
+              setcompany={setEnroll_company}
+            ></Post>
           )}
         </div>
         <button
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          type="submit">
+          type="submit"
+        >
           {"회원가입"}
         </button>
       </form>
