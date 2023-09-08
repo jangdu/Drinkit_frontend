@@ -134,7 +134,7 @@ export default function Navbar() {
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 ">
-        <div className="hidden absolute right-[30%] sm:block">
+        <div className="hidden absolute right-[30%] md:right-[40%] sm:block">
           <div className="flex flex-row items-center">
             <input
               placeholder="검색어 입력"
@@ -146,7 +146,7 @@ export default function Navbar() {
         </div>
         <div
           style={cardStyles}
-          className="absolute hidden sm:block right-[30%] top-[54px]"
+          className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]"
         >
           {searchValue.length > 0 && text && (
             <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
