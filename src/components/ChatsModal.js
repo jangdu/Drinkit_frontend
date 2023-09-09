@@ -133,15 +133,15 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
       });
     });
 
-    socket.emit("joinRoom", clickedRoom);
     socket.on("joinedRoom", handleNewMessage);
     socket.on("userJoined", handleNewMessage);
     socket.on("broadcastMessage", handleNewMessage);
 
     // id: 공유받은 id
     socket.on("sharedId", async (id) => {
-      setConn(peer.connect(id));
-      newConection(id, conn);
+      const peerConn = peer.connect(id);
+      setConn(peerConn);
+      newConection(id, peerConn);
     });
 
     const newConection = (id, conn) => {
