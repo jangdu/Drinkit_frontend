@@ -195,7 +195,7 @@ export default function Navbar() {
               console.log(Cookies);
               Cookies.remove("AccessToken");
               Cookies.remove("RefreshToken");
-              window.location.reload();
+              // window.location.reload();
             }}
           >
             로그아웃
