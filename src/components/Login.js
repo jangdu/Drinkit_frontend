@@ -24,8 +24,8 @@ const Login = () => {
       );
 
       if (response.status === 201) {
-        console.log("response Data => ", response.data);
-        // window.location.reload();
+        alert("Login Success !");
+        window.location.reload();
       } else {
         const data = await response.json();
         console.log(data);
