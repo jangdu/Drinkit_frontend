@@ -194,6 +194,9 @@ export default function Navbar() {
           <button
             className="font-mono font-bold text-black-300 hover:text-pink-500"
             onClick={async () => {
+              console.log("access =>", Cookies.get("AccessToken"));
+              console.log("refresh =>", Cookies.get("RefreshToken"));
+
               await axios.delete(
                 `${process.env.REACT_APP_API_SERVERURL}/user/signOut`,
                 {
@@ -205,7 +208,6 @@ export default function Navbar() {
               );
               // Cookies.remove("AccessToken");
               // Cookies.remove("RefreshToken");
-              console.log("요청 갔지롱~");
               // window.location.reload();
             }}
           >
