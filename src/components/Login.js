@@ -24,8 +24,12 @@ const Login = () => {
       );
 
       if (response.status === 201) {
-        console.log(response);
-        alert("로그인에 성공했습니다.");
+        console.log("datas =>", response.data);
+        const accessToken = response.data.accessToken;
+        const refreshToken = response.data.refreshToken;
+
+        document.cookie = `accessToken=${accessToken}; Secure; SameSite=None;`;
+        document.cookie = `refreshToken=${refreshToken}; Secure; SameSite=None;`;
         // window.location.reload();
       } else {
         const data = await response.json();
