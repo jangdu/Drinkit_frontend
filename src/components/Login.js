@@ -24,16 +24,11 @@ const Login = () => {
       );
 
       if (response.status === 201) {
-        console.log("datas =>", response.data);
-        const accessToken = response.data.accessToken;
-        const refreshToken = response.data.refreshToken;
-
-        document.cookie = `AccessToken=Bearer%20${accessToken}; Secure; SameSite=None;`;
-        document.cookie = `RefreshToken=Bearer%20${refreshToken}; Secure; SameSite=None;`;
+        console.log("response Data => ", response.data);
         // window.location.reload();
       } else {
         const data = await response.json();
-        console.log("Not 201 =>", data);
+        console.log(data);
       }
     } catch (error) {
       alert(error);
