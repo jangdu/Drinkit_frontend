@@ -28,9 +28,9 @@ const Login = () => {
         const accessToken = response.data.accessToken;
         const refreshToken = response.data.refreshToken;
 
-        document.cookie = `accessToken=${accessToken}; Secure; SameSite=None;`;
-        document.cookie = `refreshToken=${refreshToken}; Secure; SameSite=None;`;
-        // window.location.reload();
+        document.cookie = `AccessToken=${accessToken}; Secure; SameSite=None;`;
+        document.cookie = `RefreshToken=${refreshToken}; Secure; SameSite=None;`;
+        window.location.reload();
       } else {
         const data = await response.json();
         console.log("Not 201 =>", data);
