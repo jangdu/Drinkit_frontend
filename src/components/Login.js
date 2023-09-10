@@ -28,8 +28,8 @@ const Login = () => {
         const accessToken = response.data.accessToken;
         const refreshToken = response.data.refreshToken;
 
-        document.cookie = `AccessToken=${accessToken}; Secure; SameSite=None;`;
-        document.cookie = `RefreshToken=${refreshToken}; Secure; SameSite=None;`;
+        document.cookie = `AccessToken=${accessToken}; Domain=othwan.shop; Secure; SameSite=None;`;
+        document.cookie = `RefreshToken=${refreshToken}; Domain=othwan.shop; Secure; SameSite=None;`;
         window.location.reload();
       } else {
         const data = await response.json();
