@@ -21,8 +21,6 @@ export function AuthContextProvider({ children }) {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
-            AccessToken: Cookies.get("AccessToken"),
-            RefreshToken: Cookies.get("RefreshToken"),
           },
         }
       );
