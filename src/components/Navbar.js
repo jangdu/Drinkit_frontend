@@ -61,6 +61,8 @@ export default function Navbar() {
 
   useEffect(() => {
     const storedToken = Cookies.get("AccessToken");
+    console.log("Navbar Access Token chk =>", Cookies.get("AccessToken"));
+    console.log("Navbar Refresh Token chk =>", Cookies.get("RefreshToken"));
     setRefreshToken(Cookies.get("RefreshToken"));
     setToken(storedToken);
   }, []);
