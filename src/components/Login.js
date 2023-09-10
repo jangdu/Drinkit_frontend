@@ -26,10 +26,10 @@ const Login = () => {
       if (response.status === 201) {
         console.log(response);
         alert("로그인에 성공했습니다.");
-        window.location.reload();
+        // window.location.reload();
       } else {
         const data = await response.json();
-        console.log(data);
+        console.log("Not 201 =>", data);
       }
     } catch (error) {
       alert(error);
