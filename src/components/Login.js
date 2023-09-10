@@ -28,8 +28,8 @@ const Login = () => {
         const accessToken = response.data.accessToken;
         const refreshToken = response.data.refreshToken;
 
-        document.cookie = `AccessToken=Bearer ${accessToken}; Secure; SameSite=None;`;
-        document.cookie = `RefreshToken=Bearer ${refreshToken}; Secure; SameSite=None;`;
+        document.cookie = `AccessToken=Bearer%20${accessToken}; Secure; SameSite=None;`;
+        document.cookie = `RefreshToken=Bearer%20${refreshToken}; Secure; SameSite=None;`;
         // window.location.reload();
       } else {
         const data = await response.json();
