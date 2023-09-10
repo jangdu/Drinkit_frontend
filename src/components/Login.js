@@ -29,8 +29,8 @@ const Login = () => {
         const refreshToken = response.data.refreshToken;
 
         document.cookie = `AccessToken=${accessToken}; Domain=othwan.shop; Secure; SameSite=None;`;
-        document.cookie = `RefreshToken=${refreshToken}; Domain=othwan.shop; Secure; SameSite=None;`;
-        window.location.reload();
+        document.cookie = `RefreshToken=${refreshToken}; Secure; SameSite=None;`;
+        // window.location.reload();
       } else {
         const data = await response.json();
         console.log("Not 201 =>", data);
