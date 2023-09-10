@@ -138,7 +138,7 @@ export default function Navbar() {
           <div className="flex flex-row items-center">
             <input
               placeholder="검색어 입력"
-              className="p-2 border border-pink-300 rounded-lg  placeholder:text-gray-500 w-52"
+              className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500 w-52"
               value={text}
               onChange={(e) => newText(e.target.value)}
             ></input>
@@ -192,6 +192,7 @@ export default function Navbar() {
           <button
             className="font-mono font-bold text-black-300 hover:text-pink-500"
             onClick={() => {
+              console.log(Cookies);
               Cookies.remove("AccessToken");
               Cookies.remove("RefreshToken");
               window.location.reload();
