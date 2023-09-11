@@ -70,12 +70,15 @@ export default function Navbar() {
       const debouncedSendRequest = _debounce(() => {
         const openSearch = async () => {
           try {
-            const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/open-search?keyword=${text}`, {
-              withCredentials: true,
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
+            const response = await axios.get(
+              `${process.env.REACT_APP_API_SERVERURL}/open-search?keyword=${text}`,
+              {
+                withCredentials: true,
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
             if (response.status === 200) {
               const data = await response.data;
               console.log(data);
@@ -114,12 +117,14 @@ export default function Navbar() {
           <h1>Drink!t</h1>
         </Link>
         <div>
-          <Link className="font-mono font-bold text-black-300 hover:text-pink-500" to={"/subscribes"}>
+          <Link
+            className="text-black-300 hover:text-pink-500"
+            to={"/subscribes"}>
             구독
           </Link>
         </div>
         <div>
-          <Link className="font-mono font-bold text-black-300 hover:text-pink-500" to={"/chatList"}>
+          <Link className="text-black-300 hover:text-pink-500" to={"/chatList"}>
             ZZAN
           </Link>
         </div>
@@ -127,10 +132,16 @@ export default function Navbar() {
       <div className="flex items-center justify-end gap-2 ">
         <div className="hidden absolute right-[30%] md:right-[40%] sm:block">
           <div className="flex flex-row items-center">
-            <input placeholder="검색어 입력" className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500 w-52" value={text} onChange={(e) => newText(e.target.value)}></input>
+            <input
+              placeholder="검색어 입력"
+              className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500 w-52"
+              value={text}
+              onChange={(e) => newText(e.target.value)}></input>
           </div>
         </div>
-        <div style={cardStyles} className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]">
+        <div
+          style={cardStyles}
+          className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]">
           {searchValue.length > 0 && text && (
             <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
               {searchValue.map((item) => {
@@ -153,7 +164,9 @@ export default function Navbar() {
         </div>
         {/* <Link to="/posts">Post</Link> */}
         {user ? (
-          <Link className="font-semibold text-pink-300 text-black-300 hover:text-pink-500" to="/profile">
+          <Link
+            className="font-semibold text-pink-300 text-black-300 hover:text-pink-500"
+            to="/profile">
             {user.nickname + " 님 >"}
           </Link>
         ) : (
@@ -161,14 +174,17 @@ export default function Navbar() {
         )}
         {user ? (
           <button
-            className="font-mono font-bold text-black-300 hover:text-pink-500"
+            className="text-black-300 hover:text-pink-500"
             onClick={async () => {
-              await axios.delete(`${process.env.REACT_APP_API_SERVERURL}/user/signOut`, {
-                withCredentials: true,
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              });
+              await axios.delete(
+                `${process.env.REACT_APP_API_SERVERURL}/user/signOut`,
+                {
+                  withCredentials: true,
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
 
               window.location.reload();
             }}>
@@ -186,9 +202,14 @@ export default function Navbar() {
         )}
         <CartButton />
       </div>
-      <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={customStyles}>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        style={customStyles}>
         <style>{slideUpAnimation}</style>
-        <div className="">{isSignupLogIn === "login" ? <Login /> : <Signup />}</div>
+        <div className="">
+          {isSignupLogIn === "login" ? <Login /> : <Signup />}
+        </div>
       </Modal>
     </header>
   );
