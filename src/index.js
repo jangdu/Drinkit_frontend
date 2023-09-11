@@ -21,6 +21,7 @@ import OrderList from "./components/OrderList";
 import OrderListByAdmin from "./components/OrderListByAdmin";
 import OrderListByStore from "./components/OrderListByStore";
 import CreateStore from "./pages/Store";
+import AdminPage from "./pages/AdminPage";
 
 const router = createBrowserRouter([
   {
@@ -122,6 +123,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <CreateStore />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin",
+        element: (
+          <ProtectedRoute requireAdmin={true}>
+            <AdminPage />
           </ProtectedRoute>
         ),
       },

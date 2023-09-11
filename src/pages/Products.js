@@ -8,7 +8,7 @@ export default function Products() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="w-72 mx-auto">
+      <div className="w-fit mx-auto">
         <Category categories={categories} setCategories={setCategories} setCategory={setCategory} category={category} />
       </div>
       <div>

@@ -5,11 +5,12 @@ import Loading from "./Loding";
 
 export default function ProductList({ category }) {
   const [productList, setProductList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
     const getProductList = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/products?categoryId=${category.id}&page=${page}`, {
           withCredentials: true,
@@ -25,6 +26,7 @@ export default function ProductList({ category }) {
           setProductList();
           alert(data.message);
         }
+        setLoading(false);
       } catch (error) {}
     };
     getProductList();
