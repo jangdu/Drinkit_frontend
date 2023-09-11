@@ -1,5 +1,6 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
@@ -14,12 +15,15 @@ export function AuthContextProvider({ children }) {
 
   const getUser = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/user/profile`, {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_SERVERURL}/user/profile`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const { data } = await response;
       if (response.status === 202) {
@@ -35,6 +39,7 @@ export function AuthContextProvider({ children }) {
         setUser({});
       }
       setUser(data);
+      console.log("Data in Auth Context =>", data);
       setIsLoading(false);
     } catch (error) {
       setMyStore(null);
@@ -43,7 +48,13 @@ export function AuthContextProvider({ children }) {
     }
   };
 
-  return <AuthContext.Provider value={{ user, myStore, userId: user && user.id, isLoading }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{ user, myStore, userId: user && user.id, isLoading }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuthContext() {

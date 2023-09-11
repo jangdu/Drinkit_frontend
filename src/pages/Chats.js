@@ -1,6 +1,8 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, forwardRef } from "react";
 import io from "socket.io-client";
 import Video from "../components/Video";
+import { useParams } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 
 const pc_config = {
   iceServers: [
@@ -10,22 +12,45 @@ const pc_config = {
   ],
 };
 
-// 뒤에 namespace이름
-const SOCKET_SERVER_URL = "http://localhost:8080";
+const SOCKET_SERVER_URL = "http://jangdu.me:8000";
 
 const Chats = () => {
+  const { roomId } = useParams(); // roomId 가져오기
   const socketRef = useRef();
   const pcsRef = useRef({});
   const localVideoRef = useRef();
   const localStreamRef = useRef();
   const [users, setUsers] = useState([]);
+  const { user, isLoading } = useAuthContext();
+
+  const [localStream, setLocalStream] = useState(null);
 
   useEffect(() => {
+    const init = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        setLocalStream(stream);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    init();
+
     // Establish socket connection and setup local stream
     socketRef.current = io(SOCKET_SERVER_URL, {
       transports: ["websocket", "polling"],
+      withCredentials: true,
     });
     getLocalStream();
+
+    socketRef.current.emit("join_room", {
+      room: roomId,
+      email: user.email,
+    });
 
     // Event listener for receiving list of all users
     socketRef.current.on("all_users", (allUsers) => {
@@ -126,7 +151,7 @@ const Chats = () => {
       if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
       if (!socketRef.current) return;
       socketRef.current.emit("join_room", {
-        room: "ngMOFrloe5b-mBv0AAAD",
+        room: "1234",
         email: "sample@naver.com",
       });
     } catch (error) {
@@ -193,7 +218,7 @@ const Chats = () => {
         autoPlay
       />
       {users.map((user, index) => (
-        <Video ref={localVideoRef} key={index} email={user.email} stream={user.stream} />
+        <Video key={index} email={user.email} stream={user.stream} />
       ))}
     </div>
   );

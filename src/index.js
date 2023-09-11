@@ -13,6 +13,15 @@ import MyProfile from "./pages/MyProfile";
 import ProductDetail from "./pages/ProductDetail";
 import Subscribes from "./pages/subscribes";
 import Test from "./pages/Test";
+import Signup from "./pages/SignUp";
+import AuthEmail from "./pages/Email";
+import PickUpPage from "./pages/PickUpPage";
+import PaymentsPage from "./pages/PaymentsPage";
+import OrderList from "./components/OrderList";
+import OrderListByAdmin from "./components/OrderListByAdmin";
+import OrderListByStore from "./components/OrderListByStore";
+import CreateStore from "./pages/Store";
+import AdminPage from "./pages/AdminPage";
 
 const router = createBrowserRouter([
   {
@@ -22,7 +31,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       {
-        path: "/chats",
+        path: "/chats/:roomId",
         element: (
           <ProtectedRoute>
             <Chats />
@@ -58,8 +67,72 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/pickup",
+        element: (
+          <ProtectedRoute>
+            <PickUpPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/payments",
+        element: (
+          <ProtectedRoute>
+            <PaymentsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/orderlist",
+        element: (
+          <ProtectedRoute>
+            <OrderList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/orderlistbyadmin",
+        element: (
+          <ProtectedRoute>
+            <OrderListByAdmin />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/orderlistbystore/:storeId",
+        element: (
+          <ProtectedRoute>
+            <OrderListByStore />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "/test",
         element: <Test />,
+      },
+      {
+        path: "/signup",
+        element: <Signup />,
+      },
+      {
+        path: "/authEmail",
+        element: <AuthEmail />,
+      },
+      {
+        path: "/store",
+        element: (
+          <ProtectedRoute>
+            <CreateStore />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin",
+        element: (
+          <ProtectedRoute requireAdmin={true}>
+            <AdminPage />
+          </ProtectedRoute>
+        ),
       },
       // {
       //   path: '/stores/:storeId',

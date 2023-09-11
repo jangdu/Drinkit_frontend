@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import Cookies from "js-cookie";
 import Login from "./Login";
 import Signup from "./Signup";
+import CartButton from "./CartButton";
+import _debounce from "lodash/debounce";
+import axios from "axios";
+import { useAuthContext } from "../context/AuthContext";
+
+const cardStyles = {
+  zIndex: "1100",
+};
 
 const customStyles = {
   overlay: {
@@ -42,17 +50,14 @@ const slideUpAnimation = `
 Modal.setAppElement("#root"); // App 요소 설정
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
   const [token, setToken] = useState(Cookies.get("AccessToken"));
   const [refreshToken, setRefreshToken] = useState(Cookies.get("RefreshToken"));
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isSignupLogIn, setIsSignupLogIn] = useState("login");
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  console.log(Cookies.get("AccessToken"));
+  const [text, setText] = useState("");
+  const [searchValue, setSearchValue] = useState([]);
+  const { user } = useAuthContext();
 
   useEffect(() => {
     const storedToken = Cookies.get("AccessToken");
@@ -60,57 +65,127 @@ export default function Navbar() {
     setToken(storedToken);
   }, []);
 
-  const goBack = () => {
-    window.history.back();
+  useEffect(() => {
+    if (text !== "") {
+      const debouncedSendRequest = _debounce(() => {
+        const openSearch = async () => {
+          try {
+            const response = await axios.get(
+              `${process.env.REACT_APP_API_SERVERURL}/open-search?keyword=${text}`,
+              {
+                withCredentials: true,
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            if (response.status === 200) {
+              const data = await response.data;
+              console.log(data);
+              setSearchValue(data);
+            }
+          } catch (error) {
+            console.log(error.message);
+          }
+        };
+        openSearch();
+      }, 800);
+      debouncedSendRequest();
+
+      return () => {
+        debouncedSendRequest.cancel();
+      };
+    }
+  }, [text]);
+
+  const newText = (value) => {
+    setText(value);
+    if (!value) {
+      setSearchValue([]);
+    }
   };
 
   return (
-    <header className="flex max-w-4xl mx-auto justify-between border-b border-gray p-3">
+    <header className="flex justify-between max-w-4xl p-3 mx-auto mt-1 titleFont">
       {/* <div className="w-32">
-        <button onClick={goBack} className="text-3xl text-center mx-auto py-1 px-2 rounded-xl font-bold text-pink-300 hover:text-pink-500">
+        <button onClick={goBack} className="px-2 py-1 mx-auto text-3xl font-bold text-center text-pink-300 rounded-xl hover:text-pink-500">
           <MdArrowBackIos />
         </button>
       </div> */}
-      <div className="">
-        <Link to={"/"} className="flex text-4xl text-black font-bold">
-          <h1>Drin!t</h1>
+      <div className="flex flex-row items-center gap-4 text-xl">
+        <Link to={"/"} className="flex text-4xl font-bold text-pink-500 ">
+          <h1>Drink!t</h1>
         </Link>
-      </div>
-      <div className=" flex justify-end items-center gap-2 font-semibold">
-        <div className="hidden sm:block">
-          <input placeholder="검색어 입력" className="placeholder:text-gray-500 p-2 bg-pink-300 border rounded-lg"></input>
-        </div>
         <div>
-          <Link className="text-black-300 hover:text-pink-500" to={"/subscribes"}>
-            술구독
+          <Link
+            className="text-black-300 hover:text-pink-500"
+            to={"/subscribes"}>
+            구독
           </Link>
         </div>
         <div>
           <Link className="text-black-300 hover:text-pink-500" to={"/chatList"}>
-            같이 술
+            ZZAN
           </Link>
         </div>
+      </div>
+      <div className="flex items-center justify-end gap-2 ">
+        <div className="hidden absolute right-[30%] md:right-[40%] sm:block">
+          <div className="flex flex-row items-center">
+            <input
+              placeholder="검색어 입력"
+              className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500 w-52"
+              value={text}
+              onChange={(e) => newText(e.target.value)}></input>
+          </div>
+        </div>
+        <div
+          style={cardStyles}
+          className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]">
+          {searchValue.length > 0 && text && (
+            <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
+              {searchValue.map((item) => {
+                return (
+                  <div
+                    className="rounded-md cursor-pointer hover:bg-slate-200"
+                    onClick={() => {
+                      newText("");
+                      navigate(`/products/${item._source.id}`);
+                    }}>
+                    <p className="p-2 " key={item._source.id}>
+                      {item._source.productName}
+                    </p>
+                    <div className="border-b"></div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
         {/* <Link to="/posts">Post</Link> */}
-        {token || refreshToken ? (
-          <Link className="text-black-300 hover:text-pink-500" to="/profile">
-            프로필
+        {user ? (
+          <Link
+            className="font-semibold text-pink-300 text-black-300 hover:text-pink-500"
+            to="/profile">
+            {user.nickname + " 님 >"}
           </Link>
         ) : (
-          <button
-            className="text-black-300 hover:text-pink-500"
-            onClick={() => {
-              setModalIsOpen(true);
-              setIsSignupLogIn("signup");
-            }}>
-            회원가입
-          </button>
+          <div></div>
         )}
-        {token || refreshToken ? (
+        {user ? (
           <button
             className="text-black-300 hover:text-pink-500"
-            onClick={() => {
-              Cookies.remove("AccessToken");
-              Cookies.remove("RefreshToken");
+            onClick={async () => {
+              await axios.delete(
+                `${process.env.REACT_APP_API_SERVERURL}/user/signOut`,
+                {
+                  withCredentials: true,
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+
               window.location.reload();
             }}>
             로그아웃
@@ -125,10 +200,16 @@ export default function Navbar() {
             로그인
           </button>
         )}
+        <CartButton />
       </div>
-      <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={customStyles}>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        style={customStyles}>
         <style>{slideUpAnimation}</style>
-        <div className="">{isSignupLogIn === "login" ? <Login /> : <Signup />}</div>
+        <div className="">
+          {isSignupLogIn === "login" ? <Login /> : <Signup />}
+        </div>
       </Modal>
     </header>
   );

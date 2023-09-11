@@ -12,3 +12,148 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+input:focus {
+  outline: none;
+}
+
+li {
+  max-width: 200px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: normal; /* white-space를 normal로 설정 */
+}
+
+.speech-bubble {
+  position: relative;
+  background: #bd00b6;
+  border-radius: 0.4em;
+}
+
+.speech-bubble:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border: 57px solid transparent;
+  border-right-color: #bd00b6;
+  border-left: 0;
+  border-bottom: 0;
+  margin-top: -28.5px;
+  margin-left: -57px;
+}
+
+.animate-shake {
+  animation: shake 1s;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(5px);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+.animate-tilt {
+  animation: tilt 2s;
+  transform-origin: 50% 0%;
+}
+
+@keyframes tilt {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(10deg);
+  }
+  20% {
+    transform: rotate(-10deg);
+  }
+  30% {
+    transform: rotate(20deg);
+  }
+  40% {
+    transform: rotate(-20deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(-10deg);
+  }
+  70% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* 알림 메시지 말풍선 스타일 */
+.alert-bubble {
+  position: absolute;
+  top: 64px; /* 알림 메시지가 아래로 내려가도록 설정 */
+  background-color: #fba1b7;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+/* 화면 너비가 1024px 이상인 경우 */
+@media (max-width: 896px) {
+  .alert-bubble::before {
+    content: "";
+    position: absolute;
+    bottom: 100%; /* 화살표를 아래로 향하도록 설정 */
+    right: 10px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent #fba1b7 transparent; /* 화살표의 색상을 변경 */
+  }
+}
+
+/* 말풍선 모양 만들기 */
+@import url("https://fonts.googleapis.com/css2?family=Jua&display=swap");
+
+.titleFont {
+  font-family: "Jua", sans-serif;
+}
+
+.draggable-container {
+  position: absolute;
+
+  cursor: grab; /* 드래그 커서 모양 지정 */
+}
+
+.draggable-container.dragging {
+  cursor: grabbing; /* 드래그 중일 때의 커서 모양 지정 */
+}
+
+.index99 {
+  z-index: 999;
+}
+
+/* 스크롤바 숨기기 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
