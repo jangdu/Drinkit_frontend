@@ -8,7 +8,6 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [nickname, setNickname] = useState("");
   const [isPersonal, setIsPerisPersonal] = useState(false);
@@ -17,12 +16,6 @@ const Signup = () => {
   const [code, setCode] = useState("");
   const [isAuth, setIsAuth] = useState(false);
   const { naver } = window;
-
-  useEffect(() => {
-    const validEmail = Cookies.get("email");
-
-    setEmail(validEmail);
-  }, []);
 
   const sendSMS = async (e) => {
     console.log(phoneNumber.length);
@@ -123,7 +116,6 @@ const Signup = () => {
             name,
             password,
             confirm,
-            email,
             isPersonal,
             isAdmin: false,
             phoneNumber,
@@ -142,15 +134,16 @@ const Signup = () => {
             },
           }
         );
-
+        if (response.status === 302) {
+          alert("회원가입에 실패하였습니다. 다시 시도해주세요.");
+          return (window.location = `${process.env.REACT_APP_MAINURL}`);
+        }
         if (response.status === 201) {
           alert("회원가입에 성공하였습니다.");
-          Cookies.remove("email");
-          return (window.location = "https://drinkit.site");
+          return (window.location = `${process.env.REACT_APP_MAINURL}`);
         } else {
           alert(response.message);
           setConfirm("");
-          setEmail("");
           setIsPerisPersonal(false);
           setName("");
           setNickname("");
