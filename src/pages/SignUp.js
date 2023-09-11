@@ -264,6 +264,7 @@ const Signup = () => {
             required={true}
             onChange={(e) => setAddressDetail(e.target.value)}
             value={addressDetail}
+            style={{ marginRight: "1em" }}
           />
           <button
             type="button"
