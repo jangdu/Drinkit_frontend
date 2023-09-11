@@ -228,6 +228,7 @@ const Signup = () => {
             type="text"
             required={true}
             value={enroll_company.address}
+            style={{ marginRight: "1em" }}
           />
           <input
             placeholder="상세 주소"
@@ -235,6 +236,7 @@ const Signup = () => {
             required={true}
             onChange={(e) => setAddressDetail(e.target.value)}
             value={addressDetail}
+            style={{ marginRight: "1em" }}
           />
           <input
             placeholder="주소명"
@@ -242,6 +244,7 @@ const Signup = () => {
             required={true}
             onChange={(e) => setAddressName(e.target.value)}
             value={addressName}
+            style={{ marginRight: "1em" }}
           />
           <button type="button" onClick={handleComplete}>
             우편번호 찾기
@@ -249,12 +252,14 @@ const Signup = () => {
           {popup && (
             <Post
               company={enroll_company}
-              setcompany={setEnroll_company}></Post>
+              setcompany={setEnroll_company}
+            ></Post>
           )}
         </div>
         <button
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          type="submit">
+          type="submit"
+        >
           {"회원가입"}
         </button>
       </form>
