@@ -63,7 +63,7 @@ export default function MyProfile() {
         console.log(response);
         if (response.status === 200) {
           const { data } = response;
-          setMyStore(data);
+          setMyStore(data[0]);
         } else {
           if (response.status === 404) {
             setMyStore();
