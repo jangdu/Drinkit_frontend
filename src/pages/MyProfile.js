@@ -83,11 +83,27 @@ export default function MyProfile() {
   } else {
     return (
       <div className="flex flex-col gap-5 max-w-lg p-2 mx-auto">
-        <div className="mt-5 w-full text-left content-center p-2 flex flex-row text-xl font-semibold">
-          <p className="text-pink-500">{user.nickname}</p>
-          <p className="font-bold"> {"님의 회원정보"}</p>
-        </div>
-        <div className="rounded-xl border-slate-200 text-slate-500 p-4 shadow-xl border flex flex-col gap-4">
+        <div className="rounded-xl border-slate-200 my-6 bg-white text-slate-500 p-4 shadow-xl border flex flex-col gap-4">
+          <div className="my-2 text-center w-fit mx-auto content-center p-2 flex flex-row text-xl font-semibold">
+            <p className="text-pink-500">{user.nickname}</p>
+            <p className="font-bold"> {"님의 회원정보"}</p>
+          </div>
+          <div className="flex justify-end text-black">
+            {user && (
+              <div>
+                <Link to={`/orderlist`} className="font-bold w-20 hover:text-pink-300">
+                  나의 주문내역
+                </Link>
+              </div>
+            )}
+            {user && user.isAdmin && (
+              <div>
+                <Link to={`/orderlistbyadmin`} className="font-bold ms-4 w-20 hover:text-pink-300">
+                  관리자 주문내역
+                </Link>
+              </div>
+            )}
+          </div>
           <div className="flex flex-row items-center text-lg justify-between">
             <div className="flex flex-row">
               <p className="font-bold w-20">이름</p> <span className="ms-10 text-black">{user.name}</span>
@@ -158,15 +174,40 @@ export default function MyProfile() {
               }}></Button>
           </div>
         </div>
-        <div className="border-b-2 border-slate-300 mb-5"></div>
+        <div className="border-b-2 border-slate-300"></div>
         {user.isPersonal && myStore && (
-          <div>
-            <h1 className="text-center text-xl font-bold w-20">{`${myStore.name}님의 가게 정보`}</h1>
-            <div>
-              <Link to={`/orderlistbystore/${myStore.id}`} className="font-bold w-20 hover:text-pink-300">
+          <div className="rounded-xl border-slate-200 bg-white text-slate-500 p-4 shadow-xl border flex flex-col gap-4">
+            <h1 className="text-center my-3 text-xl font-bold">
+              <span className="text-xl font-bold text-pink-500">{`${myStore.name}`}</span>
+              {`님의 가게 정보`}
+            </h1>
+            <div className="flex justify-end text-black">
+              <Link to={`/orderlistbystore/${myStore.id}`} className="font-bold w-fit flex justify-end hover:text-pink-300">
                 <Button text="나의 가게 주문내역" />
               </Link>
-              <div className="border-b-2 border-slate-300 my-5"></div>
+            </div>
+            <div className="flex flex-row  items-center text-lg justify-between">
+              <div className="flex flex-row justify-between">
+                <p className="font-bold w-20">상호명</p> <span className="ms-10 text-black">{myStore.name}</span>
+              </div>
+            </div>
+            <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
+            <div className="flex flex-row  items-center text-lg justify-between">
+              <div className="flex flex-row justify-between">
+                <p className="font-bold w-20">가게 설명</p> <span className="ms-10 text-black">{myStore.description}</span>
+              </div>
+            </div>
+            <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
+            <div className="flex flex-row  items-center text-lg justify-between">
+              <div className="flex flex-row justify-between">
+                <p className="font-bold w-20">주소</p> <span className="ms-10 text-black">{myStore.address}</span>
+              </div>
+            </div>
+            <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
+            <div className="flex flex-row  items-center text-lg justify-between">
+              <div className="flex flex-row justify-between">
+                <p className="font-bold w-20">사업자번호</p> <span className="ms-10 text-black">{myStore.businessLicense}</span>
+              </div>
             </div>
           </div>
         )}
@@ -177,20 +218,8 @@ export default function MyProfile() {
             </Link>
           </div>
         )}
-        {user && user.isAdmin && (
-          <div>
-            <Link to={`/orderlistbyadmin`} className="font-bold w-20 hover:text-pink-300">
-              관리자 주문내역
-            </Link>
-          </div>
-        )}
-        {user && (
-          <div>
-            <Link to={`/orderlist`} className="font-bold w-20 hover:text-pink-300">
-              나의 주문내역
-            </Link>
-          </div>
-        )}
+        <div className="border-b-2 border-slate-300 my-5"></div>
+
         <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={customStyles}>
           <style>{slideUpAnimation}</style>
           <div className=""> {isPoint ? <AddPoint user={user} /> : <Signup isUpdateProfile={true} />}</div>
