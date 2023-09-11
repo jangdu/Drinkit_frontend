@@ -32,8 +32,7 @@ const Login = () => {
       document.cookie = `AccessToken=Bearer ${response.data.accessToken}; Secure; SameSite=None;`;
       document.cookie = `RefreshToken=Bearer ${response.data.refreshToken}; Secure; SameSite=None;`;
     } catch (error) {
-      alert(error);
-      console.error("Error occurred during signup:", error);
+      alert(error.response.data.message);
     }
   };
 
@@ -43,8 +42,7 @@ const Login = () => {
     try {
       window.location = `${process.env.REACT_APP_API_SERVERURL}/user/login/kakao`;
     } catch (error) {
-      alert(error);
-      console.error("Error occurred during signup:", error);
+      alert(error.response.data.message);
     }
   };
 
@@ -54,8 +52,7 @@ const Login = () => {
     try {
       window.location = `${process.env.REACT_APP_API_SERVERURL}/user/login/naver`;
     } catch (error) {
-      alert(error);
-      console.error("Error occurred during signup:", error);
+      alert(error.response.data.message);
     }
   };
 
@@ -65,8 +62,7 @@ const Login = () => {
     try {
       window.location = `${process.env.REACT_APP_API_SERVERURL}/user/login/google`;
     } catch (error) {
-      alert(error);
-      console.error("Error occurred during signup:", error);
+      alert(error.response.data.message);
     }
   };
 
