@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 // import { loginUser } from '../api/auth';
-import Cookies from "js-cookie";
 import axios from "axios";
 
 const Login = () => {
@@ -71,7 +70,7 @@ const Login = () => {
 
   const signup = async (e) => {
     e.preventDefault();
-    window.location = "http://118.67.143.18:3200/authEmail";
+    window.location = `${process.env.REACT_APP_API_SERVERURL}/authEmail`;
   };
 
   return (
