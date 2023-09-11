@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import Modal from "react-modal";
@@ -6,6 +6,7 @@ import Signup from "../components/Signup";
 import Button from "../components/ui/Button";
 import Loading from "../components/Loding";
 import AddPoint from "../components/AddPoint";
+import axios from "axios";
 
 const customStyles = {
   overlay: {
@@ -42,9 +43,37 @@ const slideUpAnimation = `
 `;
 
 export default function MyProfile() {
-  const { user, isLoading, myStore } = useAuthContext();
+  const { user, isLoading } = useAuthContext();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isPoint, setIsPoint] = useState(false);
+  const [myStore, setMyStore] = useState();
+
+  useEffect(() => {
+    const getMyStore = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/stores/mystore`, {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log(response);
+        if (response.status === 200) {
+          const { data } = response;
+          setMyStore(data);
+        } else {
+          if (response.status === 404) {
+            setMyStore();
+            const data = response.json();
+          }
+        }
+      } catch (error) {}
+    };
+
+    if (user.isPersonal) {
+      getMyStore();
+    }
+  }, []);
 
   if (isLoading) {
     return <Loading></Loading>;
@@ -130,16 +159,21 @@ export default function MyProfile() {
           </div>
         </div>
         <div className="border-b-2 border-slate-300 mb-5"></div>
-        {user.isPersonal && (
+        {user.isPersonal && myStore && (
           <div>
             <h1 className="text-center text-xl font-bold w-20">{`${myStore.name}님의 가게 정보`}</h1>
-            <div className="border-b-2 border-slate-300 my-5"></div>
+            <div>
+              <Link to={`/orderlistbyadmin`} className="font-bold w-20 hover:text-pink-300">
+                <Button text="나의 가게 주문내역" />
+              </Link>
+              <div className="border-b-2 border-slate-300 my-5"></div>
+            </div>
           </div>
         )}
-        {user && user.isPersonal && (
+        {user.isPersonal && !myStore && (
           <div>
-            <Link to={`/orderlistbyadmin`} className="font-bold w-20 hover:text-pink-300">
-              나의 가게 주문내역
+            <Link to={"/store"}>
+              <Button text="나의 가게 등록하기" />
             </Link>
           </div>
         )}
