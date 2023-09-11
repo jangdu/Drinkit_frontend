@@ -21,11 +21,6 @@ const Signup = () => {
   useEffect(() => {
     const validEmail = Cookies.get("email");
 
-    if (!validEmail) {
-      alert("세션이 유효하지 않습니다.");
-      return (window.location = "http://118.67.143.18:3200");
-    }
-
     setEmail(validEmail);
   }, []);
 
@@ -151,7 +146,7 @@ const Signup = () => {
         if (response.status === 201) {
           alert("회원가입에 성공하였습니다.");
           Cookies.remove("email");
-          return (window.location = "http://118.67.143.18:3200");
+          return (window.location = "https://drinkit.site");
         } else {
           alert(response.message);
           setConfirm("");
@@ -260,14 +255,12 @@ const Signup = () => {
           {popup && (
             <Post
               company={enroll_company}
-              setcompany={setEnroll_company}
-            ></Post>
+              setcompany={setEnroll_company}></Post>
           )}
         </div>
         <button
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          type="submit"
-        >
+          type="submit">
           {"회원가입"}
         </button>
       </form>

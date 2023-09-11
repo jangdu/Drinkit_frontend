@@ -121,16 +121,14 @@ export default function Navbar() {
         <div>
           <Link
             className="font-mono font-bold text-black-300 hover:text-pink-500"
-            to={"/subscribes"}
-          >
+            to={"/subscribes"}>
             구독
           </Link>
         </div>
         <div>
           <Link
             className="font-mono font-bold text-black-300 hover:text-pink-500"
-            to={"/chatList"}
-          >
+            to={"/chatList"}>
             같이술
           </Link>
         </div>
@@ -142,14 +140,12 @@ export default function Navbar() {
               placeholder="검색어 입력"
               className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500 w-52"
               value={text}
-              onChange={(e) => newText(e.target.value)}
-            ></input>
+              onChange={(e) => newText(e.target.value)}></input>
           </div>
         </div>
         <div
           style={cardStyles}
-          className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]"
-        >
+          className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]">
           {searchValue.length > 0 && text && (
             <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
               {searchValue.map((item) => {
@@ -159,8 +155,7 @@ export default function Navbar() {
                     onClick={() => {
                       newText("");
                       navigate(`/products/${item._source.id}`);
-                    }}
-                  >
+                    }}>
                     <p className="p-2 " key={item._source.id}>
                       {item._source.productName}
                     </p>
@@ -175,20 +170,11 @@ export default function Navbar() {
         {user ? (
           <Link
             className="font-semibold text-pink-300 text-black-300 hover:text-pink-500"
-            to="/profile"
-          >
+            to="/profile">
             {user.nickname + " 님 >"}
           </Link>
         ) : (
-          <button
-            className="font-thin text-black-300 hover:text-pink-500"
-            onClick={() => {
-              setModalIsOpen(true);
-              setIsSignupLogIn("signup");
-            }}
-          >
-            회원가입
-          </button>
+          <div></div>
         )}
         {user ? (
           <button
@@ -205,8 +191,7 @@ export default function Navbar() {
               );
 
               window.location.reload();
-            }}
-          >
+            }}>
             로그아웃
           </button>
         ) : (
@@ -215,8 +200,7 @@ export default function Navbar() {
             onClick={() => {
               setModalIsOpen(true);
               setIsSignupLogIn("login");
-            }}
-          >
+            }}>
             로그인
           </button>
         )}
@@ -225,8 +209,7 @@ export default function Navbar() {
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
-        style={customStyles}
-      >
+        style={customStyles}>
         <style>{slideUpAnimation}</style>
         <div className="">
           {isSignupLogIn === "login" ? <Login /> : <Signup />}
