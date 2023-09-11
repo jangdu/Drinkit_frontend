@@ -122,8 +122,8 @@ const Signup = () => {
             nickname,
             address: {
               address: enroll_company.address + addressDetail,
-              y,
-              x,
+              lat: y,
+              lng: x,
               name: addressName,
             },
           },
