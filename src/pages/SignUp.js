@@ -43,7 +43,7 @@ const Signup = () => {
       } catch (error) {
         alert("이미 존재하는 사용자입니다.");
       }
-    else return alert("번호가 올바른지 확인해 주세요.");
+    else return alert("번호를 확인해 주세요.");
   };
 
   const codeAuth = async (e) => {
@@ -168,13 +168,14 @@ const Signup = () => {
     setPopup(!popup);
   };
   return (
-    <div className="mt-20 p-2 border border-pink-300 rounded-lg bg-white">
+    <div className="p-2 mt-20 bg-white border border-pink-300 rounded-lg">
       <h2 className="mx-auto mt-5 mb-5 text-xl font-bold text-center">
         {"회원가입"}
       </h2>
       <form
         className="flex flex-col gap-4 w-[50%] mx-auto"
-        onSubmit={handleSubmit}>
+        onSubmit={handleSubmit}
+      >
         <input
           type="text"
           placeholder="이름"
@@ -217,7 +218,8 @@ const Signup = () => {
           <button
             type="button"
             className="w-40 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-            onClick={sendSMS}>
+            onClick={sendSMS}
+          >
             인증 번호 발급
           </button>
         </div>
@@ -237,7 +239,8 @@ const Signup = () => {
           <button
             type="button"
             className="w-40 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-            onClick={codeAuth}>
+            onClick={codeAuth}
+          >
             인증
           </button>
         </div>
@@ -249,7 +252,7 @@ const Signup = () => {
           onChange={(e) => setNickname(e.target.value)}
         />
         <input
-          className="user_enroll_text p-2 border border-pink-300 rounded-lg placeholder:text-gray-500"
+          className="p-2 border border-pink-300 rounded-lg user_enroll_text placeholder:text-gray-500"
           placeholder="주소"
           type="text"
           disabled={true}
@@ -269,7 +272,8 @@ const Signup = () => {
           <button
             type="button"
             className="w-40 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-            onClick={handleComplete}>
+            onClick={handleComplete}
+          >
             주소 검색
           </button>
         </div>
@@ -286,7 +290,8 @@ const Signup = () => {
         />
         <button
           className="w-[80%] mx-auto mb-10 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          type="submit">
+          type="submit"
+        >
           {"회원가입"}
         </button>
       </form>
