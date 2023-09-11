@@ -55,7 +55,8 @@ export class RequestPay extends React.Component {
                     async function (rsp) {
                     let msg = '';
                         if (rsp.success) {
-                            msg = `결제가 완료되었습니다.\n고유ID: ${rsp.imp_uid}\n상점 거래ID: ${rsp.merchant_uid}\n결제 금액: ${rsp.paid_amount}원\n카드 승인번호: ${rsp.apply_num}`;
+                            // msg = `결제가 완료되었습니다.\n고유ID: ${rsp.imp_uid}\n상점 거래ID: ${rsp.merchant_uid}\n결제 금액: ${rsp.paid_amount}원\n카드 승인번호: ${rsp.apply_num}`;
+                            msg = `결제가 완료되었습니다.\n결제 금액: ${rsp.paid_amount}원`
             
                             const response = await axios.post(`${process.env.REACT_APP_API_SERVERURL}/orders/postOrder`,
                             {totalPrice: rsp.paid_amount, orderList, impUid: rsp.imp_uid, paidPoint: Number(usePoint), storeId, address: input } ,{
