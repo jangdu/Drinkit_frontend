@@ -70,7 +70,7 @@ const Login = () => {
 
   const signup = async (e) => {
     e.preventDefault();
-    window.location = `${process.env.REACT_APP_API_SERVERURL}/authEmail`;
+    window.location = "https://drinkit.site/authEmail";
   };
 
   return (
