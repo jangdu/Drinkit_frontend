@@ -11,7 +11,7 @@ import ReactModal from "react-modal";
 // 2. http://jangdu.me:8000
 // 3. http://www.yhjs1211.online:8000 , http://118.67.143.18:8000
 
-const socket = io("http://jangdu.me/chat", {
+const socket = io("https://jangdu.me/chat", {
   transports: ["websocket"],
   withCredentials: true,
   auth: {
