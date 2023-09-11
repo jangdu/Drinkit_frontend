@@ -36,24 +36,24 @@ const AuthEmail = () => {
   };
 
   return (
-    <div className="flex flex-col">
-      <h2 className="mx-auto mb-5 text-xl font-bold text-center">
-        {" "}
-        {"이메일 인증"}
-      </h2>
-      <input
-        type="text"
-        placeholder="example@example.com"
-        value={email}
-        required
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <button
-        className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-        type="submit"
-        onClick={emailValid}>
-        {"인증"}
-      </button>
+    <div className="mt-20 p-2 border border-pink-300 rounded-lg bg-white">
+      <h1 className="mt-20 mb-10 text-xl font-bold text-center">이메일 인증</h1>
+      <form className="flex flex-col gap-4 w-[50%] mx-auto">
+        <input
+          type="text"
+          className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500"
+          placeholder="example@example.com"
+          value={email}
+          required={true}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <button
+          className="w-[100%] mb-20 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
+          type="submit"
+          onClick={emailValid}>
+          {"인증"}
+        </button>
+      </form>
     </div>
   );
 };
