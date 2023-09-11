@@ -92,8 +92,7 @@ const Login = () => {
         />
         <button
           type="submit"
-          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-        >
+          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500">
           로그인
         </button>
       </form>
@@ -101,29 +100,25 @@ const Login = () => {
         <button
           type="submit"
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={kakaoLogin}
-        >
+          onClick={kakaoLogin}>
           카카오 로그인
         </button>
         <button
           type="submit"
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={naverLogin}
-        >
+          onClick={naverLogin}>
           네이버 로그인
         </button>
         <button
           type="submit"
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={googleLogin}
-        >
+          onClick={googleLogin}>
           구글 로그인
         </button>
         <button
           type="submit"
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={signup}
-        >
+          onClick={signup}>
           회원가입
         </button>
       </div>

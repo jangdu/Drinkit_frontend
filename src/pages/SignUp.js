@@ -8,7 +8,6 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [nickname, setNickname] = useState("");
   const [isPersonal, setIsPerisPersonal] = useState(false);
@@ -17,17 +16,6 @@ const Signup = () => {
   const [code, setCode] = useState("");
   const [isAuth, setIsAuth] = useState(false);
   const { naver } = window;
-
-  useEffect(() => {
-    const validEmail = Cookies.get("email");
-
-    if (!validEmail) {
-      alert("세션이 유효하지 않습니다.");
-      return (window.location = `${process.env.REACT_APP_API_SERVERURL}/user/signup`);
-    }
-
-    setEmail(validEmail);
-  }, []);
 
   const sendSMS = async (e) => {
     console.log(phoneNumber.length);
@@ -128,7 +116,6 @@ const Signup = () => {
             name,
             password,
             confirm,
-            email,
             isPersonal,
             isAdmin: false,
             phoneNumber,
@@ -147,15 +134,17 @@ const Signup = () => {
             },
           }
         );
-
+        //쿠키 없어서 실패
+        if (response.status === 302) {
+          alert("회원가입에 실패하였습니다. 다시 시도해주세요.");
+          return (window.location = `${process.env.REACT_APP_MAINURL}`);
+        }
         if (response.status === 201) {
           alert("회원가입에 성공하였습니다.");
-          Cookies.remove("email");
-          return (window.location = `${process.env.REACT_APP_API_SERVERURL}`);
+          return (window.location = `${process.env.REACT_APP_MAINURL}`);
         } else {
           alert(response.message);
           setConfirm("");
-          setEmail("");
           setIsPerisPersonal(false);
           setName("");
           setNickname("");
@@ -260,14 +249,12 @@ const Signup = () => {
           {popup && (
             <Post
               company={enroll_company}
-              setcompany={setEnroll_company}
-            ></Post>
+              setcompany={setEnroll_company}></Post>
           )}
         </div>
         <button
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          type="submit"
-        >
+          type="submit">
           {"회원가입"}
         </button>
       </form>

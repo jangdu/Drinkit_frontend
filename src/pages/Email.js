@@ -8,7 +8,6 @@ const AuthEmail = () => {
     e.preventDefault();
 
     try {
-      // 회원가입
       const response = await axios.post(
         `${process.env.REACT_APP_API_SERVERURL}/user/emailAuth`,
         {
@@ -52,8 +51,7 @@ const AuthEmail = () => {
       <button
         className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
         type="submit"
-        onClick={emailValid}
-      >
+        onClick={emailValid}>
         {"인증"}
       </button>
     </div>
