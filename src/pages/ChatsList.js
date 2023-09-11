@@ -22,10 +22,10 @@ const socket = io("https://jangdu.me/chat", {
 
 const cardStyles = {
   position: "fixed",
-  bottom: "120px",
-  right: "2.5%",
-  width: "95%",
-  height: "80vh",
+  bottom: "25%",
+  left: "25%",
+  width: "50%",
+  height: "50%",
   animation: "slide-up 0.8s",
 };
 
@@ -94,43 +94,34 @@ const ChatList = () => {
   };
 
   return (
-    <div className={`flex flex-col`}>
-      <h1 className="text-2xl font-bold text-center">채팅방 목록</h1>
-      <div className="w-fit ">
-        <Button text={"내 채팅방 만들기"} onClick={handleCreateRoomClick} />
+    // <div className={`flex flex-col border border-slate-500 bg-white max-w-xl mx-auto mt-2 h-[90vh] rounded-2xl p-3`}>
+    <div className="rounded-xl border-slate-200 my-3 max-w-xl min-h-[90vh] mx-auto bg-white p-4 shadow-xl border flex flex-col gap-4">
+      <h1 className="text-2xl font-bold text-center my-2">채팅방 목록</h1>
+      <div className="flex flex-row justify-end font-bold text-xl my-2">
+        <Button text={"방 만들기"} onClick={handleCreateRoomClick} />
       </div>
       {isCreatingRoom ? (
-        <div
-          className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`}
-          style={cardStyles}>
+        <div className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`} style={cardStyles}>
           <style>{slideUpAnimation}</style>
-          <CreateRoom
-            socket={socket}
-            socketId={socketId}
-            setIsCreatingRoom={setIsCreatingRoom}
-            setModalIsOpen={setModalIsOpen}
-            setClickedRoom={setClickedRoom}
-          />
+          <CreateRoom socket={socket} socketId={socketId} setIsCreatingRoom={setIsCreatingRoom} setModalIsOpen={setModalIsOpen} setClickedRoom={setClickedRoom} />
         </div>
       ) : (
         chatRooms &&
         Object.entries(chatRooms).map(([roomSize, value]) => {
           return (
-            <div key={roomSize} className="flex flex-col p-2">
-              <h2 className="text-xl font-bold">{roomSize}명 방</h2>
+            <div key={roomSize} className="flex flex-col">
+              {/* <h2 className="text-xl font-bold">{roomSize}명 방</h2> */}
               {chatRooms[roomSize] &&
-                Object.entries(chatRooms[roomSize]).map(
-                  ([roomId, roomList]) => {
-                    const jsonRoom = JSON.parse(roomList);
-                    return (
-                      <div
-                        key={roomId}
-                        className="flex flex-row items-center justify-between gap-3 p-4 my-4">
-                        <span className="text-lg ">
-                          방 이름: {jsonRoom["roomName"]}
-                        </span>
-                        {/* <span>방장: {jsonRoom["roomOwner"]}</span> */}
-                        {/* <span className="text-lg">최대 인원: {jsonRoom["maxNumberOfPerson"]}</span> */}
+                Object.entries(chatRooms[roomSize]).map(([roomId, roomList]) => {
+                  const jsonRoom = JSON.parse(roomList);
+                  return (
+                    <div key={roomId} className="flex flex-col  my-4 p-3">
+                      <div key={roomId} className="flex flex-row items-center justify-between gap-3">
+                        <div className="flex flex-row items-center gap-4 ">
+                          <span className="text-lg text-slate-500 font-semibold">{"[" + jsonRoom["maxNumberOfPerson"] + "인방]"}</span>
+                          <span className="text-lg font-bold">{jsonRoom["roomName"]}</span>
+                          {/* <span>방장: {jsonRoom["roomOwner"]}</span> */}
+                        </div>
                         <Button
                           text={"들어가기"}
                           onClick={() => {
@@ -139,9 +130,10 @@ const ChatList = () => {
                           }}
                         />
                       </div>
-                    );
-                  }
-                )}
+                      {/* <div className="border w-[50%] mx-auto border-pink-300"></div> */}
+                    </div>
+                  );
+                })}
             </div>
           );
         })
@@ -155,12 +147,7 @@ const ChatList = () => {
       <ReactModal isOpen={modalIsOpen} style={cusStyle}>
         <style>{slideUpModalAnimation}</style>
         <div>
-          <ChatsModal
-            clickedRoom={clickedRoom}
-            socket={socket}
-            socketId={socketId}
-            setModalIsOpen={setModalIsOpen}
-          />
+          <ChatsModal clickedRoom={clickedRoom} socket={socket} socketId={socketId} setModalIsOpen={setModalIsOpen} />
         </div>
       </ReactModal>
     </div>
