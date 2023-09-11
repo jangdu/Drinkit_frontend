@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 // import { loginUser } from '../api/auth';
-import Cookies from "js-cookie";
 import axios from "axios";
 
 const Login = () => {
