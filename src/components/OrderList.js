@@ -61,9 +61,9 @@ export default function OrderList() {
               <span> 주문일: {item.createdAt}</span>
               <div className="flex justify-end">
                 <p className="me-2">{item.status}</p>
-                <button value={item.id} type="submit" className="w-[10%] bg-pink-400 rounded-2xl me-2" onClick={(e) => cancelOrderRequest(e.target.value)}>
+                {item.address !== '포인트충전' ? <button value={item.id} type="submit" className="w-[10%] bg-pink-400 rounded-2xl me-2" onClick={(e) => cancelOrderRequest(e.target.value)}>
                   환불하기
-                </button>
+                </button> : <p>포인트(환불불가)</p>}
               </div>
             </div>
           );
