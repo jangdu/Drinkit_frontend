@@ -1,5 +1,6 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
@@ -38,6 +39,7 @@ export function AuthContextProvider({ children }) {
         setUser({});
       }
       setUser(data);
+      console.log("Data in Auth Context =>", data);
       setIsLoading(false);
     } catch (error) {
       setMyStore(null);
@@ -48,7 +50,8 @@ export function AuthContextProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, myStore, userId: user && user.id, isLoading }}>
+      value={{ user, myStore, userId: user && user.id, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

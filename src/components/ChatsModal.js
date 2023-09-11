@@ -1,17 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Button from "./ui/Button";
 import { useAuthContext } from "../context/AuthContext";
-import Peer from "peerjs";
+import Peer, { DataConnection } from "peerjs";
+import { AiOutlineClose } from "react-icons/ai";
+import { BiChat } from "react-icons/bi";
 
-const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
+const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
+  const [chatMessages, setChatMessages] = useState([]);
+  const [isOpenedChat, setIsOpenChat] = useState(false);
+  const scrollContainerRef = useRef(null);
+  // Peer
   const [newPeer, setNewPeer] = useState();
   const [myPeerId, setMyPeerId] = useState();
   const [peers, setPeers] = useState([]);
-  const [chatMessages, setChatMessages] = useState([]);
+  const [conn, setConn] = useState(null);
 
   const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    // 스크롤 컨테이너의 scrollTop을 최대로 설정하여 항상 아래로 스크롤합니다.
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   useEffect(() => {
     const container = document.getElementById("myVideoContainer");
@@ -57,14 +70,14 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
   }, []);
 
   useEffect(() => {
-    var peer = new Peer();
+    var peer = new Peer(socketId);
     setNewPeer(peer);
 
-    peer.on("open", function (data) {
-      console.log("me:", data);
-      setMyPeerId(data);
+    peer.on("open", function (id) {
+      setMyPeerId(id);
 
-      socket.emit("shareId", data);
+      clickedRoom.peerId = id;
+      socket.emit("joinRoom", clickedRoom);
     });
 
     peer.on("connection", function (conn) {
@@ -73,7 +86,7 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
 
       conn.on("data", function (data) {
         // 연결된 피어에서 수신
-        console.log(data);
+        console.log("connected!!", data);
         setChatMessages((prevMessages) => [...prevMessages, data]);
       });
     });
@@ -89,7 +102,7 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
       videoElement.srcObject = stream;
       // videoElement.className = "absolute bottom-10 w-96";
       videoElement.autoplay = true; // 자동 재생 설정
-      videoElement.className = "border rounded-lg shadow-xl";
+      videoElement.className = "border border-2 border-pink-500 rounded-lg shadow-xl";
 
       // 비디오를 화면에 추가
       const videoContainer = document.getElementById("myVideoContainer");
@@ -118,19 +131,18 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
       });
     });
 
-    socket.emit("joinRoom", clickedRoom);
     socket.on("joinedRoom", handleNewMessage);
     socket.on("userJoined", handleNewMessage);
     socket.on("broadcastMessage", handleNewMessage);
 
     // id: 공유받은 id
     socket.on("sharedId", async (id) => {
-      console.log("누구아이디", id);
-      await newConection(id);
+      const peerConn = peer.connect(id);
+      setConn(peerConn);
+      newConection(id, peerConn);
     });
 
-    const newConection = (id) => {
-      var conn = peer.connect(id);
+    const newConection = (id, conn) => {
       conn.on("open", function () {
         conn.send("hi!", id);
         navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((mediaStream) => {
@@ -170,7 +182,9 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
     window.location.reload();
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+
     if (messageInput.trim() !== "") {
       // 입력한 메시지를 서버로 전송합니다.
       socket.emit("sendChat", messageInput);
@@ -185,34 +199,37 @@ const ChatsModal = ({ clickedRoom, socket, setModalIsOpen }) => {
 
   return (
     <div style={{ height: "90%", overflowY: "auto" }}>
-      <h2>{clickedRoom.name} 채팅방</h2>
-      <div id="myVideoContainer" className={`w-40 index99 ${"draggable-container"}`}></div>
+      <div id="myVideoContainer" className={`w-60 index99 ${"draggable-container"}`}></div>
       <div id="videoContainer" className="grid grid-cols-2"></div>
-      <div>
-        {chatMessages.map((msg, index) => (
-          <div key={index}>
-            <strong>{msg.from}: </strong>
-            {msg.text}
-          </div>
-        ))}
+      <div className={`absolute ${isOpenedChat && "hidden"} min-w-[280px] bg-opacity-50 w-[45%] rounded-lg bottom-5 right-14 h-[50%] shadow-xl p-4 bg-pink-100`}>
+        <div ref={scrollContainerRef} className={`overflow-y-auto h-[95%] no-scrollbar overscroll-none `} style={{ whiteSpace: "nowrap" }}>
+          {chatMessages.map((msg, index) => (
+            <div key={index}>
+              <strong>{msg.from}: </strong>
+              {msg.text}
+            </div>
+          ))}
+          {messages.map((message, index) => (
+            <div key={index}>{message}</div>
+          ))}
+        </div>
+        <form className="absolute bottom-0 right-0 w-full" onSubmit={handleSendMessage}>
+          <input required type="text" className="bg-transparent p-4 w-[85%]" value={messageInput} onChange={(e) => setMessageInput(e.target.value)} placeholder="메시지를 입력하세요." />
+          <Button text=">" />
+        </form>
       </div>
-      <div>
-        {messages.map((message, index) => (
-          <div key={index}>{message}</div>
-        ))}
-      </div>
-      <div className="absolute bottom-0">
-        <input type="text" value={messageInput} onChange={(e) => setMessageInput(e.target.value)} placeholder="메시지를 입력하세요." />
-        <Button text="전송" onClick={handleSendMessage} />
-      </div>
-      <div className="absolute right-3 top-3">
-        <Button
-          text="나가기"
+      <div className="absolute text-4xl right-3 flex flex-col h-[95%] top-4 justify-between">
+        <button
+          className="hover:text-red-500"
           onClick={() => {
             // 채팅 나가기
             handleLeaveRoom();
-          }}
-        />
+          }}>
+          <AiOutlineClose />{" "}
+        </button>
+        <button className="hover:text-red-500" onClick={() => setIsOpenChat(!isOpenedChat)}>
+          <BiChat />
+        </button>
       </div>
     </div>
   );

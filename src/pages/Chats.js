@@ -12,7 +12,7 @@ const pc_config = {
   ],
 };
 
-const SOCKET_SERVER_URL = "http://localhost:8000";
+const SOCKET_SERVER_URL = "http://jangdu.me:8000";
 
 const Chats = () => {
   const { roomId } = useParams(); // roomId 가져오기

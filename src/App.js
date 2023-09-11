@@ -16,7 +16,7 @@ function ScrollToTop() {
 }
 function App() {
   return (
-    <div className=" bg-slate-100">
+    <div className="bg-pink-50">
       <ScrollToTop />
       <AuthContextProvider>
         <CartProvider>
@@ -24,7 +24,7 @@ function App() {
             <header className=" border-b-2 border-pink-200 bg-white w-full">
               <Navbar />
             </header>
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-6xl mx-auto">
               <Outlet />
             </div>
           </div>
