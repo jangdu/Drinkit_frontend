@@ -29,9 +29,10 @@ const Login = () => {
         const data = await response.json();
         console.log(data);
       }
+      document.cookie = `AccessToken=Bearer ${response.data.accessToken}; Secure; SameSite=None;`;
+      document.cookie = `RefreshToken=Bearer ${response.data.refreshToken}; Secure; SameSite=None;`;
     } catch (error) {
-      alert(error);
-      console.error("Error occurred during signup:", error);
+      alert(error.response.data.message);
     }
   };
 
@@ -41,8 +42,7 @@ const Login = () => {
     try {
       window.location = `${process.env.REACT_APP_API_SERVERURL}/user/login/kakao`;
     } catch (error) {
-      alert(error);
-      console.error("Error occurred during signup:", error);
+      alert(error.response.data.message);
     }
   };
 
@@ -52,8 +52,7 @@ const Login = () => {
     try {
       window.location = `${process.env.REACT_APP_API_SERVERURL}/user/login/naver`;
     } catch (error) {
-      alert(error);
-      console.error("Error occurred during signup:", error);
+      alert(error.response.data.message);
     }
   };
 
@@ -63,14 +62,13 @@ const Login = () => {
     try {
       window.location = `${process.env.REACT_APP_API_SERVERURL}/user/login/google`;
     } catch (error) {
-      alert(error);
-      console.error("Error occurred during signup:", error);
+      alert(error.response.data.message);
     }
   };
 
   const signup = async (e) => {
     e.preventDefault();
-    window.location = "https://drinkit.site/authEmail";
+    window.location = `${process.env.REACT_APP_MAINURL}/authEmail`;
   };
 
   return (
@@ -92,7 +90,8 @@ const Login = () => {
         />
         <button
           type="submit"
-          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500">
+          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
+        >
           로그인
         </button>
       </form>
@@ -100,25 +99,29 @@ const Login = () => {
         <button
           type="submit"
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={kakaoLogin}>
+          onClick={kakaoLogin}
+        >
           카카오 로그인
         </button>
         <button
           type="submit"
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={naverLogin}>
+          onClick={naverLogin}
+        >
           네이버 로그인
         </button>
         <button
           type="submit"
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={googleLogin}>
+          onClick={googleLogin}
+        >
           구글 로그인
         </button>
         <button
           type="submit"
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={signup}>
+          onClick={signup}
+        >
           회원가입
         </button>
       </div>
