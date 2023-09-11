@@ -23,7 +23,7 @@ const Signup = () => {
 
     if (!validEmail) {
       alert("세션이 유효하지 않습니다.");
-      return (window.location = "http://118.67.143.18:3200");
+      return (window.location = `${process.env.REACT_APP_API_SERVERURL}/user/signup`);
     }
 
     setEmail(validEmail);
@@ -151,7 +151,7 @@ const Signup = () => {
         if (response.status === 201) {
           alert("회원가입에 성공하였습니다.");
           Cookies.remove("email");
-          return (window.location = "http://118.67.143.18:3200");
+          return (window.location = `${process.env.REACT_APP_API_SERVERURL}`);
         } else {
           alert(response.message);
           setConfirm("");
