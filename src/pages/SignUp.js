@@ -134,6 +134,7 @@ const Signup = () => {
             },
           }
         );
+        //쿠키 없어서 실패
         if (response.status === 302) {
           alert("회원가입에 실패하였습니다. 다시 시도해주세요.");
           return (window.location = `${process.env.REACT_APP_MAINURL}`);

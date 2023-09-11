@@ -51,12 +51,15 @@ export default function MyProfile() {
   useEffect(() => {
     const getMyStore = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_SERVERURL}/stores/mystore`, {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_SERVERURL}/stores/user/mystore`,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         console.log(response);
         if (response.status === 200) {
           const { data } = response;
@@ -90,27 +93,31 @@ export default function MyProfile() {
         <div className="rounded-xl border-slate-200 text-slate-500 p-4 shadow-xl border flex flex-col gap-4">
           <div className="flex flex-row items-center text-lg justify-between">
             <div className="flex flex-row">
-              <p className="font-bold w-20">이름</p> <span className="ms-10 text-black">{user.name}</span>
+              <p className="font-bold w-20">이름</p>{" "}
+              <span className="ms-10 text-black">{user.name}</span>
             </div>
           </div>
           <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
           <div className="flex flex-row  items-center text-lg justify-between">
             <div className="flex flex-row justify-between">
-              <p className="font-bold w-20">닉네임</p> <span className="ms-10 text-black">{user.nickname}</span>
-            </div>
-          </div>
-          <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
-
-          <div className="flex flex-row  items-center text-lg justify-between">
-            <div className="flex flex-row justify-between">
-              <p className="font-bold w-20">이메일</p> <span className="ms-10 text-black">{user.email}</span>
+              <p className="font-bold w-20">닉네임</p>{" "}
+              <span className="ms-10 text-black">{user.nickname}</span>
             </div>
           </div>
           <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
 
           <div className="flex flex-row  items-center text-lg justify-between">
             <div className="flex flex-row justify-between">
-              <p className="font-bold w-20">전화번호</p> <span className="ms-10 text-black">{user.phoneNumber}</span>
+              <p className="font-bold w-20">이메일</p>{" "}
+              <span className="ms-10 text-black">{user.email}</span>
+            </div>
+          </div>
+          <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
+
+          <div className="flex flex-row  items-center text-lg justify-between">
+            <div className="flex flex-row justify-between">
+              <p className="font-bold w-20">전화번호</p>{" "}
+              <span className="ms-10 text-black">{user.phoneNumber}</span>
             </div>
           </div>
           <div className="border-b-2 border-slate-100 w-[80%] mx-auto"></div>
@@ -163,7 +170,9 @@ export default function MyProfile() {
           <div>
             <h1 className="text-center text-xl font-bold w-20">{`${myStore.name}님의 가게 정보`}</h1>
             <div>
-              <Link to={`/orderlistbyadmin`} className="font-bold w-20 hover:text-pink-300">
+              <Link
+                to={`/orderlistbyadmin`}
+                className="font-bold w-20 hover:text-pink-300">
                 <Button text="나의 가게 주문내역" />
               </Link>
               <div className="border-b-2 border-slate-300 my-5"></div>
@@ -186,14 +195,26 @@ export default function MyProfile() {
         )}
         {user && (
           <div>
-            <Link to={`/orderlist`} className="font-bold w-20 hover:text-pink-300">
+            <Link
+              to={`/orderlist`}
+              className="font-bold w-20 hover:text-pink-300">
               나의 주문내역
             </Link>
           </div>
         )}
-        <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={customStyles}>
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={() => setModalIsOpen(false)}
+          style={customStyles}>
           <style>{slideUpAnimation}</style>
-          <div className=""> {isPoint ? <AddPoint user={user} /> : <Signup isUpdateProfile={true} />}</div>
+          <div className="">
+            {" "}
+            {isPoint ? (
+              <AddPoint user={user} />
+            ) : (
+              <Signup isUpdateProfile={true} />
+            )}
+          </div>
         </Modal>
       </div>
     );
