@@ -103,7 +103,9 @@ const ChatList = () => {
         }
       });
     });
-  }, [isCreatingRoom, socket]);
+  }, [isCreatingRoom]);
+
+  console.log(socket.id);
 
   const handleCreateRoomClick = () => {
     setIsCreatingRoom(true); // 버튼 클릭 시 방 만들기 화면 표시
