@@ -13,12 +13,25 @@ import GridChatList from "../components/GridChatList";
 // 3. http://www.yhjs1211.online:8000 , http://118.67.143.18:8000
 const cardStyles = {
   position: "fixed",
-  bottom: "120px",
-  right: "2.5%",
-  width: "95%",
-  height: "80vh",
+  bottom: "25%",
+  right: "25%",
+  width: "50%",
+  height: "50vh",
   animation: "slide-up 0.8s",
 };
+
+const slideUpAnimation = `
+    @keyframes slide-up {
+      from {
+        opacity: 0;
+        transform: translate(10%, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate(0, 0);
+      }
+    }
+  `;
 
 const cusStyle = {
   overlay: {
@@ -42,19 +55,6 @@ const cusStyle = {
   },
 };
 
-const slideUpAnimation = `
-    @keyframes slide-up {
-      from {
-        opacity: 0;
-        transform: translate(10%, 0);
-      }
-      to {
-        opacity: 1;
-        transform: translate(0, 0);
-      }
-    }
-  `;
-
 const slideUpModalAnimation = `
 @keyframes slide-up {
   from {
@@ -67,18 +67,21 @@ const slideUpModalAnimation = `
 `;
 
 const ChatList = () => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isCreatingRoom, setIsCreatingRoom] = useState(false); // 방 만들기 화면을 표시할지 여부를 상태로 관리합니다.
   const [clickedRoom, setClickedRoom] = useState();
   const [selectedCnt, setSelectedCnt] = useState([]);
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   // Room State
   const [roomForTwo, setRoomForTwo] = useState([]);
   const [roomForThree, setRoomForThree] = useState([]);
   const [roomForFour, setRoomForFour] = useState([]);
 
-  const [socket, setSocket] = useState(
-    io("http://localhost:8000/chat", {
+  const [socket, setSocket] = useState({});
+
+  useEffect(() => {
+    const newSocket = io("http://localhost:8000/chat", {
       transports: ["websocket"],
       auth: {
         accessToken: cookies.get("AccessToken"),
@@ -86,12 +89,10 @@ const ChatList = () => {
       },
       reconnectionAttempts: 3,
       reconnection: true,
-    })
-  );
+    });
+    setSocket(newSocket);
 
-  useEffect(() => {
-    socket.emit("getRooms", null, (response) => {
-      console.log(response);
+    newSocket.emit("getRooms", null, (response) => {
       Object.entries(response).forEach(([max, room]) => {
         if (max === "2") {
           setRoomForTwo(room);
@@ -103,9 +104,7 @@ const ChatList = () => {
         }
       });
     });
-  }, [isCreatingRoom]);
-
-  console.log(socket.id);
+  }, []);
 
   const handleCreateRoomClick = () => {
     setIsCreatingRoom(true); // 버튼 클릭 시 방 만들기 화면 표시
@@ -114,20 +113,23 @@ const ChatList = () => {
   return (
     <div className={`flex flex-col border max-w-xl mx-auto p-4 bg-white my-8 rounded-xl shadow-md`}>
       <h1 className="text-2xl font-bold text-center my-4">채팅방 목록</h1>
-      <div className="flex flex-row gap-3 justify-center">
+      <div className="flex flex-row gap-3 font-semibold justify-center">
         <button
+          className={`hover:text-pink-500 ${selectedCnt === roomForTwo && "text-pink-500"}`}
           onClick={() => {
             setSelectedCnt(roomForTwo);
           }}>
           2인방
         </button>
         <button
+          className={`hover:text-pink-500 ${selectedCnt === roomForThree && "text-pink-500"}`}
           onClick={() => {
             setSelectedCnt(roomForThree);
           }}>
           3인방
         </button>
         <button
+          className={`hover:text-pink-500 ${selectedCnt === roomForFour && "text-pink-500"}`}
           onClick={() => {
             setSelectedCnt(roomForFour);
           }}>
@@ -140,22 +142,17 @@ const ChatList = () => {
       {isCreatingRoom && (
         <div className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`} style={cardStyles}>
           <style>{slideUpAnimation}</style>
-          <CreateRoom socket={socket} setIsCreatingRoom={setIsCreatingRoom} setModalIsOpen={setModalIsOpen} setClickedRoom={setClickedRoom} />
+          <CreateRoom socket={socket} setIsCreatingRoom={setIsCreatingRoom} setClickedRoom={setClickedRoom} />
         </div>
       )}
-      {selectedCnt && <GridChatList list={selectedCnt} />}
-      {/* {modalIsOpen && (
-        <div className={`transition-opacity rounded-3xl shadow-2xl p-6 bg-pink-100`} style={cardStyles}>
-          <style>{slideUpAnimation}</style>
-          <ChatsModal clickedRoom={clickedRoom} socket={socket} setModalIsOpen={setModalIsOpen} />
-        </div>
-      )} */}
       <ReactModal isOpen={modalIsOpen} style={cusStyle}>
         <style>{slideUpModalAnimation}</style>
         <div>
           <ChatsModal clickedRoom={clickedRoom} socket={socket} socketId={socket.id} setModalIsOpen={setModalIsOpen} />
         </div>
       </ReactModal>
+
+      {selectedCnt && <GridChatList socket={socket} clickedRoom={clickedRoom} setClickedRoom={setClickedRoom} setModalIsOpen={setModalIsOpen} list={selectedCnt} />}
     </div>
   );
 };

@@ -13,7 +13,7 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
   const scrollContainerRef = useRef(null);
   // Peer
   const [peer, setPeer] = useState(null);
-  // const [myPeerId, setMyPeerId] = useState();
+  const [myPeerId, setMyPeerId] = useState();
   // const [peers, setPeers] = useState([]);
   // const [conn, setConn] = useState(null);
 
@@ -73,18 +73,39 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
 
   // Peer
   useEffect(() => {
+    if (!socket) {
+      return;
+    }
     const peer = new Peer(socketId);
     setPeer(peer);
+    clickedRoom.peerId = socketId;
 
-    socket.emit("joinRoom", clickedRoom);
+    // socket.emit("joinRoom", clickedRoom);
+    peer.on("open", function (id) {
+      setMyPeerId(id);
+
+      clickedRoom.peerId = id;
+      console.log(clickedRoom);
+      socket.emit("joinRoom", clickedRoom);
+    });
+
+    const userMedia = navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false,
+    });
+    userMedia.then((stream) => {
+      console.log(stream);
+      const videoElement = document.createElement("video");
+      videoElement.srcObject = stream;
+      videoElement.autoplay = true; // 자동 재생 설정
+      videoElement.className = "border border-2 border-pink-500 rounded-lg shadow-xl";
+
+      // 비디오를 화면에 추가
+      const videoContainer = document.getElementById("myVideoContainer");
+      videoContainer.appendChild(videoElement);
+      console.log(videoContainer);
+    });
   }, []);
-
-  // peer.on("open", function (id) {
-  //   setMyPeerId(id);
-
-  //   clickedRoom.peerId = id;
-  //   socket.emit("joinRoom", clickedRoom);
-  // });
 
   // peer.on("connection", function (conn) {
   //   // 새로운 연결이 설정될 때 처리
@@ -98,23 +119,6 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
   // });
 
   // // 전화 걸기
-
-  // const userMedia = navigator.mediaDevices.getUserMedia({
-  //   video: true,
-  //   audio: false,
-  // });
-  // userMedia.then((stream) => {
-  //   const videoElement = document.createElement("video");
-  //   videoElement.srcObject = stream;
-  //   // videoElement.className = "absolute bottom-10 w-96";
-  //   videoElement.autoplay = true; // 자동 재생 설정
-  //   videoElement.className =
-  //     "border border-2 border-pink-500 rounded-lg shadow-xl";
-
-  //   // 비디오를 화면에 추가
-  //   const videoContainer = document.getElementById("myVideoContainer");
-  //   videoContainer.appendChild(videoElement);
-  // });
 
   // peer.on("call", function (call) {
   //   //2 받기
