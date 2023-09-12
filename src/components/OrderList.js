@@ -17,6 +17,8 @@ export default function OrderList() {
         });
         if (response.status === 200) {
           const data = await response.data;
+          console.log(data)
+
           setPaymentLog(data);
         }
       } catch (error) {
@@ -47,6 +49,14 @@ export default function OrderList() {
     }
   };
 
+  const convertUtc = (time) => {
+    let date = new Date(time)
+    let offset = date.getTimezoneOffset() / 60;
+    let hours = date.getHours()
+    date.setHours(hours - offset)
+    return date.toLocaleString()
+  }
+
   return (
     <div>
       <h1 className=" rounded-t-3xl text-2xl font-bold text-center my-4 p-3">주문 목록</h1>
@@ -55,10 +65,17 @@ export default function OrderList() {
           return (
             <div type="submit" key={item.id} className="flex flex-col w-[90%] mx-auto shadow-md shadow-slate-400 bg-pink-300 p-4 py-1.5 rounded-2xl font-bold text-white mb-3">
               <div className="flex flex-row justify-between">
-                <p>{item.impUid}</p>
-                <p>금액-{item.totalPrice}</p>
+                <p>주문 코드: {item.impUid}</p>
+                <p>금액: {item.totalPrice}</p>
               </div>
-              <span> 주문일: {item.createdAt}</span>
+              <div>구매 목록</div>
+              {item.paymentDetail.length === 0 ? <div>포인트 충전</div>: item.paymentDetail.map((e) =>{ 
+                  return(<div>
+                    {e['product'].productName}  {e['product'].price}  X  {e.count}
+                  </div>)
+                })}
+              <div>사용 포인트: {item.paidPoint}</div>
+              <span> 주문일: {convertUtc(item.createdAt)}</span>
               <div className="flex justify-end">
                 <p className="me-2">{item.status}</p>
                 {item.address !== '포인트충전' ? <button value={item.id} type="submit" className="w-[10%] bg-pink-400 rounded-2xl me-2" onClick={(e) => cancelOrderRequest(e.target.value)}>
