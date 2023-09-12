@@ -2,12 +2,12 @@
 import React, { useState } from "react";
 import Button from "./ui/Button";
 
-// const socket = io("http://localhost:8000/chat", {
-//   transports: ["websocket", "polling"],
-//   withCredentials: true,
-// });
-
-const CreateRoom = ({ socket, socketId, setIsCreatingRoom, setModalIsOpen, setClickedRoom }) => {
+const CreateRoom = ({
+  socket,
+  setIsCreatingRoom,
+  setModalIsOpen,
+  setClickedRoom,
+}) => {
   const [roomName, setRoomName] = useState("");
   const [maxNumberOfPerson, setMaxNumberOfPerson] = useState("");
   const [password, setPassword] = useState("");
@@ -30,20 +30,35 @@ const CreateRoom = ({ socket, socketId, setIsCreatingRoom, setModalIsOpen, setCl
       <div className="absolute right-5 top-5">
         <Button text={"닫기"} onClick={() => setIsCreatingRoom(false)} />
       </div>
-      <h1 className="text-center font-bold my-2 text-xl">새 채팅방 만들기</h1>
-      <div className="flex flex-row justify-between items-center">
+      <h1 className="my-2 text-xl font-bold text-center">새 채팅방 만들기</h1>
+      <div className="flex flex-row items-center justify-between">
         <label>방 이름: </label>
-        <input type="text" className="rounded-lg py-1 px-2" value={roomName} onChange={(e) => setRoomName(e.target.value)} />
+        <input
+          type="text"
+          className="px-2 py-1 rounded-lg"
+          value={roomName}
+          onChange={(e) => setRoomName(e.target.value)}
+        />
       </div>
-      <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-row items-center justify-between">
         <label>최대 참여 인원 </label>
-        <input type="number" className="rounded-lg py-1 px-2" value={maxNumberOfPerson} onChange={(e) => setMaxNumberOfPerson(e.target.value)} />
+        <input
+          type="number"
+          className="px-2 py-1 rounded-lg"
+          value={maxNumberOfPerson}
+          onChange={(e) => setMaxNumberOfPerson(e.target.value)}
+        />
       </div>
-      <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-row items-center justify-between">
         <label>비밀번호: </label>
-        <input type="password" className="rounded-lg py-1 px-2" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <input
+          type="password"
+          className="px-2 py-1 rounded-lg"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
       </div>
-      <div className="w-fit mx-auto my-10">
+      <div className="mx-auto my-10 w-fit">
         <Button text={"방 만들기"} onClick={handleCreateRoom} />
       </div>
     </div>

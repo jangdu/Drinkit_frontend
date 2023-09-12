@@ -12,13 +12,14 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
   const [isOpenedChat, setIsOpenChat] = useState(false);
   const scrollContainerRef = useRef(null);
   // Peer
-  const [newPeer, setNewPeer] = useState();
-  const [myPeerId, setMyPeerId] = useState();
-  const [peers, setPeers] = useState([]);
-  const [conn, setConn] = useState(null);
+  const [peer, setPeer] = useState(null);
+  // const [myPeerId, setMyPeerId] = useState();
+  // const [peers, setPeers] = useState([]);
+  // const [conn, setConn] = useState(null);
 
   const [isDragging, setIsDragging] = useState(false);
 
+  // Scroll
   useEffect(() => {
     // 스크롤 컨테이너의 scrollTop을 최대로 설정하여 항상 아래로 스크롤합니다.
     if (scrollContainerRef.current) {
@@ -26,6 +27,7 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
     }
   }, [messages]);
 
+  // Video
   useEffect(() => {
     const container = document.getElementById("myVideoContainer");
 
@@ -69,115 +71,110 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
     };
   }, []);
 
+  // Peer
   useEffect(() => {
-    var peer = new Peer(socketId);
-    setNewPeer(peer);
+    const peer = new Peer(socketId);
+    setPeer(peer);
 
-    peer.on("open", function (id) {
-      setMyPeerId(id);
+    socket.emit("joinRoom", clickedRoom);
+  }, []);
 
-      clickedRoom.peerId = id;
-      socket.emit("joinRoom", clickedRoom);
-      console.log(clickedRoom);
-    });
+  // peer.on("open", function (id) {
+  //   setMyPeerId(id);
 
-    peer.on("connection", function (conn) {
-      // 새로운 연결이 설정될 때 처리
-      setPeers((prev) => [...prev, conn]);
+  //   clickedRoom.peerId = id;
+  //   socket.emit("joinRoom", clickedRoom);
+  // });
 
-      conn.on("data", function (data) {
-        // 연결된 피어에서 수신
-        console.log("connected!!", data);
-        setChatMessages((prevMessages) => [...prevMessages, data]);
-      });
-    });
+  // peer.on("connection", function (conn) {
+  //   // 새로운 연결이 설정될 때 처리
+  //   setPeers((prev) => [...prev, conn]);
 
-    // 전화 걸기
+  //   conn.on("data", function (data) {
+  //     // 연결된 피어에서 수신
+  //     console.log("connected!!", data);
+  //     setChatMessages((prevMessages) => [...prevMessages, data]);
+  //   });
+  // });
 
-    const userMedia = navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: false,
-    });
-    userMedia.then((stream) => {
-      const videoElement = document.createElement("video");
-      videoElement.srcObject = stream;
-      // videoElement.className = "absolute bottom-10 w-96";
-      videoElement.autoplay = true; // 자동 재생 설정
-      videoElement.className = "border border-2 border-pink-500 rounded-lg shadow-xl";
+  // // 전화 걸기
 
-      // 비디오를 화면에 추가
-      const videoContainer = document.getElementById("myVideoContainer");
-      videoContainer.appendChild(videoElement);
-    });
+  // const userMedia = navigator.mediaDevices.getUserMedia({
+  //   video: true,
+  //   audio: false,
+  // });
+  // userMedia.then((stream) => {
+  //   const videoElement = document.createElement("video");
+  //   videoElement.srcObject = stream;
+  //   // videoElement.className = "absolute bottom-10 w-96";
+  //   videoElement.autoplay = true; // 자동 재생 설정
+  //   videoElement.className =
+  //     "border border-2 border-pink-500 rounded-lg shadow-xl";
 
-    peer.on("call", function (call) {
-      //2 받기
-      userMedia.then((mediaStream) => {
-        // Answer the call, providing our mediaStream
-        call.answer(mediaStream); // 3 답장하고
-        call.on("stream", function (stream) {
-          console.log("스트림 받았다잉");
-          // 2-1. 받은거 작업
-          // `stream` is the MediaStream of the remote peer.
-          // Here you'd add it to an HTML video/canvas element.
-          const videoElement = document.createElement("video");
-          videoElement.srcObject = stream;
-          videoElement.autoplay = true; // 자동 재생 설정
-          videoElement.className = "border rounded-lg shadow-xl";
+  //   // 비디오를 화면에 추가
+  //   const videoContainer = document.getElementById("myVideoContainer");
+  //   videoContainer.appendChild(videoElement);
+  // });
 
-          // 비디오를 화면에 추가
-          const videoContainer = document.getElementById("videoContainer");
-          videoContainer.appendChild(videoElement);
-        });
-      });
-    });
+  // peer.on("call", function (call) {
+  //   //2 받기
+  //   userMedia.then((mediaStream) => {
+  //     // Answer the call, providing our mediaStream
+  //     call.answer(mediaStream); // 3 답장하고
+  //     call.on("stream", function (stream) {
+  //       console.log("스트림 받았다잉");
+  //       // 2-1. 받은거 작업
+  //       // `stream` is the MediaStream of the remote peer.
+  //       // Here you'd add it to an HTML video/canvas element.
+  //       const videoElement = document.createElement("video");
+  //       videoElement.srcObject = stream;
+  //       videoElement.autoplay = true; // 자동 재생 설정
+  //       videoElement.className = "border rounded-lg shadow-xl";
 
-    socket.on("joinedRoom", handleNewMessage);
-    socket.on("userJoined", handleNewMessage);
-    socket.on("broadcastMessage", handleNewMessage);
+  //       // 비디오를 화면에 추가
+  //       const videoContainer = document.getElementById("videoContainer");
+  //       videoContainer.appendChild(videoElement);
+  //     });
+  //   });
+  // });
 
-    // id: 공유받은 id
-    socket.on("sharedId", async (id) => {
-      const peerConn = peer.connect(id);
-      setConn(peerConn);
-      newConection(id, peerConn);
-    });
+  // socket.on("joinedRoom", handleNewMessage);
+  // socket.on("userJoined", handleNewMessage);
+  // socket.on("broadcastMessage", handleNewMessage);
 
-    const newConection = (id, conn) => {
-      conn.on("open", function () {
-        conn.send("hi!", id);
-        navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((mediaStream) => {
-          // Call a peer, providing our mediaStream
-          var call = peer.call(id, mediaStream); // 1 걸기
+  // // id: 공유받은 id
+  // socket.on("sharedId", async (id) => {
+  //   const peerConn = peer.connect(id);
+  //   setConn(peerConn);
+  //   newConection(id, peerConn);
+  // });
 
-          call.on("stream", function (stream) {
-            console.log(stream);
-            const videoElement = document.createElement("video");
-            videoElement.srcObject = stream;
-            videoElement.autoplay = true; // 자동 재생 설정
-            videoElement.className = "border rounded-lg shadow-xl";
+  // const newConection = (id, conn) => {
+  //   conn.on("open", function () {
+  //     conn.send("hi!", id);
+  //     navigator.mediaDevices
+  //       .getUserMedia({ video: true, audio: false })
+  //       .then((mediaStream) => {
+  //         // Call a peer, providing our mediaStream
+  //         var call = peer.call(id, mediaStream); // 1 걸기
 
-            // 비디오를 화면에 추가
-            const videoContainer = document.getElementById("videoContainer");
-            videoContainer.appendChild(videoElement);
-          });
-        });
-      });
-    };
+  //         call.on("stream", function (stream) {
+  //           console.log(stream);
+  //           const videoElement = document.createElement("video");
+  //           videoElement.srcObject = stream;
+  //           videoElement.autoplay = true; // 자동 재생 설정
+  //           videoElement.className = "border rounded-lg shadow-xl";
 
-    return () => {
-      socket.off("broadcastMessage");
-      socket.off("userJoined");
-      socket.off("joinedRoom");
-    };
-  }, [socket, clickedRoom]);
+  //           // 비디오를 화면에 추가
+  //           const videoContainer = document.getElementById("videoContainer");
+  //           videoContainer.appendChild(videoElement);
+  //         });
+  //       });
+  //   });
+  // };
 
   const handleLeaveRoom = () => {
-    socket.emit("deleteRoom", clickedRoom.name);
-
-    if (newPeer) {
-      newPeer.destroy(); // Peer 객체 파괴
-    }
+    socket.emit("outRoom", clickedRoom);
 
     setModalIsOpen(false);
     window.location.reload();
@@ -206,8 +203,8 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
     <div style={{ height: "90%", overflowY: "auto" }}>
       <div id="myVideoContainer" className={`w-60 index99 ${"draggable-container"}`}></div>
       <div id="videoContainer" className="grid grid-cols-2"></div>
-      <div className={`absolute ${isOpenedChat && "hidden"} min-w-[280px] bg-opacity-50 w-[45%] rounded-lg bottom-5 right-14 h-[50%] shadow-xl p-4 bg-pink-100`}>
-        <div ref={scrollContainerRef} className={`overflow-y-auto h-[95%] no-scrollbar overscroll-none `} style={{ whiteSpace: "nowrap" }}>
+      <div className={`absolute ${isOpenedChat && "hidden"} min-w-[280px] w-[30%] rounded-lg bottom-3 right-14 h-[90%] shadow-lg p-4 bg-pink-200 bg-opacity-80`}>
+        <div ref={scrollContainerRef} className={`overflow-y-auto h-[90%] no-scrollbar overscroll-none `} style={{ whiteSpace: "nowrap" }}>
           {chatMessages.map((msg, index) => (
             <div key={index}>
               <strong>{msg.from}: </strong>
