@@ -6,6 +6,7 @@ import Button from "../components/ui/Button";
 import ChatsModal from "../components/ChatsModal";
 import cookies from "js-cookie";
 import ReactModal from "react-modal";
+import GridChatList from "../components/GridChatList";
 
 // 1. http://localhost:8000
 // 2. http://jangdu.me:8000
@@ -69,6 +70,13 @@ const ChatList = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isCreatingRoom, setIsCreatingRoom] = useState(false); // 방 만들기 화면을 표시할지 여부를 상태로 관리합니다.
   const [clickedRoom, setClickedRoom] = useState();
+  const [selectedCnt, setSelectedCnt] = useState([]);
+
+  // Room State
+  const [roomForTwo, setRoomForTwo] = useState([]);
+  const [roomForThree, setRoomForThree] = useState([]);
+  const [roomForFour, setRoomForFour] = useState([]);
+
   const [socket, setSocket] = useState(
     io("http://localhost:8000/chat", {
       transports: ["websocket"],
@@ -81,84 +89,59 @@ const ChatList = () => {
     })
   );
 
-  // Room State
-  const [roomForTwo, setRoomForTwo] = useState([]);
-  const [roomForThree, setRoomForThree] = useState([]);
-  const [roomForFour, setRoomForFour] = useState([]);
-
   useEffect(() => {
     socket.emit("getRooms", null, (response) => {
+      console.log(response);
       Object.entries(response).forEach(([max, room]) => {
         if (max === "2") {
-          setRoomForTwo([...roomForTwo, room]);
+          setRoomForTwo(room);
+          setSelectedCnt(room);
         } else if (max === "3") {
-          setRoomForThree([...roomForThree, room]);
+          setRoomForThree(room);
         } else if (max === "4") {
-          setRoomForFour([...roomForFour, room]);
+          setRoomForFour(room);
         }
       });
     });
   }, [isCreatingRoom, socket]);
 
-  console.log("out=>", roomForFour);
   const handleCreateRoomClick = () => {
     setIsCreatingRoom(true); // 버튼 클릭 시 방 만들기 화면 표시
   };
 
   return (
-    <div className={`flex flex-col`}>
-      <h1 className="text-2xl font-bold text-center">채팅방 목록</h1>
-      <div className="w-fit ">
+    <div className={`flex flex-col border max-w-xl mx-auto p-4 bg-white my-8 rounded-xl shadow-md`}>
+      <h1 className="text-2xl font-bold text-center my-4">채팅방 목록</h1>
+      <div className="flex flex-row gap-3 justify-center">
+        <button
+          onClick={() => {
+            setSelectedCnt(roomForTwo);
+          }}>
+          2인방
+        </button>
+        <button
+          onClick={() => {
+            setSelectedCnt(roomForThree);
+          }}>
+          3인방
+        </button>
+        <button
+          onClick={() => {
+            setSelectedCnt(roomForFour);
+          }}>
+          4인방
+        </button>
+      </div>
+      <div className="flex justify-end">
         <Button text={"내 채팅방 만들기"} onClick={handleCreateRoomClick} />
       </div>
-      {isCreatingRoom ? (
-        <div
-          className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`}
-          style={cardStyles}
-        >
+      {isCreatingRoom && (
+        <div className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`} style={cardStyles}>
           <style>{slideUpAnimation}</style>
-          <CreateRoom
-            socket={socket}
-            setIsCreatingRoom={setIsCreatingRoom}
-            setModalIsOpen={setModalIsOpen}
-            setClickedRoom={setClickedRoom}
-          />
+          <CreateRoom socket={socket} setIsCreatingRoom={setIsCreatingRoom} setModalIsOpen={setModalIsOpen} setClickedRoom={setClickedRoom} />
         </div>
-      ) : (
-        // Object.entries(chatRooms).map(([roomSize, value]) => {
-        //   return (
-        //     <div key={roomSize} className="flex flex-col p-2">
-        //       <h2 className="text-xl font-bold">{roomSize}명 방</h2>
-        //       {chatRooms[roomSize] &&
-        //         Object.entries(chatRooms[roomSize]).map(
-        //           ([roomId, roomList]) => {
-        //             const jsonRoom = JSON.parse(roomList);
-        // return (
-        //   <div
-        //     key={roomId}
-        //     className="flex flex-row items-center justify-between gap-3 p-4 my-4"
-        //   >
-        //     <span className="text-lg ">
-        //       방 이름: {jsonRoom["roomName"]}
-        //     </span>
-        //     {/* <span>방장: {jsonRoom["roomOwner"]}</span> */}
-        //     {/* <span className="text-lg">최대 인원: {jsonRoom["maxNumberOfPerson"]}</span> */}
-        //     <Button
-        //       text={"들어가기"}
-        //       onClick={() => {
-        //         setModalIsOpen(true);
-        //         setClickedRoom({ ...jsonRoom, roomId });
-        //       }}
-        //     />
-        //   </div>
-        // );
-        //           }
-        //         )}
-        //     </div>
-        //   );
-        // })
-        console.log("hi")
       )}
+      {selectedCnt && <GridChatList list={selectedCnt} />}
       {/* {modalIsOpen && (
         <div className={`transition-opacity rounded-3xl shadow-2xl p-6 bg-pink-100`} style={cardStyles}>
           <style>{slideUpAnimation}</style>
@@ -168,12 +151,7 @@ const ChatList = () => {
       <ReactModal isOpen={modalIsOpen} style={cusStyle}>
         <style>{slideUpModalAnimation}</style>
         <div>
-          <ChatsModal
-            clickedRoom={clickedRoom}
-            socket={socket}
-            socketId={socket.id}
-            setModalIsOpen={setModalIsOpen}
-          />
+          <ChatsModal clickedRoom={clickedRoom} socket={socket} socketId={socket.id} setModalIsOpen={setModalIsOpen} />
         </div>
       </ReactModal>
     </div>
@@ -181,25 +159,3 @@ const ChatList = () => {
 };
 
 export default ChatList;
-
-// Object.entries(room).map(([id,info])=>{
-//   return (
-//     <div
-//       key={id}
-//       className="flex flex-row items-center justify-between gap-3 p-4 my-4"
-//     >
-//       <span className="text-lg ">
-//         방 이름: {info["roomName"]}
-//       </span>
-//       {/* <span>방장: {jsonRoom["roomOwner"]}</span> */}
-//       {/* <span className="text-lg">최대 인원: {jsonRoom["maxNumberOfPerson"]}</span> */}
-//       <Button
-//         text={"들어가기"}
-//         onClick={() => {
-//           setModalIsOpen(true);
-//           setClickedRoom({ ...info, id });
-//         }}
-//       />
-//     </div>
-//   );
-// })
