@@ -88,19 +88,20 @@ const ChatList = () => {
 
   useEffect(() => {
     socket.emit("getRooms", null, (response) => {
-      Object.entries(response).forEach(([max, room]) => {
+      Object.entries(response).forEach(([max, rooms]) => {
         if (max === "2") {
-          setRoomForTwo([...roomForTwo, room]);
+          setRoomForTwo([...roomForTwo, rooms]);
         } else if (max === "3") {
-          setRoomForThree([...roomForThree, room]);
+          setRoomForThree([...roomForThree, rooms]);
         } else if (max === "4") {
-          setRoomForFour([...roomForFour, room]);
+          setRoomForFour([...roomForFour, rooms]);
         }
       });
     });
-  }, [isCreatingRoom, socket]);
+  }, [isCreatingRoom]);
 
-  console.log("out=>", roomForFour);
+  console.log(socket.id);
+
   const handleCreateRoomClick = () => {
     setIsCreatingRoom(true); // 버튼 클릭 시 방 만들기 화면 표시
   };
