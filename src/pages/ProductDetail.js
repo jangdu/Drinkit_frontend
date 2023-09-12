@@ -85,7 +85,7 @@ export default function ProductDetail() {
           </div>
           <div className="sm:w-3/5 sm:pl-8">
             <h1 className="text-3xl font-semibold">{product.productName}</h1>
-            <p className="mt-2 text-gray-600" style={{ whiteSpace: "nowrap" }}>
+            <p className="mt-2 text-gray-600" style={{ whiteSpace: "pre-wrap" }}>
               {product.description}
             </p>
             <p className="px-2 mt-2 text-white font-bold py-1 bg-pink-500 rounded-lg w-fit">{product.category.name}</p>

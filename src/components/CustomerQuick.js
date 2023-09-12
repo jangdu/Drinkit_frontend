@@ -10,11 +10,13 @@ export default function CustomerQuick() {
   const [loading, setloading] = useState(true);
   const [statusButton, setStatusButton] = useState();
   const [start, setStart] = useState(false);
+  const [count, setCount] = useState(0);
   
   const category = {
     post: ['택배', '일정'],
     refund: ['환불', '방법'],
-    subscribe: ['구독', '안내', '방법']
+    subscribe: ['구독', '안내'],
+    zzan: ['ZZAN', '방법']
   }
 
   useEffect(() => {
@@ -27,7 +29,8 @@ export default function CustomerQuick() {
   const sendCreateMessage = async (num) => {
     setloading(true);
     setStart(true)
-    const inputMessage = `${category[statusButton][0]} / ${category[statusButton][num]} 라는 단어로 질문을 만들어 줘.`
+    setSave([...save, { owner: false, input: `${category[statusButton][0]} ${category[statusButton][num]}에 대해서 알려줘` }]);
+    const inputMessage = `${category[statusButton][0]} ${category[statusButton][num]}을 알려줘`
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_OPENAI_SERVERURL}/messages`,
@@ -41,8 +44,8 @@ export default function CustomerQuick() {
       );
       if (response.status === 201) {
         const data = await response.data;
-        setInput(data)
-        setloading(false);
+        setMessage(data);
+        setCount(count + 1);
       }
     } catch (error) {
       console.log(error.message);
@@ -66,6 +69,7 @@ export default function CustomerQuick() {
       if (response.status === 201) {
         const data = await response.data;
         setMessage(data);
+        setCount(count + 1);
       }
     } catch (error) {
       console.log(error.message);
@@ -77,7 +81,7 @@ export default function CustomerQuick() {
       setSave([...save, { owner: true, input: message }]);
     }
     setloading(false);
-  }, [message]);
+  }, [count]);
 
   const handlleSubmit = (e) => {
     e.preventDefault();
@@ -92,18 +96,20 @@ export default function CustomerQuick() {
 
   return (
     <div className="h-[80%]">
-      {/* <h1 className="titleFont text-lg text-center mt-4">AI 고객센터</h1> */}
       <div ref={scrollContainerRef} className="flex flex-col gap-3 h-[100%] rounded-t-xl p-3 overflow-y-auto no-scrollbar overscroll-none" style={{ whiteSpace: "nowrap" }}>
       <div className="flex flex-col items-end gap-3">
         <div className="items-center flex justify-end">
-          <button value={'post'} onClick={(e) => {setStatusButton(e.target.value)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none mr-2`}>
+          <button value={'post'} onClick={(e) => {setStatusButton(e.target.value)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none mr-2 hover:bg-pink-300`}>
             택배
           </button>
-          <button value={'refund'} onClick={(e) => {setStatusButton(e.target.value)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none mr-2`}>
+          <button value={'refund'} onClick={(e) => {setStatusButton(e.target.value)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none mr-2 hover:bg-pink-300`}>
             환불
           </button>
-          <button value={'subscribe'} onClick={(e) => {setStatusButton(e.target.value)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none`}>
+          <button value={'subscribe'} onClick={(e) => {setStatusButton(e.target.value)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none mr-2 hover:bg-pink-300`}>
             구독
+          </button>
+          <button value={'zzan'} onClick={(e) => {setStatusButton(e.target.value)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none hover:bg-pink-300`}>
+            ZZAN
           </button>
           <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-l-white"></div>
         </div>
@@ -114,7 +120,7 @@ export default function CustomerQuick() {
             }else if (i === category[statusButton].length -1){
                 return(
                   <div className="flex flex-row">
-                    <button value={i} onClick={(e) => {sendCreateMessage(i)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none`}>
+                    <button value={i} onClick={(e) => {sendCreateMessage(i)}} className={`bg-white h-auto rounded-md px-4 py-2 break-words list-none hover:bg-pink-300`}>
                       {item}
                     </button>
                     <div className="bg-transparent mt-2 w-4 h-1 border-8 border-solid border-transparent border-l-white"></div>
