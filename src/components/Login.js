@@ -73,7 +73,7 @@ const Login = () => {
 
   return (
     <div>
-      <h2 className="mx-auto mb-5 text-xl font-bold text-center">로그인</h2>
+      <h2 className="mx-auto mb-3 text-xl font-bold text-center">로그인</h2>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <input
           id="email"
@@ -90,39 +90,44 @@ const Login = () => {
         />
         <button
           type="submit"
-          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-        >
+          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500">
           로그인
         </button>
+        <button
+          type="button"
+          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
+          onClick={signup}>
+          회원가입
+        </button>
       </form>
+      <div className="border mt-5"></div>
       <div className="flex flex-col gap-4 mt-4">
         <button
           type="submit"
-          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={kakaoLogin}
-        >
-          카카오 로그인
+          className="w-[300px] mx-auto"
+          onClick={kakaoLogin}>
+          <img
+            src="https://res.cloudinary.com/dmrbffsxy/image/upload/v1694446050/login/kakao-login-btn_m2ft7d.png"
+            alt="카카오 로그인"
+          />
         </button>
         <button
           type="submit"
-          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={naverLogin}
-        >
-          네이버 로그인
+          className="w-[300px] mx-auto"
+          onClick={naverLogin}>
+          <img
+            src="https://res.cloudinary.com/devkbqyym/image/upload/v1694449080/drinkit/%EB%84%A4%EC%9D%B4%EB%B2%84_n10rwo.png"
+            alt="네이버 로그인"
+          />
         </button>
         <button
           type="submit"
-          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={googleLogin}
-        >
-          구글 로그인
-        </button>
-        <button
-          type="submit"
-          className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          onClick={signup}
-        >
-          회원가입
+          className="w-[300px] mx-auto"
+          onClick={googleLogin}>
+          <img
+            src="https://res.cloudinary.com/devkbqyym/image/upload/v1694451804/drinkit/%EA%B5%AC%EA%B8%80_xravgf.png"
+            alt="구글 로그인"
+          />
         </button>
       </div>
     </div>
