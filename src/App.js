@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { AuthContextProvider } from "./context/AuthContext";
 import CartProvider from "./context/CartContext";
 import ToggleButton from "./components/ui/ToggleButton";
+import Footer from "./components/Footer/Footer";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -24,10 +25,11 @@ function App() {
             <header className=" border-b-2 border-pink-200 bg-white w-full">
               <Navbar />
             </header>
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-6xl min-h-[50%] mx-auto">
               <Outlet />
             </div>
           </div>
+          <Footer />
           <ToggleButton />
         </CartProvider>
       </AuthContextProvider>

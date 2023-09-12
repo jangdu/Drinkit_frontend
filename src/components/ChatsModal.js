@@ -78,6 +78,7 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
 
       clickedRoom.peerId = id;
       socket.emit("joinRoom", clickedRoom);
+      console.log(clickedRoom);
     });
 
     peer.on("connection", function (conn) {
@@ -197,6 +198,10 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
     setMessages((prevMessages) => [...prevMessages, `${data}`]);
   };
 
+  const handleBoomBtn = () => {
+    socket.emit("deleteRoom", clickedRoom.name);
+  };
+
   return (
     <div style={{ height: "90%", overflowY: "auto" }}>
       <div id="myVideoContainer" className={`w-60 index99 ${"draggable-container"}`}></div>
@@ -218,6 +223,18 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
           <Button text=">" />
         </form>
       </div>
+      {clickedRoom.roomOwner === socketId && (
+        <div className="absolute text-xl titleFont right-16 flex flex-col h-[95%] top-5 ">
+          <button
+            className="hover:text-red-500"
+            onClick={() => {
+              handleBoomBtn();
+            }}>
+            손 튕기기
+          </button>
+        </div>
+      )}
+
       <div className="absolute text-4xl right-3 flex flex-col h-[95%] top-4 justify-between">
         <button
           className="hover:text-red-500"
