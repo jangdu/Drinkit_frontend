@@ -1,10 +1,46 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
+import Modal from "react-modal";
+import ReviewModal from "./reviewModal";
+
+const customStyles = {
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  content: {
+    width: "80%",
+    "max-width": "450px",
+    position: "absolute",
+    height: "450px",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    backgroundColor: "white",
+    padding: "1rem",
+    borderRadius: "0.5rem",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+    animation: "slide-up 0.5s", // 애니메이션 적용
+  },
+};
+
+// 슬라이드 업 애니메이션을 위한 CSS 키 프레임 정의
+const slideUpAnimation = `
+  @keyframes slide-up {
+    from {
+      transform: translate(-50%, 100%);
+    }
+    to {
+      transform: translateY(-50%, 0);
+    }
+  }
+`;
 
 export default function OrderList() {
   const [paymentLog, setPaymentLog] = useState();
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [reLoad, setReLoad] = useState(true);
+  const [paymentDetailId, setPaymentDetailId] = useState()
 
   useEffect(() => {
     const getPaymentLog = async () => {
@@ -70,21 +106,29 @@ export default function OrderList() {
               </div>
               <div>구매 목록</div>
               {item.paymentDetail.length === 0 ? <div>포인트 충전</div>: item.paymentDetail.map((e) =>{ 
-                  return(<div>
-                    {e['product'].productName}  {e['product'].price}  X  {e.count}
+                  return(<div key={e.id} className="mb-2">
+                    {e['product'].productName}  {e['product'].price}  X  {e.count} {item.status !== '완료' ? <p></p> : e.isComplete ? <button className="w-[80px] cursor-default bg-pink-400 rounded-2xl me-2">작성완료</button> : <button value={e.id} key={e.id} className="w-[80px] bg-pink-400 rounded-2xl me-2" onClick={(e) => {
+                        setPaymentDetailId(e.target.value); 
+                        setModalIsOpen(true);
+                      }}>리뷰작성</button>}
                   </div>)
                 })}
               <div>사용 포인트: {item.paidPoint}</div>
               <span> 주문일: {convertUtc(item.createdAt)}</span>
               <div className="flex justify-end">
                 <p className="me-2">{item.status}</p>
-                {item.address !== '포인트충전' ? <button value={item.id} type="submit" className="w-[10%] bg-pink-400 rounded-2xl me-2" onClick={(e) => cancelOrderRequest(e.target.value)}>
+                {item.address !== '포인트충전' ? <button value={item.id} type="submit" className="w-[100px] bg-pink-400 rounded-2xl me-2 " onClick={(e) => cancelOrderRequest(e.target.value)}>
                   환불하기
                 </button> : <p>포인트(환불불가)</p>}
               </div>
             </div>
           );
         })}
+
+        <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={customStyles}>
+          <style>{slideUpAnimation}</style>
+          <div className=""> {<ReviewModal paymentDetailId={paymentDetailId}/>}</div>
+        </Modal>
     </div>
   );
 }
