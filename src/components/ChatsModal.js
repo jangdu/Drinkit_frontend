@@ -84,8 +84,8 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
     peer.on("open", function (id) {
       setMyPeerId(id);
 
-      clickedRoom.peerId = id;
       console.log(clickedRoom);
+
       socket.emit("joinRoom", clickedRoom);
     });
 
