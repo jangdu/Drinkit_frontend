@@ -9,8 +9,8 @@ import ReactModal from "react-modal";
 import GridChatList from "../components/GridChatList";
 
 // 1. http://localhost:8000
-// 2. http://jangdu.me:8000
-// 3. http://www.yhjs1211.online:8000 , http://118.67.143.18:8000
+// 2. https://jangdu.me
+
 const cardStyles = {
   position: "fixed",
   bottom: "25%",
@@ -81,7 +81,7 @@ const ChatList = () => {
   const [socket, setSocket] = useState({});
 
   useEffect(() => {
-    const newSocket = io("http://localhost:8000/chat", {
+    const newSocket = io("https://jangdu.me/chat", {
       transports: ["websocket"],
       auth: {
         accessToken: cookies.get("AccessToken"),
