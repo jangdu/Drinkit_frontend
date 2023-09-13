@@ -71,6 +71,7 @@ export default function OrderListByStore() {
         } else {
           setReLoad(true);
         }
+        alert("환불 승인 처리가 완료되었습니다.")
       }
     } catch (error) {
       console.log(error.message);
@@ -92,6 +93,7 @@ export default function OrderListByStore() {
         } else {
           setReLoad(true);
         }
+        alert("환불이 완료되었습니다.")
       }
     } catch (error) {
       console.log(error.message);
@@ -135,13 +137,14 @@ export default function OrderListByStore() {
               <div>사용 포인트: {item.paidPoint}</div>
               <span> 주문일: {convertUtc(item.createdAt)}</span>
               <div className="flex justify-end">
-                <button value={item.id} type="submit" className="w-[10%] bg-pink-400 rounded-2xl me-2" onClick={(e) => statusChangeOrder(e.target.value)}>
+                <p className="me-2">{item.status}</p>
+                <button value={item.id} type="submit" className="w-[100px] bg-pink-400 rounded-2xl me-2" onClick={(e) => statusChangeOrder(e.target.value)}>
                   상태 변경
                 </button>
-                <button value={item.id} type="submit" className="w-[10%] bg-pink-400 rounded-2xl me-2" onClick={(e) => compulsionRefund(e.target.value)}>
+                <button value={item.id} type="submit" className="w-[100px] bg-pink-400 rounded-2xl me-2" onClick={(e) => compulsionRefund(e.target.value)}>
                   강제 환불
                 </button>
-                <button value={item.id} type="submit" className="w-[10%] bg-pink-400 rounded-2xl me-2" onClick={(e) => cancelOrderComplete(e.target.value)}>
+                <button value={item.id} type="submit" className="w-[100px] bg-pink-400 rounded-2xl me-2" onClick={(e) => cancelOrderComplete(e.target.value)}>
                   환불 승인
                 </button>
               </div>

@@ -20,8 +20,6 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
     backgroundColor: "white",
     padding: "1rem",
-    "padding-left": "2rem",
-    "padding-right": "2rem",
     borderRadius: "0.5rem",
     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
     animation: "slide-up 0.5s", // 애니메이션 적용
