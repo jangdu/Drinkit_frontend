@@ -1,19 +1,14 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { RiTokenSwapLine } from "react-icons/ri";
-
 const AuthContext = createContext();
-
 export function AuthContextProvider({ children }) {
   const [user, setUser] = useState();
   const [myStore, setMyStore] = useState();
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     setUser(getUser());
   }, []);
-
   const getUser = async () => {
     try {
       const response = await axios.get(
@@ -25,12 +20,10 @@ export function AuthContextProvider({ children }) {
           },
         }
       );
-
-      const { data } = await response;
-      const {token, profile} = data
+      const { data } = response;
       if (response.status === 202) {
         if (data.store !== null) {
-          setMyStore(profile.store);
+          setMyStore(data.store);
         } else {
           setMyStore({});
         }
@@ -40,11 +33,8 @@ export function AuthContextProvider({ children }) {
         setMyStore({});
         setUser({});
       }
-
-      document.cookie = `AccessToken=Bearer ${token.accessToken}; Secure; SameSite=None;`;
-      document.cookie = `RefreshToken=Bearer ${token.refreshToken}; Secure; SameSite=None;`;
-      
-      setUser(profile);
+      setUser(data);
+      console.log("Data in Auth Context =>", data);
       setIsLoading(false);
     } catch (error) {
       setMyStore(null);
@@ -52,16 +42,13 @@ export function AuthContextProvider({ children }) {
       setIsLoading(false);
     }
   };
-
   return (
     <AuthContext.Provider
-      value={{ user, myStore, userId: user && user.id, isLoading }}
-    >
+      value={{ user, myStore, userId: user && user.id, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
 }
-
 export function useAuthContext() {
   return useContext(AuthContext);
 }

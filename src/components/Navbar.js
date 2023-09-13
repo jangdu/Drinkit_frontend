@@ -105,6 +105,31 @@ export default function Navbar() {
     }
   };
 
+  const getToken = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_SERVERURL}/user/token`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.status);
+      if (response.status === 200) {
+        document.cookie = `AccessToken=Bearer ${response.data.accessToken}; Secure; SameSite=None;`;
+        document.cookie = `RefreshToken=Bearer ${response.data.refreshToken}; Secure; SameSite=None;`;
+
+        window.location.href = `${process.env.REACT_APP_MAINURL}/chatlist`;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <header className="flex justify-between max-w-4xl p-3 mx-auto mt-1 titleFont">
       {/* <div className="w-32">
@@ -124,9 +149,12 @@ export default function Navbar() {
           </Link>
         </div>
         <div>
-          <Link className="text-black-300 hover:text-pink-500" to={"/chatList"}>
+          <button
+            type="button"
+            className="text-black-300 hover:text-pink-500"
+            onClick={getToken}>
             ZZAN
-          </Link>
+          </button>
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 ">
@@ -185,6 +213,8 @@ export default function Navbar() {
                   },
                 }
               );
+              document.cookie = `AccessToken=; Secure; SameSite=None;`;
+              document.cookie = `RefreshToken=; Secure; SameSite=None;`;
 
               window.location.reload();
             }}>
