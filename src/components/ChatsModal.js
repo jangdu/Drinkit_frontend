@@ -23,8 +23,7 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
   useEffect(() => {
     // 스크롤 컨테이너의 scrollTop을 최대로 설정하여 항상 아래로 스크롤합니다.
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop =
-        scrollContainerRef.current.scrollHeight;
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
@@ -98,8 +97,7 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
       const videoElement = document.createElement("video");
       videoElement.srcObject = stream;
       videoElement.autoplay = true; // 자동 재생 설정
-      videoElement.className =
-        "border border-2 border-pink-500 rounded-lg shadow-xl";
+      videoElement.className = "border border-2 border-pink-500 rounded-lg shadow-xl";
 
       // 비디오를 화면에 추가
       const videoContainer = document.getElementById("myVideoContainer");
@@ -203,14 +201,10 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
 
   return (
     <div style={{ height: "90%", overflowY: "auto" }}>
-      <div
-        id="myVideoContainer"
-        className={`w-60 index99 ${"draggable-container"}`}
-      ></div>
+      <div id="myVideoContainer" className={`w-60 index99 ${"draggable-container"}`}></div>
       <div id="videoContainer" className="grid grid-cols-2"></div>
       <div className={`absolute ${isOpenedChat && "hidden"} min-w-[280px] w-[80%] rounded-lg bottom-3 right-14 h-[40%] shadow-lg p-4 bg-pink-200 bg-opacity-80`}>
         <div ref={scrollContainerRef} className={`overflow-y-auto no-scrollbar overscroll-none `} style={{ whiteSpace: "nowrap" }}>
-      <div
           {chatMessages.map((msg, index) => (
             <div key={index}>
               <strong>{msg.from}: </strong>
@@ -221,18 +215,8 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
             <div key={index}>{message}</div>
           ))}
         </div>
-        <form
-          className="absolute bottom-0 right-0 w-full"
-          onSubmit={handleSendMessage}
-        >
-          <input
-            required
-            type="text"
-            className="bg-transparent p-4 w-[85%]"
-            value={messageInput}
-            onChange={(e) => setMessageInput(e.target.value)}
-            placeholder="메시지를 입력하세요."
-          />
+        <form className="absolute bottom-0 right-0 w-full" onSubmit={handleSendMessage}>
+          <input required type="text" className="bg-transparent p-4 w-[85%]" value={messageInput} onChange={(e) => setMessageInput(e.target.value)} placeholder="메시지를 입력하세요." />
           <Button text=">" />
         </form>
       </div>
@@ -242,8 +226,7 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
             className="hover:text-red-500"
             onClick={() => {
               handleBoomBtn();
-            }}
-          >
+            }}>
             손 튕기기
           </button>
         </div>
@@ -255,14 +238,10 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
           onClick={() => {
             // 채팅 나가기
             handleLeaveRoom();
-          }}
-        >
+          }}>
           <AiOutlineClose />{" "}
         </button>
-        <button
-          className="hover:text-red-500"
-          onClick={() => setIsOpenChat(!isOpenedChat)}
-        >
+        <button className="hover:text-red-500" onClick={() => setIsOpenChat(!isOpenedChat)}>
           <BiChat />
         </button>
       </div>
