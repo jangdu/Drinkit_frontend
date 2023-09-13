@@ -120,7 +120,9 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
         // Answer the call, providing our mediaStream
         call.answer(mediaStream); // 3 답장하고
         call.on("stream", function (stream) {
-          console.log("스트림 받았다잉", stream);
+          if(document.getElementById(call.peer) && document.getElementById(call.peer).srcObject === stream){
+            return
+          }
 
           const videoElement = document.createElement("video");
           videoElement.srcObject = stream;
@@ -158,6 +160,10 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
           var call = peer.call(id, mediaStream); // 1 걸기
 
           call.on("stream", function (stream) {
+            if(document.getElementById(id) && document.getElementById(id).srcObject === stream){
+              return
+            }
+            
             const videoElement = document.createElement("video");
             videoElement.srcObject = stream;
             videoElement.id = id;
