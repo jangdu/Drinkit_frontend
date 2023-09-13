@@ -39,7 +39,6 @@ export function AuthContextProvider({ children }) {
         setUser({});
       }
       setUser(data);
-      console.log("Data in Auth Context =>", data);
       setIsLoading(false);
     } catch (error) {
       setMyStore(null);
