@@ -1,6 +1,7 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { RiTokenSwapLine } from "react-icons/ri";
 
 const AuthContext = createContext();
 
@@ -26,9 +27,10 @@ export function AuthContextProvider({ children }) {
       );
 
       const { data } = await response;
+      const {token, profile} = data
       if (response.status === 202) {
         if (data.store !== null) {
-          setMyStore(data.store);
+          setMyStore(profile.store);
         } else {
           setMyStore({});
         }
@@ -38,7 +40,11 @@ export function AuthContextProvider({ children }) {
         setMyStore({});
         setUser({});
       }
-      setUser(data);
+
+      document.cookie = `AccessToken=Bearer ${token.accessToken}; Secure; SameSite=None;`;
+      document.cookie = `RefreshToken=Bearer ${token.refreshToken}; Secure; SameSite=None;`;
+      
+      setUser(profile);
       setIsLoading(false);
     } catch (error) {
       setMyStore(null);
