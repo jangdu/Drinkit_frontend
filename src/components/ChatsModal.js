@@ -113,7 +113,6 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
         setChatMessages((prevMessages) => [...prevMessages, data]);
       });
     });
-
     peer.on("call", function (call) {
       //2 받기
       userMedia.then((mediaStream) => {

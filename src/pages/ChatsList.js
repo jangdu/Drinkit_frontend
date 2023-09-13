@@ -16,7 +16,7 @@ const cardStyles = {
   bottom: "25%",
   left: "25%",
   width: "50%",
-  minWidth: '500px',
+  minWidth: "500px",
   height: "50vh",
   animation: "slide-up 0.8s",
 };
@@ -82,7 +82,7 @@ const ChatList = () => {
   const [socket, setSocket] = useState({});
 
   useEffect(() => {
-    const newSocket = io("https://jangdu.me/chat", {
+    const newSocket = io("http://localhost:8000/chat", {
       transports: ["websocket"],
       auth: {
         accessToken: cookies.get("AccessToken"),
