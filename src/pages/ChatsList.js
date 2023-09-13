@@ -82,7 +82,7 @@ const ChatList = () => {
   const [socket, setSocket] = useState({});
 
   useEffect(() => {
-    const newSocket = io("http://localhost:8000/chat", {
+    const newSocket = io("https://jangdu.me/chat", {
       transports: ["websocket"],
       auth: {
         accessToken: cookies.get("AccessToken"),
