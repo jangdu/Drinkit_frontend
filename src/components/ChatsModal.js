@@ -77,22 +77,20 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
     if (!socket) {
       return;
     }
+
     const peer = new Peer(socketId);
     setPeer(peer);
+
     clickedRoom.peerId = socketId;
-    console.log("peer=>", clickedRoom);
-    // socket.emit("joinRoom", clickedRoom);
+
     peer.on("open", function (id) {
       setMyPeerId(id);
-
-      console.log(clickedRoom);
-
       socket.emit("joinRoom", clickedRoom);
     });
 
     const userMedia = navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: false,
+      audio: true,
     });
     userMedia.then((stream) => {
       const videoElement = document.createElement("video");
@@ -116,14 +114,11 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
     });
 
     peer.on("call", function (call) {
-      console.log(call);
       //2 받기
       userMedia.then((mediaStream) => {
         // Answer the call, providing our mediaStream
         call.answer(mediaStream); // 3 답장하고
         call.on("stream", function (stream) {
-          console.log(stream.sharedId);
-
           console.log("스트림 받았다잉", stream);
 
           const videoElement = document.createElement("video");
@@ -149,7 +144,6 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
     });
 
     socket.on("outUser", (i) => {
-      console.log(i);
       const videoDiv = document.getElementById(i);
       videoDiv.remove();
     });
