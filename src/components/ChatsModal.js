@@ -98,6 +98,7 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
       videoElement.autoplay = true; // 자동 재생 설정
       videoElement.className =
         "border border-2 border-pink-500 rounded-lg shadow-xl";
+      videoElement.volume = 0;
 
       // 비디오를 화면에 추가
       const videoContainer = document.getElementById("myVideoContainer");
@@ -152,7 +153,7 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
   const newConection = (id, conn, peer) => {
     conn.on("open", function () {
       navigator.mediaDevices
-        .getUserMedia({ video: true, audio: false })
+        .getUserMedia({ video: true, audio: true })
         .then((mediaStream) => {
           var call = peer.call(id, mediaStream); // 1 걸기
 
@@ -211,7 +212,7 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
       >
         <div
           ref={scrollContainerRef}
-          className={`overflow-y-auto no-scrollbar overscroll-none `}
+          className={`overflow-y-auto no-scrollbar h-[90%]`}
           style={{ whiteSpace: "nowrap" }}
         >
           {chatMessages.map((msg, index) => (

@@ -123,7 +123,7 @@ export default function Navbar() {
         document.cookie = `AccessToken=${response.data.accessToken}; Secure; SameSite=None;`;
         document.cookie = `RefreshToken=${response.data.refreshToken}; Secure; SameSite=None;`;
 
-        window.location.href = `${process.env.REACT_APP_MAINURL}/chatlist`;
+        window.location.href = `/chatlist`;
       }
     } catch (error) {
       console.log(error);

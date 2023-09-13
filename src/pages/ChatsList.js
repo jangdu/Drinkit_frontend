@@ -12,10 +12,11 @@ import GridChatList from "../components/GridChatList";
 // 2. https://jangdu.me
 
 const cardStyles = {
-  position: "fixed",
+  position: "absolute",
   bottom: "25%",
-  right: "25%",
+  left: "25%",
   width: "50%",
+  minWidth: '500px',
   height: "50vh",
   animation: "slide-up 0.8s",
 };
