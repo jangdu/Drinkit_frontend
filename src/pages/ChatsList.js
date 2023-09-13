@@ -111,28 +111,39 @@ const ChatList = () => {
   };
 
   return (
-    <div className={`flex flex-col border max-w-xl mx-auto p-4 bg-white my-8 rounded-xl shadow-md`}>
-      <h1 className="text-2xl font-bold text-center my-4">채팅방 목록</h1>
-      <div className="flex flex-row gap-3 font-semibold justify-center">
+    <div
+      className={`flex flex-col border max-w-xl mx-auto p-4 bg-white my-8 rounded-xl shadow-md`}
+    >
+      <h1 className="my-4 text-2xl font-bold text-center">채팅방 목록</h1>
+      <div className="flex flex-row justify-center gap-3 font-semibold">
         <button
-          className={`hover:text-pink-500 ${selectedCnt === roomForTwo && "text-pink-500"}`}
+          className={`hover:text-pink-500 ${
+            selectedCnt === roomForTwo && "text-pink-500"
+          }`}
           onClick={() => {
             setSelectedCnt(roomForTwo);
-          }}>
+          }}
+        >
           2인방
         </button>
         <button
-          className={`hover:text-pink-500 ${selectedCnt === roomForThree && "text-pink-500"}`}
+          className={`hover:text-pink-500 ${
+            selectedCnt === roomForThree && "text-pink-500"
+          }`}
           onClick={() => {
             setSelectedCnt(roomForThree);
-          }}>
+          }}
+        >
           3인방
         </button>
         <button
-          className={`hover:text-pink-500 ${selectedCnt === roomForFour && "text-pink-500"}`}
+          className={`hover:text-pink-500 ${
+            selectedCnt === roomForFour && "text-pink-500"
+          }`}
           onClick={() => {
             setSelectedCnt(roomForFour);
-          }}>
+          }}
+        >
           4인방
         </button>
       </div>
@@ -140,19 +151,40 @@ const ChatList = () => {
         <Button text={"내 채팅방 만들기"} onClick={handleCreateRoomClick} />
       </div>
       {isCreatingRoom && (
-        <div className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`} style={cardStyles}>
+        <div
+          className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`}
+          style={cardStyles}
+        >
           <style>{slideUpAnimation}</style>
-          <CreateRoom socket={socket} setIsCreatingRoom={setIsCreatingRoom} setClickedRoom={setClickedRoom} />
+          <CreateRoom
+            setModalIsOpen={setModalIsOpen}
+            socket={socket}
+            setIsCreatingRoom={setIsCreatingRoom}
+            setClickedRoom={setClickedRoom}
+          />
         </div>
       )}
       <ReactModal isOpen={modalIsOpen} style={cusStyle}>
         <style>{slideUpModalAnimation}</style>
         <div>
-          <ChatsModal clickedRoom={clickedRoom} socket={socket} socketId={socket.id} setModalIsOpen={setModalIsOpen} />
+          <ChatsModal
+            clickedRoom={clickedRoom}
+            socket={socket}
+            socketId={socket.id}
+            setModalIsOpen={setModalIsOpen}
+          />
         </div>
       </ReactModal>
 
-      {selectedCnt && <GridChatList socket={socket} clickedRoom={clickedRoom} setClickedRoom={setClickedRoom} setModalIsOpen={setModalIsOpen} list={selectedCnt} />}
+      {selectedCnt && (
+        <GridChatList
+          socket={socket}
+          clickedRoom={clickedRoom}
+          setClickedRoom={setClickedRoom}
+          setModalIsOpen={setModalIsOpen}
+          list={selectedCnt}
+        />
+      )}
     </div>
   );
 };
