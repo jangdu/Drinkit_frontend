@@ -120,8 +120,8 @@ export default function Navbar() {
       );
       console.log(response.status);
       if (response.status === 200) {
-        document.cookie = `AccessToken=Bearer ${response.data.accessToken}; Secure; SameSite=None;`;
-        document.cookie = `RefreshToken=Bearer ${response.data.refreshToken}; Secure; SameSite=None;`;
+        document.cookie = `AccessToken=${response.data.accessToken}; Secure; SameSite=None;`;
+        document.cookie = `RefreshToken=${response.data.refreshToken}; Secure; SameSite=None;`;
 
         window.location.href = `${process.env.REACT_APP_MAINURL}/chatlist`;
       }
@@ -144,7 +144,8 @@ export default function Navbar() {
         <div>
           <Link
             className="text-black-300 hover:text-pink-500"
-            to={"/subscribes"}>
+            to={"/subscribes"}
+          >
             구독
           </Link>
         </div>
@@ -152,7 +153,8 @@ export default function Navbar() {
           <button
             type="button"
             className="text-black-300 hover:text-pink-500"
-            onClick={getToken}>
+            onClick={getToken}
+          >
             ZZAN
           </button>
         </div>
@@ -164,12 +166,14 @@ export default function Navbar() {
               placeholder="검색어 입력"
               className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500 w-52"
               value={text}
-              onChange={(e) => newText(e.target.value)}></input>
+              onChange={(e) => newText(e.target.value)}
+            ></input>
           </div>
         </div>
         <div
           style={cardStyles}
-          className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]">
+          className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]"
+        >
           {searchValue.length > 0 && text && (
             <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
               {searchValue.map((item) => {
@@ -179,7 +183,8 @@ export default function Navbar() {
                     onClick={() => {
                       newText("");
                       navigate(`/products/${item._source.id}`);
-                    }}>
+                    }}
+                  >
                     <p className="p-2 " key={item._source.id}>
                       {item._source.productName}
                     </p>
@@ -194,7 +199,8 @@ export default function Navbar() {
         {user ? (
           <Link
             className="font-semibold text-pink-300 text-black-300 hover:text-pink-500"
-            to="/profile">
+            to="/profile"
+          >
             {user.nickname + " 님 >"}
           </Link>
         ) : (
@@ -217,7 +223,8 @@ export default function Navbar() {
               document.cookie = `RefreshToken=; Secure; SameSite=None;`;
 
               window.location.reload();
-            }}>
+            }}
+          >
             로그아웃
           </button>
         ) : (
@@ -226,7 +233,8 @@ export default function Navbar() {
             onClick={() => {
               setModalIsOpen(true);
               setIsSignupLogIn("login");
-            }}>
+            }}
+          >
             로그인
           </button>
         )}
@@ -235,7 +243,8 @@ export default function Navbar() {
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
-        style={customStyles}>
+        style={customStyles}
+      >
         <style>{slideUpAnimation}</style>
         <div className="">
           {isSignupLogIn === "login" ? <Login /> : <Signup />}
