@@ -71,6 +71,7 @@ export default function OrderListByStore() {
         } else {
           setReLoad(true);
         }
+        alert("환불 승인 처리가 완료되었습니다.")
       }
     } catch (error) {
       console.log(error.message);
@@ -92,6 +93,7 @@ export default function OrderListByStore() {
         } else {
           setReLoad(true);
         }
+        alert("환불이 완료되었습니다.")
       }
     } catch (error) {
       console.log(error.message);
