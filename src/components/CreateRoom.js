@@ -55,7 +55,9 @@ const CreateRoom = ({
           type="password"
           className="px-2 py-1 rounded-lg"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) =>
+            e === "" ? setPassword(undefined) : setPassword(e.target.value)
+          }
         />
       </div>
       <div className="mx-auto my-10 w-fit">
