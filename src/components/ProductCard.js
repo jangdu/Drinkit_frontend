@@ -46,8 +46,8 @@ export default function ProductCard({ product }) {
       </p>
       <div className="mt-2 flex justify-between items-center">
         <span className={`text-xl font-semibold ${product.discount && "text-slate-300 line-through"}`}>{Number(product.price).toLocaleString()}원</span>
-        {product.discount && product.discount.discountRating && <span className="text-lg font-bold"> {Number(Math.round(product.price * (1 - product.discount.discountRating / 100))).toLocaleString()}원</span>}
-        {product.discount && product.discount.discountPrice && <span className="text-red-600">할인 {product.discount.discountPrice}%</span>}
+        {product.discount && product.discount.discountRating && <span className="text-red-500 text-lg font-bold">할인 {Number(Math.round(product.price * (1 - product.discount.discountRating / 100))).toLocaleString()}원</span>}
+        {product.discount && product.discount.discountPrice && <span className="text-red-500 text-lg font-bold">할인 {Number(product.discount.discountPrice).toLocaleString()}원</span>}
       </div>
     </div>
   );
