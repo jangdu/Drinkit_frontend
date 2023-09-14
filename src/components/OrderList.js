@@ -53,9 +53,8 @@ export default function OrderList() {
         });
         if (response.status === 200) {
           const data = await response.data;
-          console.log(data)
-
           setPaymentLog(data);
+          alert("완료 상태의 주문에만 리뷰 작성이 가능합니다.")
         }
       } catch (error) {
         console.log(error.message);

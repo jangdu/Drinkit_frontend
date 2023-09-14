@@ -69,7 +69,7 @@ export class RequestPay extends React.Component {
                             if (response.status === 201) {
                                 await response.data;
                                 alert(msg)
-                                window.location.href = process.env.REACT_APP_MAINURL;
+                                window.location.href = `${process.env.REACT_APP_MAINURL}/orderlist`;
                             }
                         }
                     },

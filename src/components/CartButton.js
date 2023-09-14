@@ -106,7 +106,7 @@ export default function CartButton() {
                 setModalIsOpen(false);
               }}
               className="flex w-fit text-lg text-center mx-auto py-1 px-2 rounded-xl font-semibold text-black bg-pink-300 hover:bg-pink-500 hover:text-white">
-              {totalPrice + "원 주문하기"}
+              {totalPrice.toLocaleString() + "원 주문하기"}
             </Link>
           </div>
         )}

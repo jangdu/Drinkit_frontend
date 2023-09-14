@@ -90,8 +90,8 @@ export default function ProductDetail() {
             </p>
             <p className="px-2 mt-2 text-white font-bold py-1 bg-pink-500 rounded-lg w-fit">{product.category.name}</p>
             <div className="flex items-center mt-4">
-              <span className={`text-xl font-semibold ${product.discount && "text-slate-300 line-through"}`}>{product.price}원</span>
-              {product.discount && <p className="text-xl font-semibold ms-2">{"→ " + Math.round(product.price * (1 - product.discount.discountRating / 100))}원</p>}
+              <span className={`text-xl font-semibold ${product.discount && "text-slate-300 line-through"}`}>{Number(product.price).toLocaleString()}원</span>
+              {product.discount && <p className="text-xl font-semibold ms-2">{"→ " + Number(Math.round(product.price * (1 - product.discount.discountRating / 100))).toLocaleString()}원</p>}
             </div>
             <div className="flex flex-row items-center justify-end gap-3 text-lg font-bold">
               <Button
