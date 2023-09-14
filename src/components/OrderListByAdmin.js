@@ -123,7 +123,7 @@ export default function OrderListByAdmin() {
                 item.paymentDetail.map((e) => {
                   return (
                     <div>
-                      {e["product"].productName} {e["product"].price} X {e.count}
+                      {e["product"].productName} X {e.count}
                     </div>
                   );
                 })

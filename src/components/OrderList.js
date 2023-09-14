@@ -106,7 +106,7 @@ export default function OrderList() {
               <div>구매 목록</div>
               {item.paymentDetail.length === 0 ? <div>포인트 충전</div>: item.paymentDetail.map((e) =>{ 
                   return(<div key={e.id} className="mb-2">
-                    {e['product'].productName}  {e['product'].price}  X  {e.count} {item.status !== '완료' ? <p></p> : e.isComplete ? <button className="w-[80px] cursor-default bg-pink-400 rounded-2xl me-2">작성완료</button> : <button value={e.id} key={e.id} className="w-[80px] bg-pink-400 rounded-2xl me-2" onClick={(e) => {
+                    {e['product'].productName}  X  {e.count} {item.status !== '완료' ? <p></p> : e.isComplete ? <button className="w-[80px] cursor-default bg-pink-400 rounded-2xl me-2">작성완료</button> : <button value={e.id} key={e.id} className="w-[80px] bg-pink-400 rounded-2xl me-2" onClick={(e) => {
                         setPaymentDetailId(e.target.value); 
                         setModalIsOpen(true);
                       }}>리뷰작성</button>}
