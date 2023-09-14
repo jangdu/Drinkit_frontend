@@ -16,7 +16,7 @@ const cardStyles = {
   bottom: "25%",
   left: "25%",
   width: "50%",
-  minWidth: '500px',
+  minWidth: "500px",
   height: "50vh",
   animation: "slide-up 0.8s",
 };
