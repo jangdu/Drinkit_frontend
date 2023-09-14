@@ -32,8 +32,16 @@ export default function HomeBanner() {
           src="https://res.cloudinary.com/devkbqyym/image/upload/v1694447595/drinkit/%EF%BC%91%EC%95%88_ssdd05.png"
           onClick={() => {
             window.location.href = `${process.env.REACT_APP_MAINURL}/chatList`;
-          }}></img>
-        {/* <img alt="" src="https://res.cloudinary.com/devkbqyym/image/upload/v1694435012/drinkit/banner2_jkgylc.png" /> */}
+          }}
+        ></img>
+        <img
+          className="cursor-pointer"
+          alt=""
+          src="https://res.cloudinary.com/devkbqyym/image/upload/v1694435012/drinkit/banner2_jkgylc.png"
+          onClick={() => {
+            window.location.href = `${process.env.REACT_APP_MAINURL}/products/10`;
+          }}
+        />
         <img
           alt=""
           className="cursor-pointer"
@@ -42,12 +50,14 @@ export default function HomeBanner() {
             window.location.href = `${process.env.REACT_APP_MAINURL}/products/37`;
           }}
         />
-        <img alt="" 
+        <img
+          alt=""
           className="cursor-pointer"
-          src="https://res.cloudinary.com/devkbqyym/image/upload/v1694435021/drinkit/banner3_ehelva.png" 
+          src="https://res.cloudinary.com/devkbqyym/image/upload/v1694435021/drinkit/banner3_ehelva.png"
           onClick={() => {
             window.location.href = `${process.env.REACT_APP_MAINURL}/products/39`;
-          }}/>
+          }}
+        />
       </Slider>
     </div>
   );
