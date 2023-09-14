@@ -34,7 +34,7 @@ export default function Category({
   }, []);
   return (
     <div
-      className="flex flex-row py-3 mx-auto my-3 overflow-scroll"
+      className="flex flex-row py-3 mx-auto my-3 overflow-scroll no-scrollbar overscroll-none"
       style={{ whiteSpace: "nowrap" }}
     >
       {categories &&
