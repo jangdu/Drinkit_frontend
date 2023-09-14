@@ -41,7 +41,7 @@ const Signup = () => {
           alert("번호를 확인해주세요.");
         }
       } catch (error) {
-        alert("이미 존재하는 사용자입니다.");
+        alert(error.message);
       }
     else return alert("번호를 확인해 주세요.");
   };
@@ -174,8 +174,7 @@ const Signup = () => {
       </h2>
       <form
         className="flex flex-col gap-4 w-[50%] mx-auto"
-        onSubmit={handleSubmit}
-      >
+        onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="이름"
@@ -218,8 +217,7 @@ const Signup = () => {
           <button
             type="button"
             className="w-40 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-            onClick={sendSMS}
-          >
+            onClick={sendSMS}>
             인증 번호 발급
           </button>
         </div>
@@ -239,8 +237,7 @@ const Signup = () => {
           <button
             type="button"
             className="w-40 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-            onClick={codeAuth}
-          >
+            onClick={codeAuth}>
             인증
           </button>
         </div>
@@ -272,8 +269,7 @@ const Signup = () => {
           <button
             type="button"
             className="w-40 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-            onClick={handleComplete}
-          >
+            onClick={handleComplete}>
             주소 검색
           </button>
         </div>
@@ -290,8 +286,7 @@ const Signup = () => {
         />
         <button
           className="w-[80%] mx-auto mb-10 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          type="submit"
-        >
+          type="submit">
           {"회원가입"}
         </button>
       </form>
