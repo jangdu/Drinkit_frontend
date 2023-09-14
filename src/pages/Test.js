@@ -11,7 +11,7 @@ const { naver } = window;
 export default function Test() {
   const [user, setUser] = useState("");
   const [userAddressArr, setUserAddressArr] = useState([{ address: "" }]);
-  const { cartItems } = useCart();
+  const { cartItems, getTotalCount, getTotalPrice } = useCart();
   const [storeAddress, setStoreAddress] = useState("");
   const [markerInfo, setMarkerInfo] = useState();
   const [value, setValue] = useState();
@@ -314,6 +314,10 @@ export default function Test() {
               usePoint > 0 ? setUsePoint(e.target.value) : setUsePoint(0);
             }}
           />
+          <div className="flex flex-row justify-between my-2 text-slate-500">
+            <p>{`총 상품 가격`}</p>
+            <p className="text-black">{getTotalPrice()}</p>
+          </div>
           <div className="w-fit mx-auto">
             <Button text={"주문하기"} type="submit" className="w-fit mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500 mb-2" onClick={() => requstPay.requestPay(cartItems, input, user, usePoint, storeId)} />
           </div>

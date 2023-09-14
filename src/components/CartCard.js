@@ -9,7 +9,7 @@ export default function CartCard({ product, removeFromCart, increaseCount, decre
         <div className="flex flex-row">
           <div className="flex flex-col gap-6">
             <p className="text-lg text-black font-semibold">{product.productName}</p>
-            <p className="text-slate-500 font-medium">{product.price}원</p>
+            <p className="text-slate-500 font-medium">{Number(product.price).toLocaleString()}원</p>
           </div>
         </div>
         <div className="items-center text-center">

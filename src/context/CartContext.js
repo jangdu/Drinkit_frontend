@@ -54,7 +54,7 @@ const CartProvider = ({ children }) => {
 
   // 장바구니 내 메뉴 가격의 총합 계산하는 함수
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.count, 0);
+    return cartItems.reduce((total, item) => total + item.price * item.count, 0).toLocaleString();
   };
 
   return (
