@@ -82,7 +82,11 @@ export default function Navbar() {
             if (response.status === 200) {
               const data = await response.data;
               console.log(data);
-              setSearchValue(data);
+              if(!data[0]){
+                setSearchValue('상품이 존재하지 않습니다.');
+              }else{
+                setSearchValue(data);
+              }
             }
           } catch (error) {
             console.log(error.message);
@@ -174,7 +178,11 @@ export default function Navbar() {
           style={cardStyles}
           className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]"
         >
-          {searchValue.length > 0 && text && (
+          {searchValue === '상품이 존재하지 않습니다.' ? <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
+              <p className="p-2 " key='136248'>
+                해당 상품이 존재하지 않습니다.
+              </p>
+            </div> : searchValue.length > 0 && text && (
             <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
               {searchValue.map((item) => {
                 return (
