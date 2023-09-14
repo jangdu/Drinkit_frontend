@@ -178,28 +178,6 @@ export default function Navbar() {
           style={cardStyles}
           className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]"
         >
-          {/* 기존 내용  */}
-          {/* {searchValue.length > 0 && text && (
-            <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
-              {searchValue.map((item) => {
-                return (
-                  <div
-                    className="rounded-md cursor-pointer hover:bg-slate-200"
-                    onClick={() => {
-                      newText("");
-                      navigate(`/products/${item._source.id}`);
-                    }}
-                  >
-                    <p className="p-2 " key={item._source.id}>
-                      {item._source.productName}
-                    </p>
-                    <div className="border-b"></div>
-                  </div>
-                );
-              })}
-            </div>
-          )} */}
-          {/* 변경 내용 */}
           {searchValue === '상품이 존재하지 않습니다.' ? <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
               <p className="p-2 " key='136248'>
                 해당 상품이 존재하지 않습니다.
