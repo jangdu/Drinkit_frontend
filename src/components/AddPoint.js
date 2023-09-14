@@ -96,6 +96,15 @@ const AddPoint = (user) => {
         포인트 충전
       </h2>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <p className="flex justify-end text-xs text-slate-400">
+          1회 충전 한도는 1,000,000원 입니다.
+        </p>
+        <p className="flex justify-end text-xs text-slate-400">
+          구독을 제외한 배송, 픽업 결제 시
+        </p>
+        <p className="flex justify-end text-xs text-slate-400">
+          포인트는 총 결제 금액의 50% 까지만 사용 가능합니다.
+        </p>
         <input
           id="cost"
           type="number"
@@ -106,9 +115,6 @@ const AddPoint = (user) => {
             setIsButton(false);
           }}
         />
-        <p className="flex justify-end text-xs text-slate-400">
-          1회 충전 한도는 1,000,000원 입니다.
-        </p>
         <button
           type="submit"
           className="w-[80%] mx-auto bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
