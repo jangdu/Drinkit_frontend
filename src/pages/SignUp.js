@@ -79,30 +79,27 @@ const Signup = () => {
     e.preventDefault();
 
     if (password !== confirm) {
-      alert("비빌번호를 확인해주세요!");
+      alert("비밀번호를 확인해주세요!");
       setPassword("");
       setConfirm("");
       return;
     }
 
-    if (!isAuth) {
-      return alert("휴대폰 인증이 필요합니다.");
-    }
+    // if (!isAuth) {
+    //   return alert("휴대폰 인증이 필요합니다.");
+    // }
 
     const handleGeocode = async () => {
-      await naver.maps.Service.geocode(
-        { query: enroll_company.address },
-        async (status, response) => {
-          if (status === 200) {
-            y = response.v2.addresses[0].y;
-            x = response.v2.addresses[0].x;
+      await naver.maps.Service.geocode({ query: enroll_company.address }, async (status, response) => {
+        if (status === 200) {
+          y = response.v2.addresses[0].y;
+          x = response.v2.addresses[0].x;
 
-            await handleRequest();
-          } else {
-            alert("Something wrong!");
-          }
+          await handleRequest();
+        } else {
+          alert("Something wrong!");
         }
-      );
+      });
     };
 
     await handleGeocode();
@@ -169,36 +166,11 @@ const Signup = () => {
   };
   return (
     <div className="p-2 mt-20 bg-white border border-pink-300 rounded-lg">
-      <h2 className="mx-auto mt-5 mb-5 text-xl font-bold text-center">
-        {"회원가입"}
-      </h2>
-      <form
-        className="flex flex-col gap-4 w-[50%] mx-auto"
-        onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="이름"
-          className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500"
-          value={name}
-          required
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500"
-          value={password}
-          required
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="비밀번호 확인"
-          className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500"
-          value={confirm}
-          required
-          onChange={(e) => setConfirm(e.target.value)}
-        />
+      <h2 className="mx-auto mt-5 mb-5 text-xl font-bold text-center">{"회원가입"}</h2>
+      <form className="flex flex-col gap-4 w-[50%] mx-auto" onSubmit={handleSubmit}>
+        <input type="text" placeholder="이름" className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500" value={name} required onChange={(e) => setName(e.target.value)} />
+        <input type="password" placeholder="비밀번호" className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500" value={password} required onChange={(e) => setPassword(e.target.value)} />
+        <input type="password" placeholder="비밀번호 확인" className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500" value={confirm} required onChange={(e) => setConfirm(e.target.value)} />
         <div className="flex flex-row">
           <input
             type="text"
@@ -214,14 +186,14 @@ const Signup = () => {
               setPhoneNumber(numericInput);
             }}
           />
-          <button
+          {/* <button
             type="button"
             className="w-40 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
             onClick={sendSMS}>
             인증 번호 발급
-          </button>
+          </button> */}
         </div>
-        <div className="flex flex-row">
+        {/* <div className="flex flex-row">
           <input
             type="text"
             placeholder="코드"
@@ -240,53 +212,18 @@ const Signup = () => {
             onClick={codeAuth}>
             인증
           </button>
-        </div>
-        <input
-          type="nickname"
-          placeholder="닉네임"
-          className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-        />
-        <input
-          className="p-2 border border-pink-300 rounded-lg user_enroll_text placeholder:text-gray-500"
-          placeholder="주소"
-          type="text"
-          disabled={true}
-          required={true}
-          value={enroll_company.address}
-        />
+        </div> */}
+        <input type="nickname" placeholder="닉네임" className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+        <input className="p-2 border border-pink-300 rounded-lg user_enroll_text placeholder:text-gray-500" placeholder="주소" type="text" disabled={true} required={true} value={enroll_company.address} />
         <div className="flex flex-row">
-          <input
-            placeholder="상세 주소"
-            className="p-2 border mr-5 border-pink-300 rounded-lg placeholder:text-gray-500 w-[70%]"
-            type="text"
-            required={true}
-            onChange={(e) => setAddressDetail(e.target.value)}
-            value={addressDetail}
-            style={{ marginRight: "1em" }}
-          />
-          <button
-            type="button"
-            className="w-40 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-            onClick={handleComplete}>
+          <input placeholder="상세 주소" className="p-2 border mr-5 border-pink-300 rounded-lg placeholder:text-gray-500 w-[70%]" type="text" required={true} onChange={(e) => setAddressDetail(e.target.value)} value={addressDetail} style={{ marginRight: "1em" }} />
+          <button type="button" className="w-40 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500" onClick={handleComplete}>
             주소 검색
           </button>
         </div>
-        {popup && (
-          <Post company={enroll_company} setcompany={setEnroll_company}></Post>
-        )}
-        <input
-          placeholder="주소명"
-          type="text"
-          required={true}
-          className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500"
-          onChange={(e) => setAddressName(e.target.value)}
-          value={addressName}
-        />
-        <button
-          className="w-[80%] mx-auto mb-10 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500"
-          type="submit">
+        {popup && <Post company={enroll_company} setcompany={setEnroll_company}></Post>}
+        <input placeholder="주소명" type="text" required={true} className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500" onChange={(e) => setAddressName(e.target.value)} value={addressName} />
+        <button className="w-[80%] mx-auto mb-10 bg-pink-300 py-1.5 rounded-2xl font-bold text-white hover:bg-pink-500" type="submit">
           {"회원가입"}
         </button>
       </form>
