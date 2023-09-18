@@ -38,13 +38,10 @@ export default function PaymentsPage() {
     getUserAddress();
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      if (Number(usePoint) > Number(user.point)) {
-        setUsePoint(user.point);
-      }
-    }
-  }, [usePoint]);
+  const amount = getTotalPrice().replace(',', '')
+  if(Number(amount)*0.5 < Number(usePoint) ){
+    setUsePoint(amount*0.5)
+  }
 
   return (
     <div className="flex flex-col p-2 px-4">

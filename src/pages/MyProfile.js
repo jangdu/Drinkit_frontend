@@ -82,7 +82,7 @@ export default function MyProfile() {
     return <></>;
   } else {
     return (
-      <div className="flex flex-col gap-5 max-w-lg p-2 mx-auto">
+      <div className="flex flex-col gap-5 max-w-lg p-2 mx-auto py-6">
         <div className="rounded-xl border-slate-200 my-6 bg-white text-slate-500 p-4 shadow-xl border flex flex-col gap-4">
           <div className="my-2 text-center w-fit mx-auto content-center p-2 flex flex-row text-xl font-semibold">
             <p className="text-pink-500">{user.nickname}</p>
@@ -174,9 +174,8 @@ export default function MyProfile() {
               }}></Button>
           </div>
         </div>
-        <div className="border-b-2 border-slate-300"></div>
         {user.isPersonal && myStore && (
-          <div className="rounded-xl border-slate-200 bg-white text-slate-500 p-4 shadow-xl border flex flex-col gap-4">
+          <div className="rounded-xl border-slate-200 mb-8 bg-white text-slate-500 p-4 shadow-xl border flex flex-col gap-4">
             <h1 className="text-center my-3 text-xl font-bold">
               <span className="text-xl font-bold text-pink-500">{`${myStore.name}`}</span>
               {`님의 가게 정보`}
@@ -218,7 +217,6 @@ export default function MyProfile() {
             </Link>
           </div>
         )}
-        <div className="border-b-2 border-slate-300 my-5"></div>
 
         <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={customStyles}>
           <style>{slideUpAnimation}</style>

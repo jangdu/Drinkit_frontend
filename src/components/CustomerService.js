@@ -8,6 +8,7 @@ export default function CustomerService() {
   const [save, setSave] = useState([]);
   const scrollContainerRef = useRef(null);
   const [loading, setloading] = useState(false);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     if(localStorage.getItem('save')){
@@ -43,6 +44,7 @@ export default function CustomerService() {
       if (response.status === 201) {
         const data = await response.data;
         setMessage(data);
+        setCount(count + 1);
       }
     } catch (error) {
       console.log(error.message);
@@ -54,7 +56,7 @@ export default function CustomerService() {
       setSave([...save, { owner: true, input: message }]);
     }
     setloading(false);
-  }, [message]);
+  }, [count]);
 
   const handlleSubmit = (e) => {
     e.preventDefault();
@@ -72,7 +74,6 @@ export default function CustomerService() {
 
   return (
     <div className="h-[75%]">
-      {/* <h1 className="titleFont text-lg text-center mt-4">AI 고객센터</h1> */}
       <div className="flex flex-col items-end mt-1 mb-1">
         <button className="pl-2 pr-2 text-lg rounded-tr-md mr-2 mb-1 bg-pink-300 rounded-xl titleFont shadow-sm shadow-pink-400 hover:bg-pink-400 hover:shadow-none" onClick={() => {clearChat()}}>대화내용삭제</button>
       </div>

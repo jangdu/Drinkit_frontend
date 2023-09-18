@@ -1,18 +1,14 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
-
 const AuthContext = createContext();
-
 export function AuthContextProvider({ children }) {
   const [user, setUser] = useState();
   const [myStore, setMyStore] = useState();
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     setUser(getUser());
   }, []);
-
   const getUser = async () => {
     try {
       const response = await axios.get(
@@ -24,8 +20,7 @@ export function AuthContextProvider({ children }) {
           },
         }
       );
-
-      const { data } = await response;
+      const { data } = response;
       if (response.status === 202) {
         if (data.store !== null) {
           setMyStore(data.store);
@@ -47,16 +42,13 @@ export function AuthContextProvider({ children }) {
       setIsLoading(false);
     }
   };
-
   return (
     <AuthContext.Provider
-      value={{ user, myStore, userId: user && user.id, isLoading }}
-    >
+      value={{ user, myStore, userId: user && user.id, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
 }
-
 export function useAuthContext() {
   return useContext(AuthContext);
 }

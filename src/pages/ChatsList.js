@@ -6,28 +6,33 @@ import Button from "../components/ui/Button";
 import ChatsModal from "../components/ChatsModal";
 import cookies from "js-cookie";
 import ReactModal from "react-modal";
+import GridChatList from "../components/GridChatList";
 
 // 1. http://localhost:8000
-// 2. http://jangdu.me:8000
-// 3. http://www.yhjs1211.online:8000 , http://118.67.143.18:8000
-
-const socket = io("https://jangdu.me/chat", {
-  transports: ["websocket"],
-  withCredentials: true,
-  auth: {
-    accessToken: cookies.get("AccessToken"),
-    refreshToken: cookies.get("RefreshToken"),
-  },
-});
+// 2. https://jangdu.me
 
 const cardStyles = {
-  position: "fixed",
+  position: "absolute",
   bottom: "25%",
   left: "25%",
   width: "50%",
-  height: "50%",
+  minWidth: "500px",
+  height: "50vh",
   animation: "slide-up 0.8s",
 };
+
+const slideUpAnimation = `
+    @keyframes slide-up {
+      from {
+        opacity: 0;
+        transform: translate(10%, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate(0, 0);
+      }
+    }
+  `;
 
 const cusStyle = {
   overlay: {
@@ -51,19 +56,6 @@ const cusStyle = {
   },
 };
 
-const slideUpAnimation = `
-    @keyframes slide-up {
-      from {
-        opacity: 0;
-        transform: translate(10%, 0);
-      }
-      to {
-        opacity: 1;
-        transform: translate(0, 0);
-      }
-    }
-  `;
-
 const slideUpModalAnimation = `
 @keyframes slide-up {
   from {
@@ -76,80 +68,124 @@ const slideUpModalAnimation = `
 `;
 
 const ChatList = () => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [chatRooms, setChatRooms] = useState([]);
   const [isCreatingRoom, setIsCreatingRoom] = useState(false); // 방 만들기 화면을 표시할지 여부를 상태로 관리합니다.
   const [clickedRoom, setClickedRoom] = useState();
-  const [socketId, setSocketId] = useState("");
+  const [selectedCnt, setSelectedCnt] = useState([]);
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  // Room State
+  const [roomForTwo, setRoomForTwo] = useState([]);
+  const [roomForThree, setRoomForThree] = useState([]);
+  const [roomForFour, setRoomForFour] = useState([]);
+
+  const [socket, setSocket] = useState({});
 
   useEffect(() => {
-    socket.emit("getRooms", null, (response) => {
-      setSocketId(socket.id); // peer 객체 생성시 ID 값 활용
-      setChatRooms(response);
+    const newSocket = io("https://jangdu.me/chat", {
+      transports: ["websocket"],
+      auth: {
+        accessToken: cookies.get("AccessToken"),
+        refreshToken: cookies.get("RefreshToken"),
+      },
+      reconnectionAttempts: 3,
+      reconnection: true,
     });
-  }, [isCreatingRoom, socketId]);
+    setSocket(newSocket);
+
+    newSocket.emit("getRooms", null, (response) => {
+      Object.entries(response).forEach(([max, room]) => {
+        if (max === "2") {
+          setRoomForTwo(room);
+          setSelectedCnt(room);
+        } else if (max === "3") {
+          setRoomForThree(room);
+        } else if (max === "4") {
+          setRoomForFour(room);
+        }
+      });
+    });
+  }, []);
 
   const handleCreateRoomClick = () => {
     setIsCreatingRoom(true); // 버튼 클릭 시 방 만들기 화면 표시
   };
 
   return (
-    // <div className={`flex flex-col border border-slate-500 bg-white max-w-xl mx-auto mt-2 h-[90vh] rounded-2xl p-3`}>
-    <div className="rounded-xl border-slate-200 my-3 max-w-xl min-h-[90vh] mx-auto bg-white p-4 shadow-xl border flex flex-col gap-4">
-      <h1 className="text-2xl font-bold text-center my-2">채팅방 목록</h1>
-      <div className="flex flex-row justify-end font-bold text-xl my-2">
-        <Button text={"방 만들기"} onClick={handleCreateRoomClick} />
+    <div
+      className={`flex flex-col border max-w-xl mx-auto p-4 bg-white my-8 rounded-xl shadow-md`}
+    >
+      <h1 className="my-4 text-2xl font-bold text-center">채팅방 목록</h1>
+      <div className="flex flex-row justify-center gap-3 font-semibold">
+        <button
+          className={`hover:text-pink-500 ${
+            selectedCnt === roomForTwo && "text-pink-500"
+          }`}
+          onClick={() => {
+            setSelectedCnt(roomForTwo);
+          }}
+        >
+          2인방
+        </button>
+        <button
+          className={`hover:text-pink-500 ${
+            selectedCnt === roomForThree && "text-pink-500"
+          }`}
+          onClick={() => {
+            setSelectedCnt(roomForThree);
+          }}
+        >
+          3인방
+        </button>
+        <button
+          className={`hover:text-pink-500 ${
+            selectedCnt === roomForFour && "text-pink-500"
+          }`}
+          onClick={() => {
+            setSelectedCnt(roomForFour);
+          }}
+        >
+          4인방
+        </button>
       </div>
-      {isCreatingRoom ? (
-        <div className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`} style={cardStyles}>
+      <div className="flex justify-end">
+        <Button text={"내 채팅방 만들기"} onClick={handleCreateRoomClick} />
+      </div>
+      {isCreatingRoom && (
+        <div
+          className={`transition-opacity rounded-3xl shadow-2xl bg-pink-100`}
+          style={cardStyles}
+        >
           <style>{slideUpAnimation}</style>
-          <CreateRoom socket={socket} socketId={socketId} setIsCreatingRoom={setIsCreatingRoom} setModalIsOpen={setModalIsOpen} setClickedRoom={setClickedRoom} />
+          <CreateRoom
+            setModalIsOpen={setModalIsOpen}
+            socket={socket}
+            setIsCreatingRoom={setIsCreatingRoom}
+            setClickedRoom={setClickedRoom}
+          />
         </div>
-      ) : (
-        chatRooms &&
-        Object.entries(chatRooms).map(([roomSize, value]) => {
-          return (
-            <div key={roomSize} className="flex flex-col">
-              {/* <h2 className="text-xl font-bold">{roomSize}명 방</h2> */}
-              {chatRooms[roomSize] &&
-                Object.entries(chatRooms[roomSize]).map(([roomId, roomList]) => {
-                  const jsonRoom = JSON.parse(roomList);
-                  return (
-                    <div key={roomId} className="flex flex-col  my-4 p-3">
-                      <div key={roomId} className="flex flex-row items-center justify-between gap-3">
-                        <div className="flex flex-row items-center gap-4 ">
-                          <span className="text-lg text-slate-500 font-semibold">{"[" + jsonRoom["maxNumberOfPerson"] + "인방]"}</span>
-                          <span className="text-lg font-bold">{jsonRoom["roomName"]}</span>
-                          {/* <span>방장: {jsonRoom["roomOwner"]}</span> */}
-                        </div>
-                        <Button
-                          text={"들어가기"}
-                          onClick={() => {
-                            setModalIsOpen(true);
-                            setClickedRoom({ ...jsonRoom, roomId });
-                          }}
-                        />
-                      </div>
-                      {/* <div className="border w-[50%] mx-auto border-pink-300"></div> */}
-                    </div>
-                  );
-                })}
-            </div>
-          );
-        })
       )}
-      {/* {modalIsOpen && (
-        <div className={`transition-opacity rounded-3xl shadow-2xl p-6 bg-pink-100`} style={cardStyles}>
-          <style>{slideUpAnimation}</style>
-          <ChatsModal clickedRoom={clickedRoom} socket={socket} setModalIsOpen={setModalIsOpen} />
-        </div>
-      )} */}
       <ReactModal isOpen={modalIsOpen} style={cusStyle}>
         <style>{slideUpModalAnimation}</style>
         <div>
-          <ChatsModal clickedRoom={clickedRoom} socket={socket} socketId={socketId} setModalIsOpen={setModalIsOpen} />
+          <ChatsModal
+            clickedRoom={clickedRoom}
+            socket={socket}
+            socketId={socket.id}
+            setModalIsOpen={setModalIsOpen}
+          />
         </div>
       </ReactModal>
+
+      {selectedCnt && (
+        <GridChatList
+          socket={socket}
+          clickedRoom={clickedRoom}
+          setClickedRoom={setClickedRoom}
+          setModalIsOpen={setModalIsOpen}
+          list={selectedCnt}
+        />
+      )}
     </div>
   );
 };

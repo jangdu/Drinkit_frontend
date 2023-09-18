@@ -82,7 +82,11 @@ export default function Navbar() {
             if (response.status === 200) {
               const data = await response.data;
               console.log(data);
-              setSearchValue(data);
+              if(!data[0]){
+                setSearchValue('상품이 존재하지 않습니다.');
+              }else{
+                setSearchValue(data);
+              }
             }
           } catch (error) {
             console.log(error.message);
@@ -105,6 +109,31 @@ export default function Navbar() {
     }
   };
 
+  const getToken = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_SERVERURL}/user/token`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.status);
+      if (response.status === 200) {
+        document.cookie = `AccessToken=${response.data.accessToken}; Secure; SameSite=None;`;
+        document.cookie = `RefreshToken=${response.data.refreshToken}; Secure; SameSite=None;`;
+
+        window.location.href = `/chatlist`;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <header className="flex justify-between max-w-4xl p-3 mx-auto mt-1 titleFont">
       {/* <div className="w-32">
@@ -119,14 +148,19 @@ export default function Navbar() {
         <div>
           <Link
             className="text-black-300 hover:text-pink-500"
-            to={"/subscribes"}>
+            to={"/subscribes"}
+          >
             구독
           </Link>
         </div>
         <div>
-          <Link className="text-black-300 hover:text-pink-500" to={"/chatList"}>
+          <button
+            type="button"
+            className="text-black-300 hover:text-pink-500"
+            onClick={getToken}
+          >
             ZZAN
-          </Link>
+          </button>
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 ">
@@ -136,13 +170,19 @@ export default function Navbar() {
               placeholder="검색어 입력"
               className="p-2 border border-pink-300 rounded-lg placeholder:text-gray-500 w-52"
               value={text}
-              onChange={(e) => newText(e.target.value)}></input>
+              onChange={(e) => newText(e.target.value)}
+            ></input>
           </div>
         </div>
         <div
           style={cardStyles}
-          className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]">
-          {searchValue.length > 0 && text && (
+          className="absolute hidden sm:block md:right-[40%] right-[30%] top-[54px]"
+        >
+          {searchValue === '상품이 존재하지 않습니다.' ? <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
+              <p className="p-2 " key='136248'>
+                해당 상품이 존재하지 않습니다.
+              </p>
+            </div> : searchValue.length > 0 && text && (
             <div className="flex flex-col bg-white border border-pink-300 rounded-md shadow-md w-52">
               {searchValue.map((item) => {
                 return (
@@ -151,7 +191,8 @@ export default function Navbar() {
                     onClick={() => {
                       newText("");
                       navigate(`/products/${item._source.id}`);
-                    }}>
+                    }}
+                  >
                     <p className="p-2 " key={item._source.id}>
                       {item._source.productName}
                     </p>
@@ -166,7 +207,8 @@ export default function Navbar() {
         {user ? (
           <Link
             className="font-semibold text-pink-300 text-black-300 hover:text-pink-500"
-            to="/profile">
+            to="/profile"
+          >
             {user.nickname + " 님 >"}
           </Link>
         ) : (
@@ -185,9 +227,12 @@ export default function Navbar() {
                   },
                 }
               );
+              document.cookie = `AccessToken=; Secure; SameSite=None;`;
+              document.cookie = `RefreshToken=; Secure; SameSite=None;`;
 
               window.location.reload();
-            }}>
+            }}
+          >
             로그아웃
           </button>
         ) : (
@@ -196,7 +241,8 @@ export default function Navbar() {
             onClick={() => {
               setModalIsOpen(true);
               setIsSignupLogIn("login");
-            }}>
+            }}
+          >
             로그인
           </button>
         )}
@@ -205,7 +251,8 @@ export default function Navbar() {
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
-        style={customStyles}>
+        style={customStyles}
+      >
         <style>{slideUpAnimation}</style>
         <div className="">
           {isSignupLogIn === "login" ? <Login /> : <Signup />}

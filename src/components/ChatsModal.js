@@ -12,20 +12,23 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
   const [isOpenedChat, setIsOpenChat] = useState(false);
   const scrollContainerRef = useRef(null);
   // Peer
-  const [newPeer, setNewPeer] = useState();
+  const [peer, setPeer] = useState(null);
   const [myPeerId, setMyPeerId] = useState();
-  const [peers, setPeers] = useState([]);
+  // const [peers, setPeers] = useState([]);
   const [conn, setConn] = useState(null);
 
   const [isDragging, setIsDragging] = useState(false);
 
+  // Scroll
   useEffect(() => {
     // 스크롤 컨테이너의 scrollTop을 최대로 설정하여 항상 아래로 스크롤합니다.
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+      scrollContainerRef.current.scrollTop =
+        scrollContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
+  // Video
   useEffect(() => {
     const container = document.getElementById("myVideoContainer");
 
@@ -69,58 +72,60 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
     };
   }, []);
 
+  // Peer
   useEffect(() => {
-    var peer = new Peer(socketId);
-    setNewPeer(peer);
+    if (!socket) {
+      return;
+    }
+
+    const peer = new Peer(socketId);
+    setPeer(peer);
+
+    clickedRoom.peerId = socketId;
 
     peer.on("open", function (id) {
       setMyPeerId(id);
-
-      clickedRoom.peerId = id;
       socket.emit("joinRoom", clickedRoom);
     });
 
-    peer.on("connection", function (conn) {
-      // 새로운 연결이 설정될 때 처리
-      setPeers((prev) => [...prev, conn]);
-
-      conn.on("data", function (data) {
-        // 연결된 피어에서 수신
-        console.log("connected!!", data);
-        setChatMessages((prevMessages) => [...prevMessages, data]);
-      });
-    });
-
-    // 전화 걸기
-
     const userMedia = navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: false,
+      audio: true,
     });
     userMedia.then((stream) => {
       const videoElement = document.createElement("video");
       videoElement.srcObject = stream;
-      // videoElement.className = "absolute bottom-10 w-96";
       videoElement.autoplay = true; // 자동 재생 설정
-      videoElement.className = "border border-2 border-pink-500 rounded-lg shadow-xl";
+      videoElement.className =
+        "border border-2 border-pink-500 rounded-lg shadow-xl";
+      videoElement.volume = 0;
 
       // 비디오를 화면에 추가
       const videoContainer = document.getElementById("myVideoContainer");
       videoContainer.appendChild(videoElement);
     });
 
+    peer.on("connection", function (conn) {
+      // 새로운 연결이 설정될 때 처리
+
+      conn.on("data", function (data) {
+        // 연결된 피어에서 수신
+        setChatMessages((prevMessages) => [...prevMessages, data]);
+      });
+    });
     peer.on("call", function (call) {
       //2 받기
       userMedia.then((mediaStream) => {
         // Answer the call, providing our mediaStream
         call.answer(mediaStream); // 3 답장하고
         call.on("stream", function (stream) {
-          console.log("스트림 받았다잉");
-          // 2-1. 받은거 작업
-          // `stream` is the MediaStream of the remote peer.
-          // Here you'd add it to an HTML video/canvas element.
+          if(document.getElementById(call.peer) && document.getElementById(call.peer).srcObject === stream){
+            return
+          }
+
           const videoElement = document.createElement("video");
           videoElement.srcObject = stream;
+          videoElement.id = call.peer;
           videoElement.autoplay = true; // 자동 재생 설정
           videoElement.className = "border rounded-lg shadow-xl";
 
@@ -131,28 +136,36 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
       });
     });
 
-    socket.on("joinedRoom", handleNewMessage);
-    socket.on("userJoined", handleNewMessage);
     socket.on("broadcastMessage", handleNewMessage);
 
     // id: 공유받은 id
     socket.on("sharedId", async (id) => {
       const peerConn = peer.connect(id);
       setConn(peerConn);
-      newConection(id, peerConn);
+      newConection(id, peerConn, peer);
     });
 
-    const newConection = (id, conn) => {
-      conn.on("open", function () {
-        conn.send("hi!", id);
-        navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((mediaStream) => {
-          // Call a peer, providing our mediaStream
+    socket.on("outUser", (i) => {
+      const videoDiv = document.getElementById(i);
+      videoDiv.remove();
+    });
+  }, []);
+
+  const newConection = (id, conn, peer) => {
+    conn.on("open", function () {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((mediaStream) => {
           var call = peer.call(id, mediaStream); // 1 걸기
 
           call.on("stream", function (stream) {
-            console.log(stream);
+            if(document.getElementById(id) && document.getElementById(id).srcObject === stream){
+              return
+            }
+            
             const videoElement = document.createElement("video");
             videoElement.srcObject = stream;
+            videoElement.id = id;
             videoElement.autoplay = true; // 자동 재생 설정
             videoElement.className = "border rounded-lg shadow-xl";
 
@@ -161,22 +174,11 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
             videoContainer.appendChild(videoElement);
           });
         });
-      });
-    };
-
-    return () => {
-      socket.off("broadcastMessage");
-      socket.off("userJoined");
-      socket.off("joinedRoom");
-    };
-  }, [socket, clickedRoom]);
+    });
+  };
 
   const handleLeaveRoom = () => {
-    socket.emit("deleteRoom", clickedRoom.name);
-
-    if (newPeer) {
-      newPeer.destroy(); // Peer 객체 파괴
-    }
+    socket.emit("outRoom", clickedRoom);
 
     setModalIsOpen(false);
     window.location.reload();
@@ -197,12 +199,27 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
     setMessages((prevMessages) => [...prevMessages, `${data}`]);
   };
 
+  const handleBoomBtn = () => {
+    socket.emit("deleteRoom", clickedRoom.name);
+  };
+
   return (
     <div style={{ height: "90%", overflowY: "auto" }}>
-      <div id="myVideoContainer" className={`w-60 index99 ${"draggable-container"}`}></div>
+      <div
+        id="myVideoContainer"
+        className={`w-60 index99 ${"draggable-container"}`}
+      ></div>
       <div id="videoContainer" className="grid grid-cols-2"></div>
-      <div className={`absolute ${isOpenedChat && "hidden"} min-w-[280px] bg-opacity-50 w-[45%] rounded-lg bottom-5 right-14 h-[50%] shadow-xl p-4 bg-pink-100`}>
-        <div ref={scrollContainerRef} className={`overflow-y-auto h-[95%] no-scrollbar overscroll-none `} style={{ whiteSpace: "nowrap" }}>
+      <div
+        className={`absolute ${
+          isOpenedChat && "hidden"
+        } min-w-[280px] w-[80%] rounded-lg bottom-3 right-14 h-[40%] shadow-lg p-4 bg-pink-200 bg-opacity-80`}
+      >
+        <div
+          ref={scrollContainerRef}
+          className={`overflow-y-auto no-scrollbar h-[90%]`}
+          style={{ whiteSpace: "nowrap" }}
+        >
           {chatMessages.map((msg, index) => (
             <div key={index}>
               <strong>{msg.from}: </strong>
@@ -213,21 +230,48 @@ const ChatsModal = ({ clickedRoom, socket, socketId, setModalIsOpen }) => {
             <div key={index}>{message}</div>
           ))}
         </div>
-        <form className="absolute bottom-0 right-0 w-full" onSubmit={handleSendMessage}>
-          <input required type="text" className="bg-transparent p-4 w-[85%]" value={messageInput} onChange={(e) => setMessageInput(e.target.value)} placeholder="메시지를 입력하세요." />
+        <form
+          className="absolute bottom-0 right-0 w-full"
+          onSubmit={handleSendMessage}
+        >
+          <input
+            required
+            type="text"
+            className="bg-transparent p-4 w-[85%]"
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+            placeholder="메시지를 입력하세요."
+          />
           <Button text=">" />
         </form>
       </div>
+      {clickedRoom.roomOwner === socketId && (
+        <div className="absolute text-xl titleFont right-16 flex flex-col h-[95%] top-5 ">
+          <button
+            className="hover:text-red-500"
+            onClick={() => {
+              handleBoomBtn();
+            }}
+          >
+            손 튕기기
+          </button>
+        </div>
+      )}
+
       <div className="absolute text-4xl right-3 flex flex-col h-[95%] top-4 justify-between">
         <button
           className="hover:text-red-500"
           onClick={() => {
             // 채팅 나가기
             handleLeaveRoom();
-          }}>
+          }}
+        >
           <AiOutlineClose />{" "}
         </button>
-        <button className="hover:text-red-500" onClick={() => setIsOpenChat(!isOpenedChat)}>
+        <button
+          className="hover:text-red-500"
+          onClick={() => setIsOpenChat(!isOpenedChat)}
+        >
           <BiChat />
         </button>
       </div>

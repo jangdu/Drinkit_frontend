@@ -29,8 +29,6 @@ const Login = () => {
         const data = await response.json();
         console.log(data);
       }
-      document.cookie = `AccessToken=Bearer ${response.data.accessToken}; Secure; SameSite=None;`;
-      document.cookie = `RefreshToken=Bearer ${response.data.refreshToken}; Secure; SameSite=None;`;
     } catch (error) {
       alert(error.response.data.message);
     }

@@ -39,10 +39,16 @@ export default function ProductDetail() {
   };
 
   const handleAddCart = () => {
+    let { price } = product;
+
+    if (product.discount) {
+      price = product.discount.discountPrice ? product.discount.discountPrice : price * (1 - product.discount.discountRating / 100);
+    }
+
     const newItem = {
       productId: product.id,
       productName: product.productName,
-      price: product.price,
+      price: price,
       count,
     };
 
@@ -85,13 +91,13 @@ export default function ProductDetail() {
           </div>
           <div className="sm:w-3/5 sm:pl-8">
             <h1 className="text-3xl font-semibold">{product.productName}</h1>
-            <p className="mt-2 text-gray-600" style={{ whiteSpace: "nowrap" }}>
+            <p className="mt-2 text-gray-600" style={{ whiteSpace: "pre-wrap" }}>
               {product.description}
             </p>
             <p className="px-2 mt-2 text-white font-bold py-1 bg-pink-500 rounded-lg w-fit">{product.category.name}</p>
             <div className="flex items-center mt-4">
-              <span className={`text-xl font-semibold ${product.discount && "text-slate-300 line-through"}`}>{product.price}원</span>
-              {product.discount && <p className="text-xl font-semibold ms-2">{"→ " + Math.round(product.price * (1 - product.discount.discountRating / 100))}원</p>}
+              <span className={`text-xl font-semibold ${product.discount && "text-slate-300 line-through"}`}>{Number(product.price).toLocaleString()}원</span>
+              {product.discount && <p className="text-xl font-semibold ms-2">→ {+product.discount.discountPrice ? `${Number(product.discount.discountPrice).toLocaleString()}` : Number(Math.round(product.price * (1 - product.discount.discountRating / 100))).toLocaleString()}원</p>}
             </div>
             <div className="flex flex-row items-center justify-end gap-3 text-lg font-bold">
               <Button
@@ -118,19 +124,29 @@ export default function ProductDetail() {
         <div className="w-[50%] mx-auto my-6 border border-b-2 border-pink-100"></div>
         <div className="mt-4 sm:mt-10">
           <h2 className="mb-6 text-2xl font-bold text-center">리뷰</h2>
-          <ul>
+          <div className="flex flex-col mx-auto w-[80%] font-semibold">
             {!product.review.length && <li className="mx-4">아직 달린 리뷰가 없어요!</li>}
             {product.review.map((review) => (
-              <li key={review.id} className="mb-8">
-                <div className="flex items-center px-3 my-2 bg-pink-100 rounded-lg w-fit">
-                  <p className="mr-1 text-2xl text-yellow-500">★</p>
-                  <p className="text-lg">{review.rating}점</p>
-                  <p className="text-gray-500 text-md ms-4">{review.user.email}</p>
+              <div key={review.id} className="flex flex-col mb-8 p-3 my-2 bg-pink-100 w-[100%] rounded-lg">
+                <div className="flex flex-row">
+                  {Array.from({ length: review.rating }, (_, index) => (
+                    <p key={index} className="text-yellow-500 text-2xl">
+                      ★
+                    </p>
+                  ))}
+                  {Array.from({ length: 5 - review.rating }, (_, index) => (
+                    <p key={index} className="text-gray-300 text-2xl">
+                      ☆
+                    </p>
+                  ))}
                 </div>
-                <p className="px-4 mb-1 text-gray-600">{review.content}</p>
-              </li>
+                <p className="text-gray-500 text-md ms-4">{review.user.email}</p>
+                <p className="px-4 mb-1 w-[80%] text-gray-800" style={{ wordWrap: "break-word" }}>
+                  {review.content}
+                </p>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
     );
