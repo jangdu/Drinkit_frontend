@@ -6,9 +6,11 @@ export function AuthContextProvider({ children }) {
   const [user, setUser] = useState();
   const [myStore, setMyStore] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  
   useEffect(() => {
     setUser(getUser());
   }, []);
+  
   const getUser = async () => {
     try {
       const response = await axios.get(
@@ -33,8 +35,11 @@ export function AuthContextProvider({ children }) {
         setMyStore({});
         setUser({});
       }
+      
       setUser(data);
+      
       console.log("Data in Auth Context =>", data);
+      
       setIsLoading(false);
     } catch (error) {
       setMyStore(null);
